@@ -6,12 +6,7 @@
 .haq{
     display: flex;
 }
-.bas{
-    width: 90px; height: 20px;
-    font-size: 20px;
-    padding: 10px 20px;
-    background-color: aliceblue;
-}
+
 .skq{
     width: 240px; height: 40px;
     font-size: 20px;
