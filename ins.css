@@ -50,7 +50,7 @@ h1{
 }
 
 .jap{
-    width: 490px; height: 978px;
+    width: 490px; height: 985px;
     background-color: rgb(61, 255, 84);
     color: #111;
 }
@@ -60,7 +60,7 @@ h1{
     font-size: 15px
 }
 .ja{
-    width: 490px; height: 980px;
+    width: 490px; height: 990px;
     background-color: rgb(61, 255, 84);
     color: #111;
 }
@@ -70,7 +70,7 @@ h1{
     font-size: 15px
 }
 .kor{
-    width: 490px; height: 560px;
+    width: 490px; height: 580px;
     background-color: rgb(231, 164, 255);
 }
 .kor ul{
