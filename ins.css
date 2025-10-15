@@ -1,0 +1,104 @@
+@charset "utf-8";
+
+*{
+  font-family: "굴림", Arial;
+}
+.haq{
+    display: flex;
+}
+.bas{
+    width: 90px; height: 20px;
+    font-size: 20px;
+    padding: 10px 20px;
+    background-color: aliceblue;
+}
+.skq{
+    width: 240px; height: 40px;
+    font-size: 20px;
+    left: 50px;
+    background-color: aqua;
+    list-style: none;
+}
+.skq li{
+    padding: 10px 20px;
+}
+h1{
+    font-size: 25pxs;    
+}
+.dal{
+    width: 1470px; height: 400px;
+    display: flex
+
+}
+h3{
+    font-size: 22px;
+}
+p{
+    font-size: 15px;
+}
+
+.kso{
+    width: 490px; height: 400px;
+    background-color: rgb(231, 164, 255);
+    color: #111;
+}
+h1{
+    padding: 10px 10px;
+}
+.kso ul {
+    height: 100%; height: 100%;
+    padding: 20px 40px;
+}
+.kso p{
+    color: #000;
+    font-family: "맑은 고딕";
+}
+
+.jap{
+    width: 490px; height: 966px;
+    background-color: rgb(61, 255, 84);
+    color: #111;
+}
+.jap p{
+    color: #000;
+    font-family: "맑은 고딕";
+    font-size: 15px
+}
+.ja{
+    width: 490px; height: 965.9px;
+    background-color: rgb(61, 255, 84);
+    color: #111;
+}
+.ja p{
+    color: #000;
+    font-family: "맑은 고딕";
+    font-size: 15px
+}
+.kor{
+    width: 490px; height: 550px;
+    background-color: rgb(231, 164, 255);
+}
+.kor ul{
+    width: 100%; height: 100%;
+     padding: 5px 40px;
+}
+.sks{
+  width: 300px; height: 200px;
+  background-color: #ede0ff;
+  padding: 5px;
+}
+.sks ul{
+    width: 300px; height: 20px;
+}
+.sks li{
+    width: 300px; height: 20px;
+    padding: 12px 1px;
+}
+.sks a{
+    font-size: 20px;
+    color: #333;
+}
+.sks h3{
+    width: 300px;height: 10px;
+    font-size: 25px;
+}
