@@ -1,99 +1,145 @@
-@charset "utf-8";
-
-*{
-  font-family: "굴림", Arial;
+/* 전체적인 레이아웃 및 폰트 설정 */
+body {
+    font-family: 'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', sans-serif;
+    background-color: #f4f7f9; /* 은은한 배경색 */
+    color: #333; /* 기본 글자색 */
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
 }
-.haq{
-    display: flex;
+
+/* 메인 타이틀 */
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #3498db; /* 제목 아래에 파란색 선으로 강조 */
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.skq{
-    width: 240px; height: 40px;
-    font-size: 20px;
-    left: 50px;
-    background-color: aqua;
+/* 섹션 타이틀 (카테고리 제목) */
+h3 {
+    color: #e74c3c; /* 눈에 띄는 붉은 계열 색상 */
+    border-bottom: 2px solid #f1c40f;
+    padding-bottom: 5px;
+    margin-top: 0;
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+/* 최상단 TJ 노래 신청 링크 */
+.haq {
+    background-color: #3498db; /* 파란색 배경 */
+    padding: 10px 0;
+    text-align: center;
+}
+
+.skq li {
     list-style: none;
-}
-.skq li{
-    padding: 10px 20px;
-}
-h1{
-    font-size: 25pxs;    
-}
-.dal{
-    width: 1470px; height: 400px;
-    display: flex
-
-}
-h3{
-    font-size: 22px;
-}
-p{
-    font-size: 15px;
+    padding: 0;
+    margin: 0;
 }
 
-.kso{
-    width: 490px; height: 400px;
-    background-color: rgb(231, 164, 255);
-    color: #111;
-}
-h1{
-    padding: 10px 10px;
-}
-.kso ul {
-    height: 100%; height: 100%;
-    padding: 20px 40px;
-}
-.kso p{
-    color: #000;
-    font-family: "맑은 고딕";
+.skq a {
+    display: block;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: color 0.3s;
 }
 
-.jap{
-    width: 490px; height: 985px;
-    background-color: rgb(61, 255, 84);
-    color: #111;
+.skq a:hover {
+    color: #f1c40f; /* 호버 시 노란색으로 변경 */
 }
-.jap p{
-    color: #000;
-    font-family: "맑은 고딕";
-    font-size: 15px
+
+/* 주요 카테고리 컨테이너 (준님 오리지널 & 일본곡 커버) */
+.dal {
+    display: flex;
+    flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 허용 */
+    gap: 20px; /* 각 카테고리 사이의 간격 */
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
-.ja{
-    width: 490px; height: 990px;
-    background-color: rgb(61, 255, 84);
-    color: #111;
+
+/* 개별 카테고리 스타일 */
+.kso, .jap, .ja, .kor, .sks {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px; /* .dal 밖의 항목에도 간격 적용 */
+    box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
 }
-.ja p{
-    color: #000;
-    font-family: "맑은 고딕";
-    font-size: 15px
+
+/* .dal 내부의 3개 카테고리 (오리지널, 일본곡 커버) */
+.kso, .jap, .ja {
+    flex: 1 1 calc(33.33% - 20px); /* 3분할, gap만큼 제외 */
+    min-width: 300px; /* 최소 너비 설정으로 너무 작아지는 것 방지 */
 }
-.kor{
-    width: 490px; height: 580px;
-    background-color: rgb(231, 164, 255);
+
+/* 한국 곡 커버와 멤버십 노래방 (풀 너비 섹션) */
+.kor, .sks {
+    max-width: 1200px;
+    margin: 0 auto 20px auto; /* 중앙 정렬 및 아래쪽 마진 */
+    width: 100%;
 }
-.kor ul{
-    width: 100%; height: 100%;
-     padding: 5px 40px;
+.kor, .sks {
+    padding: 20px;
 }
-.sks{
-  width: 300px; height: 200px;
-  background-color: #ede0ff;
-  padding: 5px;
+
+
+/* 노래 리스트 스타일 */
+ul {
+    list-style: none; /* 기본 리스트 마커 제거 */
+    padding: 0;
+    margin: 10px 0 0 0;
 }
-.sks ul{
-    width: 300px; height: 20px;
+
+li {
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border-left: 5px solid #3498db; /* 리스트 왼쪽에 색상 막대로 구분 */
+    background-color: #ecf0f1; /* 리스트 배경색 */
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    display: flex; /* p 요소가 줄 바꿈 없이 한 줄에 오도록 */
+    align-items: center;
 }
-.sks li{
-    width: 300px; height: 20px;
-    padding: 12px 1px;
+
+li:hover {
+    background-color: #dce1e4; /* 마우스 오버 시 색상 변경 */
 }
-.sks a{
-    font-size: 20px;
-    color: #333;
+
+li p {
+    margin: 0;
+    font-size: 0.95em;
 }
-.sks h3{
-    width: 300px;height: 10px;
-    font-size: 25px;
+
+/* 멤버십 전용 링크 스타일 */
+.sks a {
+    color: #2980b9;
+    text-decoration: none;
+    font-weight: bold;
+    display: block; /* a 태그가 li 전체를 차지하도록 */
+}
+
+.sks li {
+    border-left: 5px solid #9b59b6; /* 멤버십 항목은 보라색으로 구분 */
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1000px) {
+    .kso, .jap, .ja {
+        flex: 1 1 calc(50% - 20px); /* 1000px 이하에서는 2분할 */
+    }
+}
+
+@media (max-width: 700px) {
+    .kso, .jap, .ja {
+        flex: 1 1 100%; /* 700px 이하에서는 1분할 */
+    }
 }
