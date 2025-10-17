@@ -74,12 +74,12 @@ h3 {
     min-width: 300px;
 }
 
-.kor, .sks {
+.kso, .kor, .sks {
     max-width: 1200px;
     margin: 0 auto 20px auto;
     width: 100%;
 }
-.kor, .sks {
+.kso, .kor, .sks {
     padding: 20px;
 }
 
