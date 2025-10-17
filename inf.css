@@ -2,14 +2,28 @@
 
 *{
 font-family: "맑은 고딕", sans-serif;
+background-color: azure;
 }
 
 .cks{
+  width: 300px; height: 30px;
 }
+.cks{
+    font-size: 18px;
+}
+.cks li a:hover{
+  color: rgb(0, 172, 60);
+  background-color: aqua;
+}
+
 .cks li{
   list-style: none;
 }
 
-.opas{
+.opas h1{
+  width: 420px; height: 50px;
+}
 
+.gang{
+  width: 400px; height: 400px;
 }
