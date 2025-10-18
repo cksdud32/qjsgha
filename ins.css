@@ -39,7 +39,7 @@ h3 {
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   background: white;
-  width: 300px;
+  width: 60px;
   padding: 20px;
   border-radius: 15px;
   text-align: center;
@@ -66,13 +66,17 @@ h3 {
 }
 
 .open-popup {
-  display: inline-block;
-  padding: 10px 20px;
-  background: #007bff;
-  color: white;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
+    display: inline-block;
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    list-style: circle;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
 }
 
 .open-popup:hover {
