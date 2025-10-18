@@ -26,8 +26,58 @@ h3 {
     font-weight: bold;
 }
 
+.popup {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+}
 
+.popup-content {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  width: 300px;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
 
+.popup:target {
+  display: block;
+}
+
+.close {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 16px;
+  background: #4CAF50;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.close:hover {
+  background: #45a049;
+}
+
+.open-popup {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.open-popup:hover {
+  background: #0056b3;
+}
 
 .haq {
     background-color: #3498db;
