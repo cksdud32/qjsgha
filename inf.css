@@ -2,28 +2,53 @@
 
 *{
 font-family: "맑은 고딕", sans-serif;
-background-color: azure;
+background-color: rgb(247, 234, 255);
+margin: 0; padding: 0;
 }
 
+li{list-style-type: none;}
+
 .cks{
-  width: 300px; height: 30px;
+  width: 100%; height: 100px;
+  text-align: center;
+  
 }
-.cks{
-    font-size: 18px;
+
+.cks li{
+  padding: 10px 10px;
+  width: 100%;
+  display: block;
+  border-top: 1px solid blue;
+}
+
+.cks li a{
+  width: 100%; height: 50px;
+  font-size: 20px;
+  text-decoration: none;
+  align-items: center;
+  display: block;
+  justify-content: center;
+  background-color: #fff;
 }
 .cks li a:hover{
-  color: rgb(0, 172, 60);
-  background-color: aqua;
+  color: #333;
+  background-color: rgb(225, 179, 255);
 }
 
 .cks li{
   list-style: none;
 }
 
-.opas h1{
-  width: 420px; height: 50px;
+.opas{
+  width: 700px; height: 50px;
+}
+
+.opas h1, .opas h4{
+  width: 100%; height: 100%;
+  text-align: center;
 }
 
 .gang{
-  width: 400px; height: 400px;
+  padding: 100px ;
+  width: 600px; height: 400px;
 }
