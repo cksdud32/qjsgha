@@ -168,8 +168,8 @@ li p {
     font-size: 0.95em;
 }
 .sio{
-    
-    left: 40px;
+    width: 100%; height: 100%;
+    left: 50px;
 }
 
 .sks a {
