@@ -162,12 +162,14 @@ li:hover {
 }
 
 li p {
+    width: 40%;
     margin: 0;
     font-size: 0.95em;
 }
 .kor a{
-    width: 100%; height: 100%;
-    left: 50px;
+    width: 60%; height: 100%;
+    
+    
 }
 
 .sks a {
