@@ -133,6 +133,10 @@ h3 {
     min-width: 300px;
 }
 
+.ja ul li{
+    justify-content: space-between;
+}
+
 .kso, .kor, .sks {
     max-width: 1200px;
     margin: 0 auto 20px auto;
