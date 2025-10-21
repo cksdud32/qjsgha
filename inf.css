@@ -2,14 +2,14 @@
 
 *{
 font-family: "맑은 고딕", sans-serif;
-background-color: rgb(247, 234, 255);
+background-color: rgb(252, 247, 255);
 margin: 0; padding: 0;
 }
 
 li{list-style-type: none;}
 
 .cks{
-  width: 100%; height: 100px;
+  width: 100%; height: 200px;
   text-align: center;
 
 }
