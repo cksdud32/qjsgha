@@ -38,19 +38,32 @@ li{list-style-type: none;}
 }
 
 .opas{
-  width: 700px; height: 50px;
+  width: 700px; height: 60px;
   text-align: center;
   margin: 0 auto;
 }
 
+.opas ul{
+  width: 100%; height: 100%;
+}
+
+.opas li{
+  width: 100%; height: 50%;
+}
 .opas h1, .opas h4{
   width: 100%; height: 100%;
   text-align: center;
+ 
+}
+
+.opas h4{
+  width: 100%; height: 100%;
+  padding: 15px 0 70px 0;
 }
 
 .haw{
   width: 400px; height: 100px;
-  padding: 20px 0;
+  padding: 40px 0 0 0;
   margin: 0 auto;
   text-align: center;
 }
@@ -123,5 +136,5 @@ li{list-style-type: none;}
 #dday {
   font-size: 40px;
   color: #007acc;
-  margin-top: 20px;
+  margin-top: 10px;
 }
