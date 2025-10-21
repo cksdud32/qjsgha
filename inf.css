@@ -49,6 +49,12 @@ height: 34px;
   text-align: center;
 }
 
+.haw{
+  width: 400px; height: 100px;
+  padding: 20px 0;
+  margin: 0 auto;
+  text-align: center;
+}
 .gang{
   padding: 70px 30px ;
   width: 1440px; height: 200px;
@@ -103,4 +109,15 @@ height: 34px;
 .checked-text {
   text-decoration: line-through;
   color: gray;
+}
+
+body {
+  text-align: center;
+  margin-top: 100px;
+}
+
+#dday {
+  font-size: 40px;
+  color: #007acc;
+  margin-top: 20px;
 }
