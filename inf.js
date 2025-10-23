@@ -11,7 +11,6 @@ function updateDDay() {
   const targetDate = new Date("2026-01-10");
   const today = new Date();
 
-  // 시간을 00:00:00으로 맞추어 날짜 비교 정확하게
   targetDate.setHours(0, 0, 0, 0);
   today.setHours(0, 0, 0, 0);
 
@@ -28,4 +27,4 @@ function updateDDay() {
   }
 }
 
-updateDDay(); // 페이지 로드시 실행
+updateDDay();
