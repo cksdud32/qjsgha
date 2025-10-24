@@ -118,6 +118,15 @@ h3 {
     margin: 0 auto;
 }
 
+.dal a, .kso a, .kor a {
+    color: #2980b9;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.dal a:hover, .kso a:hover, .kor a:hover {
+    text-decoration: underline;
+}
 .kso, .jap, .ja, .kor, .sks {
     background-color: #ffffff;
     border: 1px solid #ddd;
