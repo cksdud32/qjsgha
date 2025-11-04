@@ -43,7 +43,7 @@ body{
   margin: 0 auto;
   text-align: center;
 }
-.gang { width: 90%; max-width: 1440px; margin: auto; padding: 100px 0;}
+.gang { width: 90%; max-width: 1700px; margin: auto; padding: 100px 0;}
 
 
 .gang ul{
@@ -63,9 +63,21 @@ body{
   border-bottom: 1px solid #333;
   
 }
-.gang p {
-  padding: 20px 0 10px 0;
-  font-size: 16px;;
+
+table{
+  margin: 10px auto;
+    text-align: center;
+    border-collapse: collapse;
+    width: 95%;
+}
+
+td, th{
+  border:1px solid #333;
+  padding: 8px auto;
+}
+
+th{
+  background-color: #eee;
 }
 
 .gang a:hover{text-decoration: underline; color: blue;}
