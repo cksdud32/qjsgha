@@ -1,0 +1,144 @@
+@charset "UTF-8";
+
+*{
+font-family: "맑은 고딕", sans-serif;
+
+margin: 0; padding: 0;
+}
+
+li{list-style-type: none;}
+
+body{
+  background-color: rgb(252, 247, 255);
+}
+
+.cks{
+  width: 100%; height: 200px;
+  text-align: center;
+
+}
+.cks ul{
+  width: 100%; height: 100%;
+}
+.cks li{
+  padding: 10px 10px;
+  display: block;
+  border-top: 1px solid blue;
+  list-style: none;
+}
+
+.cks li a{
+  height: 34px;
+  font-size: 20px;
+  text-decoration: none;
+  align-items: center;
+  display: block;
+  justify-content: center;
+  background-color: #fff;
+}
+.cks li a:hover{
+  color: #333;
+  background-color: rgb(225, 179, 255);
+}
+
+.opas{
+  width: 700px; height: 60px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.opas ul{
+  width: 100%; height: 100%;
+}
+
+.opas li{
+  width: 100%; height: 50%;
+}
+.opas h1, .opas h4{
+  width: 100%; height: 100%;
+  text-align: center;
+ 
+}
+
+.opas h4{
+  width: 100%; height: 100%;
+  padding: 15px 0 70px 0;
+}
+
+.haw{
+  width: 400px; height: 100px;
+  padding: 40px 0 0 0;
+  margin: 0 auto;
+  text-align: center;
+}
+.gang{
+  padding: 70px 30px ;
+  width: 1440px; height: 200px;
+ margin: 0 auto;
+}
+
+.gang ul{
+  width: 100%; height: 100%;
+  display: flex;
+}
+
+.gang li{
+  width: 50%; height: 100%;
+  padding: 0 20px;
+  border-bottom: #333 1px solid;
+}
+.gang h2{
+  text-align: center;
+  padding: 10px 0;
+  font-size: 24px;
+  border-bottom: 1px solid #333;
+  
+}
+.gang p {
+  padding: 20px 0 10px 0;
+  font-size: 16px;;
+  
+}
+
+.scd{
+  width: 700px; height: auto;
+  margin: 0 auto;
+}
+
+.scd h1{
+  padding: 10px 0;
+  font-size: 36px;
+  text-align: center;
+}
+.scd h2{
+  padding: 10px 0 20px 0;
+  font-size: 24px;
+  text-align: center;
+}
+
+.scd > ul > li > p{
+  padding: 0 0 10px 0;
+  font-size: 20px;
+  border-bottom: #333 1px solid;
+  text-align: center;
+}
+.check-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.check-item input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.checked-text {
+  text-decoration: line-through;
+  color: gray;
+}
+
+#dday {
+  font-size: 40px;
+  color: #007acc;
+  margin-top: 10px;
+}

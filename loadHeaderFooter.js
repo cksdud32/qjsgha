@@ -14,4 +14,5 @@ function loadHTML(url, elementId) {
 
 document.addEventListener('DOMContentLoaded', () => {
     loadHTML('link.html', 'link');
+    loadHTML('link.html', 'link');
 });
