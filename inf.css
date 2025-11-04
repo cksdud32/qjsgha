@@ -2,11 +2,15 @@
 
 *{
 font-family: "맑은 고딕", sans-serif;
-background-color: rgb(252, 247, 255);
+
 margin: 0; padding: 0;
 }
 
 li{list-style-type: none;}
+
+body{
+  background-color: rgb(252, 247, 255);
+}
 
 .cks{
   width: 100%; height: 200px;
