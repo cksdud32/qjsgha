@@ -26,7 +26,7 @@ h3 {
     font-weight: bold;
 }
 
-.popup {
+.popup3 {
   display: none;
   position: fixed;
   top: 0; left: 0;
@@ -34,7 +34,7 @@ h3 {
   background: rgba(0,0,0,0.6);
 }
 
-.popup-content {
+.popup-content3 {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
@@ -46,11 +46,11 @@ h3 {
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
-.popup:target {
+.popup3:target {
   display: block;
 }
 
-.close {
+.close3 {
   display: inline-block;
   margin-top: 15px;
   padding: 8px 16px;
@@ -61,11 +61,11 @@ h3 {
   font-weight: bold;
 }
 
-.close:hover {
+.close3:hover {
   background: #45a049;
 }
 
-.open-popup {
+.open-popup3 {
     display: inline-block;
     padding: 10px 20px;
     background: #007bff;
@@ -75,11 +75,11 @@ h3 {
     font-weight: bold;
     list-style: circle;
     position: fixed;
-    bottom: 10px;
+    bottom: 110px;
     left: 10px;
 }
 
-.open-popup:hover {
+.open-popup3:hover {
   background: #0056b3;
 }
 
