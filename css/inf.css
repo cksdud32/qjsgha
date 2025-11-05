@@ -38,8 +38,8 @@ body{
 }
 
 .haw{
-  width: 400px; height: 100px;
-  padding: 40px 0 0 0;
+  width: 420px; height: 100px;
+  padding: 25px 0 0 0;
   margin: 0 auto;
   text-align: center;
 }
@@ -127,7 +127,11 @@ th{
 #dday {
   font-size: 40px;
   color: #007acc;
-  margin-top: 10px;
+}
+
+#timeLeft {
+  font-size: 1.2rem;
+  color: #555;
 }
 
 footer{
