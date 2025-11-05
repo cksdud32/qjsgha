@@ -79,11 +79,11 @@ main {
 }
 
 footer {
+    height: 60px;
     text-align: center;
     margin-top: 40px;
     font-size: 0.9em;
     color: #666;
-    background-color: #fbf4ff;
 }
 
 footer a{

@@ -14,7 +14,7 @@ body{
 
 .opas{
   padding: 20px 0 0 0;
-  width: 700px; height: 80px;
+  width: 730px; height: 80px;
   text-align: center;
   margin: 0 auto;
 }
@@ -128,4 +128,14 @@ th{
   font-size: 40px;
   color: #007acc;
   margin-top: 10px;
+}
+
+footer{
+  font-family: 굴림; font-weight: bold; 
+  font-size: 14px;
+  background-color: rgb(252, 247, 255);
+}
+
+footer a:hover{
+  color: blue
 }
