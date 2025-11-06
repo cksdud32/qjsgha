@@ -31,3 +31,16 @@ function updateDDay() {
 
 setInterval(updateDDay, 1000);
 updateDDay();
+
+function toggleContent() {
+    const box = document.getElementById('hiddenContent');
+    const text = document.querySelector('.toggle-text');
+
+    box.classList.toggle('show');
+
+    if (box.classList.contains('show')) {
+      text.textContent = '▲ 닫기';
+    } else {
+      text.textContent = '▼ 대기 및 입장시간 보기';
+    }
+  }

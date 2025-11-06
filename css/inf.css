@@ -140,3 +140,28 @@ th{
 #timeLeft{
   font-size: 18px; font-weight: bold;
 }
+
+  .toggle-text {
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .hidden-box {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: all 0.4s ease;
+  }
+
+  .hidden-box.show {
+    max-height: 400px; /* 내용 길이에 맞게 조정 */
+    opacity: 1;
+  }
+
+  .content {
+    padding: 10px;
+    background: #f4f4f4;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
