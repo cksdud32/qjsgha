@@ -13,7 +13,6 @@ function updateDDay() {
   const ddayElement = document.getElementById("dday");
   const timeLeftElement = document.getElementById("timeLeft");
 
-  // D-Day 표시
   if (diffDays > 0) {
     ddayElement.textContent = `D-${diffDays}`;
   } else if (diffDays === 0) {
@@ -22,7 +21,6 @@ function updateDDay() {
     ddayElement.textContent = `D+${Math.abs(diffDays)}`;
   }
 
-  // 남은(또는 지난) 시간 계산
   const absDiff = Math.abs(diffTime);
   const totalHours = Math.floor(absDiff / (1000 * 60 * 60));
   const minutes = Math.floor((absDiff / (1000 * 60)) % 60);
@@ -31,6 +29,5 @@ function updateDDay() {
   timeLeftElement.textContent = `${totalHours}시간 ${minutes}분 ${seconds}초`;
 }
 
-// 1초마다 갱신
 setInterval(updateDDay, 1000);
 updateDDay();
