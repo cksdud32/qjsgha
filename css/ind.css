@@ -59,6 +59,10 @@ main {
     gap: 50px;
 }
 
+.sec-li{
+    padding: 0 0 0 30px;
+}
+
 .dud32 ul {
     list-style: none;
     padding: 0;
@@ -79,7 +83,7 @@ main {
 }
 
 footer {
-    height: 60px;
+    height: 120px;
     text-align: center;
     margin-top: 40px;
     font-size: 0.9em;
@@ -91,5 +95,5 @@ footer a{
 }
 
 footer a:hover{
-    text-decoration: underline;
+    text-decoration: underline; color: blue;
 }

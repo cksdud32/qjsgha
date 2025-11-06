@@ -16,7 +16,7 @@ body{
 
 .opas{
   padding: 20px 0 0 0;
-  width: 100%; height: 80px;
+  width: 100%; height: auto;
   text-align: center;
   margin: 0 auto;
 }
@@ -31,12 +31,13 @@ body{
 .opas h1, .opas h4{
   width: 100%; height: 100%;
   text-align: center;
- 
+ max-width: 100%;
 }
 
 .opas h4{
   width: 100%; height: 100%;
-  padding: 15px 0 70px 0;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .haw{
