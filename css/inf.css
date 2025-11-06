@@ -6,6 +6,9 @@ margin: 0; padding: 0;
 }
 
 li{list-style-type: none;}
+a:hover{
+  text-decoration: underline; color: blue;
+}
 
 body{
   background-color: rgb(252, 247, 255);
