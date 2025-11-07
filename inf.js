@@ -10,7 +10,7 @@ function updateDDay() {
   const now = new Date();
 
   const diffTimeForDay = targetDateForDay - now;
-  const diffDays = Math.ceil(diffTimeForDay / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor(diffTimeForDay / (1000 * 60 * 60 * 24));
 
   const ddayElement = document.getElementById("dday");
   const timeLeftElement = document.getElementById("timeLeft");
