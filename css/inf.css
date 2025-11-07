@@ -119,6 +119,15 @@ th{
     font-size: 20px;
 }
 
+.link-as{
+  color: limegreen;
+  text-decoration: underline;
+}
+
+.link-as:hover{
+  color: blue;
+}
+
 .check-item input[type="checkbox"] {
   margin-right: 10px;
   width: 20px;    
