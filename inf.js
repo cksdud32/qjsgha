@@ -4,11 +4,13 @@ function toggleStrike(checkbox) {
 }
 
 function updateDDay() {
-  const targetDate = new Date("2026-01-10T15:00:00+09:00");
+  const targetDateForDay = new Date("2026-01-10T00:00:00+09:00");
+  const targetDateForTime = new Date("2026-01-10T15:00:00+09:00");
+
   const now = new Date();
 
-  const diffTime = targetDate - now;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const diffTimeForDay = targetDateForDay - now;
+  const diffDays = Math.ceil(diffTimeForDay / (1000 * 60 * 60 * 24));
 
   const ddayElement = document.getElementById("dday");
   const timeLeftElement = document.getElementById("timeLeft");
@@ -21,7 +23,8 @@ function updateDDay() {
     ddayElement.textContent = `D+${Math.abs(diffDays)}`;
   }
 
-  const absDiff = Math.abs(diffTime);
+  const diffTimeForClock = targetDateForTime - now;
+  const absDiff = Math.abs(diffTimeForClock);
   const totalHours = Math.floor(absDiff / (1000 * 60 * 60));
   const minutes = Math.floor((absDiff / (1000 * 60)) % 60);
   const seconds = Math.floor((absDiff / 1000) % 60);

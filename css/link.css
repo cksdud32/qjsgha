@@ -21,6 +21,7 @@ a {text-decoration: none;}
     position: fixed;
     bottom: 60px;
     left: 10px;
+    z-index: 10000;
 }
 
 .open-popup1:hover {
