@@ -1,0 +1,112 @@
+<!--<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>콘서트 굿즈(현장판매)</title>
+<style>
+  table {
+    margin: 10px auto;
+    text-align: center;
+    border-collapse: collapse;
+    width: 95%;
+  }
+  th, td {
+    border: 1px solid #333;
+    padding: 8px;
+  }
+  th {
+    background-color: #eee;
+  }
+  .clickable-row {
+    background-color: #d9f0ff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .clickable-row:hover {
+    background-color: #bfe6ff;
+  }
+  .hidden-row {
+    display: none;
+  }
+  .hidden-row.show {
+    display: table-row;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<h3 style="text-align:center;">콘서트 굿즈(현장판매)<br><small>(※ 현재 등록된 정보는 ‘세카이’ 굿즈입니다.)</small></h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>종류 수</th>
+      <th>1월콘(종류 및 가격)</th>
+      <th>2월콘(종류 및 가격)</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr class="clickable-row" data-group="poster">
+      <td>포스터</td>
+      <td>정보 없음</td>
+      <td>정보 없음</td>
+    </tr>
+    <tr class="hidden-row" data-group="poster">
+      <td>내용</td>
+      <td>포스터 상세 설명</td>
+      <td>추가 정보 없음</td>
+    </tr>
+    <tr class="hidden-row" data-group="poster">
+      <td>1월콘</td>
+      <td>1월 포스터 판매 부스</td>
+      <td>가격 및 수량 정보</td>
+    </tr>
+    <tr class="hidden-row" data-group="poster">
+      <td>2월콘</td>
+      <td>2월 포스터 판매 부스</td>
+      <td>가격 및 수량 정보</td>
+    </tr>
+
+    <tr class="clickable-row" data-group="card">
+      <td>카드텍</td>
+      <td>개당 2,000</td>
+      <td>개당 2,000</td>
+    </tr>
+    <tr class="hidden-row" data-group="card">
+      <td>내용</td>
+      <td>한세트 +3 구성</td>
+      <td>예시: 12개 세트면 15개 구성</td>
+    </tr>
+    <tr class="hidden-row" data-group="card">
+      <td>1월콘</td>
+      <td>1월 콘서트 판매 부스</td>
+      <td>판매 개시 12시</td>
+    </tr>
+    <tr class="hidden-row" data-group="card">
+      <td>2월콘</td>
+      <td>2월 콘서트 판매 부스</td>
+      <td>판매 개시 13시</td>
+    </tr>
+
+  </tbody>
+</table>
+
+<script>
+  document.querySelectorAll(".clickable-row").forEach(row => {
+    row.addEventListener("click", () => {
+      const group = row.dataset.group;
+      document.querySelectorAll(`.hidden-row[data-group="${group}"]`)
+        .forEach(r => r.classList.toggle("show"));
+    });
+  });
+</script>
+
+</body>
+</html>
+-->

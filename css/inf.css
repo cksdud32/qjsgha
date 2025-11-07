@@ -83,6 +83,26 @@ th{
   background-color: #eee;
 }
 
+ .clickable-row {
+    background-color: #d9f0ff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .clickable-row:hover {
+    background-color: #bfe6ff;
+  }
+  .hidden-row {
+    display: none;
+  }
+  .hidden-row.show {
+    display: table-row;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
 .gang a:hover{text-decoration: underline; color: blue;}
 .scd{
   width: 700px; height: auto;

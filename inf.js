@@ -56,3 +56,11 @@ function toggleContent() {
       text.textContent = '▼ 대기 및 입장시간 보기';
     }
   }
+
+document.querySelectorAll(".clickable-row").forEach(row => {
+    row.addEventListener("click", () => {
+      const group = row.dataset.group;
+      document.querySelectorAll(`.hidden-row[data-group="${group}"]`)
+        .forEach(r => r.classList.toggle("show"));
+    });
+  });
