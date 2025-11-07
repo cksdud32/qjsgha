@@ -1,8 +1,11 @@
+/* 준비물 취소선 */
 function toggleStrike(checkbox) {
   const p = checkbox.nextElementSibling;
   p.classList.toggle("checked-text", checkbox.checked);
 }
 
+
+/* 디데이 */
 function updateDDay() {
   const targetDateForDay = new Date("2026-01-10T00:00:00+09:00");
   const targetDateForTime = new Date("2026-01-10T15:00:00+09:00");
@@ -38,6 +41,8 @@ const diffTimeForClock = targetDateForTime - now;
 
 setInterval(updateDDay, 1000);
 updateDDay();
+
+/* 대기 및 입장 시간 표시 */
 
 function toggleContent() {
     const box = document.getElementById('hiddenContent');
