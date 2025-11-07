@@ -151,9 +151,17 @@ th{
 }
 
   .toggle-text {
+    display: flex;
     cursor: pointer;
     font-weight: bold;
-    color: #333;
+    color: #222;
+    background-color: #64B5F6;
+    width: 35%; height: 30px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
   }
 
   .hidden-box {
@@ -164,13 +172,13 @@ th{
   }
 
   .hidden-box.show {
-    max-height: 400px; /* 내용 길이에 맞게 조정 */
+    max-height: 500px; /* 내용 길이에 맞게 조정 */
     opacity: 1;
   }
 
   .content {
     padding: 10px;
-    background: #f4f4f4;
+    background: #f5f5f5;
     border-radius: 8px;
     margin-top: 8px;
   }
