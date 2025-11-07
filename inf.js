@@ -15,15 +15,19 @@ function updateDDay() {
   const ddayElement = document.getElementById("dday");
   const timeLeftElement = document.getElementById("timeLeft");
 
-  if (diffDays > 0) {
+  const isDDay =
+    now >= new Date("2026-01-10T00:00:00+09:00") &&
+    now < new Date("2026-01-11T00:00:00+09:00");
+
+  if (diffDays > 0 && !isDDay) {
     ddayElement.textContent = `D-${diffDays}`;
-  } else if (diffDays === 0) {
+  } else if (isDDay) {
     ddayElement.textContent = "🎉 D-DAY! 🎉";
   } else {
     ddayElement.textContent = `D+${Math.abs(diffDays)}`;
   }
 
-  const diffTimeForClock = targetDateForTime - now;
+const diffTimeForClock = targetDateForTime - now;
   const absDiff = Math.abs(diffTimeForClock);
   const totalHours = Math.floor(absDiff / (1000 * 60 * 60));
   const minutes = Math.floor((absDiff / (1000 * 60)) % 60);
