@@ -58,9 +58,22 @@ function toggleContent() {
   }
 
 document.querySelectorAll(".clickable-row").forEach(row => {
-    row.addEventListener("click", () => {
-      const group = row.dataset.group;
-      document.querySelectorAll(`.hidden-row[data-group="${group}"]`)
-        .forEach(r => r.classList.toggle("show"));
+  row.addEventListener("click", () => {
+    const group = row.dataset.group;
+    document.querySelectorAll(`.hidden-row[data-group="${group}"]`).forEach(r => {
+      if (r.classList.contains("show")) {
+        // 닫기 애니메이션
+        r.classList.remove("show");
+        setTimeout(() => {
+          r.style.display = "none";
+        }, 300); // transition 시간과 동일
+      } else {
+        // 열기 애니메이션
+        r.style.display = "table-row";
+        setTimeout(() => {
+          r.classList.add("show");
+        }, 10); // 브라우저가 display 전환 인식 후 애니메이션 실행
+      }
     });
   });
+});

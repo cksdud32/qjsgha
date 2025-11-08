@@ -91,13 +91,22 @@ th{
   .clickable-row:hover {
     background-color: #bfe6ff;
   }
-  .hidden-row {
-    display: none;
-  }
-  .hidden-row.show {
-    display: table-row;
-    animation: fadeIn 0.25s ease;
-  }
+
+.hidden-row {
+  display: none;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: all 0.3s ease;
+}
+
+.hidden-row.show {
+  display: table-row;
+  opacity: 1;
+  transform: scaleY(1);
+  background-color: #efefef;
+}
+
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
