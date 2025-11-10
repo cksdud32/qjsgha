@@ -1,11 +1,11 @@
-/* 준비물 취소선 */
+// 준비물 취소선
 function toggleStrike(checkbox) {
   const p = checkbox.nextElementSibling;
   p.classList.toggle("checked-text", checkbox.checked);
 }
 
 
-/* 디데이 */
+// 디데이
 function updateDDay() {
   const targetDateForDay = new Date("2026-01-10T00:00:00+09:00");
   const targetDateForTime = new Date("2026-01-10T15:00:00+09:00");
@@ -42,7 +42,7 @@ const diffTimeForClock = targetDateForTime - now;
 setInterval(updateDDay, 1000);
 updateDDay();
 
-/* 대기 및 입장 시간 표시 */
+// 대기 및 입장 시간 표시
 
 function toggleContent() {
     const box = document.getElementById('hiddenContent');
@@ -57,22 +57,21 @@ function toggleContent() {
     }
   }
 
+  // 표 숨김/열기 처리
 document.querySelectorAll(".clickable-row").forEach(row => {
   row.addEventListener("click", () => {
     const group = row.dataset.group;
     document.querySelectorAll(`.hidden-row[data-group="${group}"]`).forEach(r => {
       if (r.classList.contains("show")) {
-        // 닫기 애니메이션
         r.classList.remove("show");
         setTimeout(() => {
           r.style.display = "none";
-        }, 300); // transition 시간과 동일
+        }, 300); 
       } else {
-        // 열기 애니메이션
         r.style.display = "table-row";
         setTimeout(() => {
           r.classList.add("show");
-        }, 10); // 브라우저가 display 전환 인식 후 애니메이션 실행
+        }, 10);
       }
     });
   });
