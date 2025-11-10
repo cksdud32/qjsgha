@@ -3,7 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
-    <link rel="stylesheet" href="css/Shor.css">
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #000;
+}
+li{list-style: none;}
+a {text-decoration: none;}
+
+.open-popup{
+    display: inline-block;
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    z-index: 10000;
+}
+
+.open-popup:hover {
+    background: #0056b3;
+}
+
+.popup{
+    display: none;
+    z-index: 1000;
+}
+
+.popup:target {
+  display: block;
+}
+
+.popup ul{
+    width: 320px; height: 250px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    position: fixed;
+    transform: translate(-50%, -50%);
+    left: 50%; top: 50%;
+    margin: 0 auto;
+}
+
+.popup ul li{
+   height: 50px;
+}
+.popup a{
+       display: block;
+       border-bottom: #000 1px solid;
+}
+    </style>
 </head>
 <body>
     <div>

@@ -4,7 +4,71 @@
     <meta charset="UTF-8">
    
     <title>Document</title>
-    <link rel="stylesheet" href="css/link.css">
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #000;
+}
+li{list-style: none;}
+a {text-decoration: none;}
+
+.open-popup1{
+    display: inline-block;
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    position: fixed;
+    bottom: 60px;
+    left: 10px;
+    z-index: 10000;
+}
+
+.open-popup1:hover {
+    background: #0056b3;
+}
+
+.popup1{
+    display: none;
+    z-index: 1000;
+    width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+}
+
+.popup1:target {
+  display: block;
+}
+
+.popup1 ul{
+    width: 700px; height: 400px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    position: fixed;
+    transform: translate(-50%, -50%);
+    left: 50%; top: 50%;
+    margin: 0 auto;
+}
+
+.popup1 ul li{
+   padding: 20px 0 0 0;
+   text-align: center;
+}
+
+.popup1 > ul > li > a{
+       display: block;
+       font-size: 18px;
+}
+.popup1 ul li:hover {
+    background-color: #dce1e4;
+}
+    </style>
 </head>
 <body>
      <a href="#popup2" class="open-popup1">류현준 관련 링크 모음집</a>
