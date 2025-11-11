@@ -104,7 +104,7 @@ th{
   display: table-row;
   opacity: 1;
   transform: scaleY(1);
-  background-color: #efefef;
+  background-color: #e9fcff;
 }
 
   @keyframes fadeIn {
