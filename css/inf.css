@@ -221,4 +221,5 @@ th{
     display: flex;
     text-align: center;
     padding: 10px; gap: 2px;
+    flex-wrap: wrap;
   }
