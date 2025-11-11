@@ -4,6 +4,36 @@ function toggleStrike(checkbox) {
   p.classList.toggle("checked-text", checkbox.checked);
 }
 
+// 체크박스 상태 저장
+function saveCheckboxState(checkbox) {
+  localStorage.setItem(checkbox.id, checkbox.checked);
+}
+
+// 체크박스 상태 불러오기
+function loadCheckboxState() {
+  const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
+  checkboxes.forEach(cb => {
+    const saved = localStorage.getItem(cb.id);
+    cb.checked = saved === "true"; 
+    toggleStrike(cb);         
+  });
+}
+
+// 기존 toggleStrike 함수에 상태 저장 연결
+function toggleStrike(checkbox) {
+  const p = checkbox.nextElementSibling;
+  p.classList.toggle("checked-text", checkbox.checked);
+  saveCheckboxState(checkbox); // 상태 저장
+}
+
+// 이벤트 연결
+document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', () => toggleStrike(cb));
+});
+
+// 페이지 로드 시 상태 불러오기
+window.addEventListener('DOMContentLoaded', loadCheckboxState);
+
 
 // 디데이
 function updateDDay() {

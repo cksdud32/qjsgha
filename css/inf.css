@@ -123,6 +123,7 @@ th{
   border-bottom: #333 1px solid;
   text-align: center;
   font-size: 24px;
+  padding-bottom: 3px;
 }
 .scd h1{
   padding: 10px 0;
@@ -183,7 +184,7 @@ th{
     display: flex;
     cursor: pointer;
     font-weight: bold;
-    color: #222;
+    color: #264b71;
     background-color: #64B5F6;
     width: 200px; height: 30px;
     border-radius: 12px;
