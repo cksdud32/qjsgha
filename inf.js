@@ -73,19 +73,38 @@ setInterval(updateDDay, 1000);
 updateDDay();
 
 // 대기 및 입장 시간 표시
+document.addEventListener('DOMContentLoaded', () => {
+  const toggles = document.querySelectorAll('.toggle-text');
 
-function toggleContent() {
-    const box = document.getElementById('hiddenContent');
-    const text = document.querySelector('.toggle-text');
+  toggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-target');
+      const targetBox = document.getElementById(targetId);
 
-    box.classList.toggle('show');
+      // 다른 박스 닫기
+      document.querySelectorAll('.hidden-box').forEach(box => {
+        if (box !== targetBox) box.classList.remove('show');
+      });
 
-    if (box.classList.contains('show')) {
-      text.textContent = '▲ 닫기';
-    } else {
-      text.textContent = '▼ 대기 및 입장시간 보기';
-    }
-  }
+      // 클릭한 박스 토글
+      targetBox.classList.toggle('show');
+
+      // 버튼 텍스트 업데이트
+      toggles.forEach(b => {
+        const tId = b.getAttribute('data-target');
+        if (tId === targetId) {
+          b.textContent = targetBox.classList.contains('show') 
+            ? `▲ ${b.textContent.slice(2)}`
+            : `▼ ${b.textContent.slice(2)}`;
+        } else {
+          b.textContent = `▼ ${b.textContent.slice(2)}`;
+        }
+      });
+    });
+  });
+});
+
+
 
   // 표 숨김/열기 처리
 document.querySelectorAll(".clickable-row").forEach(row => {
