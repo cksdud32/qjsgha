@@ -75,6 +75,7 @@ table{
     text-align: center;
     border-collapse: collapse;
     width: 95%;
+    table-layout: fixed;
 }
 
 td, th{
