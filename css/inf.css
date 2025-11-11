@@ -74,7 +74,7 @@ table{
   margin: 10px auto;
     text-align: center;
     border-collapse: collapse;
-    width: 95%;
+    width: 100%;
     table-layout: fixed;
 }
 
