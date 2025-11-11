@@ -206,7 +206,7 @@ th{
   }
 
   .hidden-box.show {
-    max-height: 650px; /* 내용 길이에 맞게 조정 */
+    max-height: 1000px; /* 내용 길이에 맞게 조정 */
     opacity: 1;
   }
 

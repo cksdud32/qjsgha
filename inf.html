@@ -72,8 +72,8 @@
               </tr>
               <tr>
                 <td>굿즈 구매 시간<br>(품절 주의)</td>
-                <td style="font-size: 13.6px;">A그룹 입장~2시n분에 끝<br>이후에는 콘서트 종료 후</td>
-                <td style="font-size: 13.6px;">A그룹 입장~2시n분에 끝<br>이후에는 콘서트 종료 후</td>
+                <td style="font-size: 13.5px;">A그룹 입장~2시n분 까지<br>이후에는 콘서트 종료 후</td>
+                <td style="font-size: 13.5px;">A그룹 입장~2시n분 까지<br>이후에는 콘서트 종료 후</td>
               </tr>
               <tr>
                 <td>셋리스트</td>
@@ -89,7 +89,7 @@
           </p>
           <div class="data">
             <div class="toggle-text" data-target="hiddenContentA">▼ 대기 및 입장시간 보기</div>
-            <div class="toggle-text" data-target="hiddenContentB">▼ 주의 사항 보기</div>
+            <div class="toggle-text" data-target="hiddenContentB">▼ 안내 사항 보기</div>
           </div>
           <div class="hidden-box" id="hiddenContentA">
             <div class="content">
@@ -114,7 +114,7 @@
               입장 시작: 13:30 ~ <br>
               <br>
               현제는 세카이 기준 시간표입니다. <br>인원수에 따라 다를수 있습니다. <br><br>
-              <h3>※ 주의 사항 ※</h3>
+              <h3>※ 안내 사항 ※</h3>
               <i>
                 본인 그룹의 입장 시간이 지나면,<br>
                 스텝의 판단하에 즉시 입장<br>
@@ -128,7 +128,7 @@
           </div>
           <div class="hidden-box" id="hiddenContentB">
             <div class="content">
-              <h3>※ 주의 사항 ※</h3>
+              <h3>※ 안내 사항 ※</h3>
               <p>
                 본인 그룹의 입장 시간이 지나면,<br>
                 스텝의 판단하에 즉시 입장<br>
@@ -301,6 +301,11 @@
         <label for="check12" style="cursor: pointer;">지갑(카드, 현금, 신분증)</label>
       </div>
 
+      <div class="check-item">
+        <input type="checkbox" id="check13" onchange="toggleStrike(this)">
+        <label for="check13" style="cursor: pointer;">작은 봉투/지퍼백(쓰레기 담는용/본인이 챙겨가서 버리기)</label>
+      </div>
+
       <ul>
         <li>
           <h2 style="border-top: 1px solid #333;">선택 준비물</h2>
@@ -308,58 +313,53 @@
       </ul>
 
       <div class="check-item">
-        <input type="checkbox" id="check13" onchange="toggleStrike(this)">
-        <label for="check13" style="cursor: pointer;">담요</label>
+        <input type="checkbox" id="check113" onchange="toggleStrike(this)">
+        <label for="check113" style="cursor: pointer;">담요</label>
       </div>
 
       <div class="check-item">
-        <input type="checkbox" id="check14" onchange="toggleStrike(this)">
-        <label for="check14" style="cursor: pointer;">핫팩</label>
+        <input type="checkbox" id="check114" onchange="toggleStrike(this)">
+        <label for="check114" style="cursor: pointer;">핫팩</label>
       </div>
 
       <div class="check-item">
-        <input type="checkbox" id="check15" onchange="toggleStrike(this)">
-        <label for="check15" style="cursor: pointer;">지관통(포스터 챙기는 용)</label>
+        <input type="checkbox" id="check115" onchange="toggleStrike(this)">
+        <label for="check115" style="cursor: pointer;">지관통(포스터 챙기는 용)</label>
       </div>
 
       <div class="check-item">
-        <input type="checkbox" id="check16" onchange="toggleStrike(this)">
-        <label for="check16" style="cursor: pointer;">LR44 건전지(행봉, 체리봉, 감정봉 건전지)</label>
+        <input type="checkbox" id="check116" onchange="toggleStrike(this)">
+        <label for="check116" style="cursor: pointer;">LR44 건전지(행봉, 체리봉, 감정봉 건전지)</label>
       </div>
 
       <div class="check-item">
-        <input type="checkbox" id="check17" onchange="toggleStrike(this)">
-        <label for="check17" style="cursor: pointer;">틴케이스(종이류 굿즈 챙기는용)</label>
+        <input type="checkbox" id="check117" onchange="toggleStrike(this)">
+        <label for="check117" style="cursor: pointer;">틴케이스(종이류 굿즈 챙기는용)</label>
       </div>
 
       <div class="check-item">
-        <input type="checkbox" id="check18" onchange="toggleStrike(this)">
-        <label for="check18" style="cursor: pointer;">쇼핑백 / 가방</label>
+        <input type="checkbox" id="check118" onchange="toggleStrike(this)">
+        <label for="check118" style="cursor: pointer;">쇼핑백 / 가방</label>
       </div>
 
       <div class="check-item">
-        <input type="checkbox" id="check19" onchange="toggleStrike(this)">
-        <label for="check19" style="cursor: pointer;">우산(접이식)</label>
+        <input type="checkbox" id="check119" onchange="toggleStrike(this)">
+        <label for="check119" style="cursor: pointer;">우산(접이식)</label>
       </div>
 
       <div class="check-item">
-        <input type="checkbox" id="check20" onchange="toggleStrike(this)">
-        <label for="check20" style="cursor: pointer;">충전기</label>
+        <input type="checkbox" id="check120" onchange="toggleStrike(this)">
+        <label for="check120" style="cursor: pointer;">충전기</label>
       </div>
 
       <div class="check-item">
-        <input type="checkbox" id="check21" onchange="toggleStrike(this)">
-        <label for="check21" style="cursor: pointer;">체리꼼 & 체리찌 / 포카 (사진용)</label>
-      </div>
-
-      <div class="check-item">
-        <input type="checkbox" id="check22" onchange="toggleStrike(this)">
-        <label for="check22" style="cursor: pointer;">물티슈/손수건</label>
+        <input type="checkbox" id="check121" onchange="toggleStrike(this)">
+        <label for="check121" style="cursor: pointer;">체리꼼 & 체리찌 / 포카 (사진용)</label>
       </div>
 
       <div class="check-item" style="border-bottom: 1px solid #333; padding-bottom: 10px;">
-        <input type="checkbox" id="check23" onchange="toggleStrike(this)">
-        <label for="check23" style="cursor: pointer;">작은 봉투/지퍼백(쓰레기 담는용)</label>
+        <input type="checkbox" id="check122" onchange="toggleStrike(this)">
+        <label for="check122" style="cursor: pointer;">물티슈/손수건</label>
       </div>
     </div>
     <footer style="height: 80px; font-size: 18px; line-height: 30px;">
