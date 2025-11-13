@@ -175,6 +175,16 @@ th{
     font-size: 16px;
 }
 
+.arrow {
+  display: inline-block;
+  margin-right: 5px;
+  transition: transform 0.3s ease;
+}
+
+.arrow.rotate {
+  transform: rotate(180deg);
+}
+
 #dday {
   font-size: 40px;
   color: #007acc;

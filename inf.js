@@ -107,17 +107,21 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelectorAll(".clickable-row").forEach(row => {
   row.addEventListener("click", () => {
     const group = row.dataset.group;
+    const arrow = row.querySelector(".arrow");
+
     document.querySelectorAll(`.hidden-row[data-group="${group}"]`).forEach(r => {
       if (r.classList.contains("show")) {
         r.classList.remove("show");
         setTimeout(() => {
           r.style.display = "none";
-        }, 300); 
+        }, 300);
+        if (arrow) arrow.classList.remove("rotate");
       } else {
         r.style.display = "table-row";
         setTimeout(() => {
           r.classList.add("show");
         }, 10);
+        if (arrow) arrow.classList.add("rotate");
       }
     });
   });
