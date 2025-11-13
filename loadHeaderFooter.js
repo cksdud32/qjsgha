@@ -12,10 +12,10 @@ function loadHTML(url, elementId) {
         .catch(error => console.error(`${elementId} 불러오기 실패:`, error));
 }
 
-const pathPrefix = iocation.pathname.includes('/html/')?'../html':'html/';
+const pathPrefix = location.pathname.includes('/html/') ? '../html/' : 'html/';
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadHTML('${pathPrefix}link.html', 'link');
-    loadHTML('${pathPrefix}Shor.html', 'Shor');
-    loadHTML('${pathPrefix}footer.html', 'footer');
+  loadHTML(`${pathPrefix}link.html`, 'link');
+  loadHTML(`${pathPrefix}Shor.html`, 'Shor');
+  loadHTML(`${pathPrefix}footer.html`, 'footer');
 });
