@@ -72,7 +72,7 @@ const diffTimeForClock = targetDateForTime - now;
 setInterval(updateDDay, 1000);
 updateDDay();
 
-// 대기 및 입장 시간 표시
+// 대기 시간, 주의사항등 버튼 
 document.addEventListener('DOMContentLoaded', () => {
   const toggles = document.querySelectorAll('.toggle-text');
 
@@ -81,15 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetId = btn.getAttribute('data-target');
       const targetBox = document.getElementById(targetId);
 
-      // 다른 박스 닫기
       document.querySelectorAll('.hidden-box').forEach(box => {
         if (box !== targetBox) box.classList.remove('show');
       });
 
-      // 클릭한 박스 토글
       targetBox.classList.toggle('show');
 
-      // 버튼 텍스트 업데이트
       toggles.forEach(b => {
         const tId = b.getAttribute('data-target');
         if (tId === targetId) {
