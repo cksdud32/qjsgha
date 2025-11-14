@@ -29,6 +29,34 @@ document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
 
 window.addEventListener('DOMContentLoaded', loadCheckboxState);
 
+// 모든 취소선(체크) 해제
+function clearAllStrikes() {
+  const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
+  checkboxes.forEach(cb => {
+    if (cb.checked) {
+      cb.checked = false;
+      toggleStrike(cb);
+    } else {
+      const p = cb.nextElementSibling;
+      if (p && p.classList.contains('checked-text')) {
+        p.classList.remove('checked-text');
+        saveCheckboxState(cb);
+      }
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const clearBtn = document.getElementById('clearStrikesBtn');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (!confirm('모든 체크와 취소선을 초기화하시겠습니까?')) return;
+
+      clearAllStrikes();
+    });
+  }
+});
+
 
 // 디데이
 function updateDDay() {
@@ -95,8 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-
-
 
   // 표 숨김/열기 처리
 document.querySelectorAll(".clickable-row").forEach(row => {

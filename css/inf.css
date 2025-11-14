@@ -146,6 +146,17 @@ th{
   text-align: center;
 }
 
+.clear-btn{
+  width: 150px; height: 40px;
+  background-color: #e9fcff;
+  border: 1px solid #333;
+  display: block;
+  cursor: pointer;
+  text-align: center;
+  line-height: 39px;
+  border-radius: 12px;
+}
+
 .check-item {
   display: flex;
   align-items: center;
@@ -233,4 +244,13 @@ th{
     text-align: center;
     padding: 10px; gap: 2px;
     flex-wrap: wrap;
+  }
+
+  .footer{
+    width: 100%; height: 80px;
+    background-color: #d9f0ff;
+    text-align: center;
+    padding: 20px;
+    margin-top: 15px;
+    color: #999;
   }
