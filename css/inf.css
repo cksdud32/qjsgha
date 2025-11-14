@@ -147,14 +147,14 @@ th{
 }
 
 .clear-btn{
-  width: 150px; height: 40px;
+  width: 170px; height: 40px;
   background-color: #e9fcff;
   border: 1px solid #333;
   display: block;
   cursor: pointer;
   text-align: center;
   line-height: 39px;
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
 .check-item {
