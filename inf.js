@@ -1,15 +1,13 @@
-// 준비물 취소선
+// 준비물 취소선(데이터 저장)
 function toggleStrike(checkbox) {
   const p = checkbox.nextElementSibling;
   p.classList.toggle("checked-text", checkbox.checked);
 }
 
-// 체크박스 상태 저장
 function saveCheckboxState(checkbox) {
   localStorage.setItem(checkbox.id, checkbox.checked);
 }
 
-// 체크박스 상태 불러오기
 function loadCheckboxState() {
   const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
   checkboxes.forEach(cb => {
@@ -19,19 +17,16 @@ function loadCheckboxState() {
   });
 }
 
-// 기존 toggleStrike 함수에 상태 저장 연결
 function toggleStrike(checkbox) {
   const p = checkbox.nextElementSibling;
   p.classList.toggle("checked-text", checkbox.checked);
-  saveCheckboxState(checkbox); // 상태 저장
+  saveCheckboxState(checkbox);
 }
 
-// 이벤트 연결
 document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
   cb.addEventListener('change', () => toggleStrike(cb));
 });
 
-// 페이지 로드 시 상태 불러오기
 window.addEventListener('DOMContentLoaded', loadCheckboxState);
 
 
