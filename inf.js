@@ -12,8 +12,8 @@ function loadCheckboxState() {
   const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
   checkboxes.forEach(cb => {
     const saved = localStorage.getItem(cb.id);
-    cb.checked = saved === "true"; 
-    toggleStrike(cb);         
+    cb.checked = saved === "true";
+    toggleStrike(cb);
   });
 }
 
@@ -83,7 +83,7 @@ function updateDDay() {
     ddayElement.textContent = `D+${Math.abs(diffDays)}`;
   }
 
-const diffTimeForClock = targetDateForTime - now;
+  const diffTimeForClock = targetDateForTime - now;
   const absDiff = Math.abs(diffTimeForClock);
   const totalHours = Math.floor(absDiff / (1000 * 60 * 60));
   const minutes = Math.floor((absDiff / (1000 * 60)) % 60);
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
       toggles.forEach(b => {
         const tId = b.getAttribute('data-target');
         if (tId === targetId) {
-          b.textContent = targetBox.classList.contains('show') 
+          b.textContent = targetBox.classList.contains('show')
             ? `▲ ${b.textContent.slice(2)}`
             : `▼ ${b.textContent.slice(2)}`;
         } else {
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-  // 표 숨김/열기 처리
+// 표 숨김/열기 처리
 document.querySelectorAll(".clickable-row").forEach(row => {
   row.addEventListener("click", () => {
     const group = row.dataset.group;
