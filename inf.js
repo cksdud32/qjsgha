@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearBtn = document.getElementById('clearStrikesBtn');
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
-      if (!confirm('모든 체크와 취소선을 초기화하시겠습니까?')) return;
+      if (!confirm('선택된 모든 준비물을 초기화하시겠습니까?')) return;
 
       clearAllStrikes();
     });
