@@ -55,7 +55,7 @@ h3 {
 }
 
 #searchInput {
-    width: 400px;
+    width: 99%;
     padding: 8px;
     font-size: 16px;
     margin-left: 10px;
@@ -65,8 +65,9 @@ h3 {
 #results {
     list-style: none;
     padding: 0;
-    margin-top: 10px;
-    margin-left: 10px;
+    margin: 0 10px;
+    max-height: 350px; 
+    overflow-y: auto;
 }
 
 #results li {
