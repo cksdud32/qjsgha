@@ -33,7 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const keyword = searchInput.value.trim().toLowerCase().replace(/\s+/g, '');
         results.innerHTML = '';
 
-        if (!keyword || keyword.length === 1) return;
+        if (!keyword) return;
+
+const keywordIsAllCho = /^[ㄱ-ㅎ]+$/.test(keyword);
+if (keywordIsAllCho && keyword.length < 2) return;
 
         contents.forEach(el => {
             const text = el.textContent || '';
