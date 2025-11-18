@@ -75,6 +75,22 @@ h3 {
     border-bottom: 1px solid #ddd;
 }
 
+.song-filter button{
+    width: 100px; height: 30px;
+    line-height: 30px;
+    margin: 0 0 15px 10px;
+    background-color: #3498db;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.song-filter button.active{
+    background-color: #0056b3;
+}
+
+.song-filter h4{
+    padding: 0 0 10px 40px;
+}
 
 .close3 {
   display: inline-block;
