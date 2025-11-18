@@ -76,8 +76,14 @@ h3 {
     border-bottom: 1px solid #ddd;
 }
 
+#results mark {
+    background-color: #c6ddffff; 
+    color: #000;
+    padding: 0;
+}
+
 #results.show-border {
-    border-bottom: 1px solid #333; /* 검색 결과 있을 때만 */
+    border-bottom: 1px solid #333;
 }
 
 .song-filter button{
