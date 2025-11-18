@@ -1,11 +1,10 @@
+// 노래 검색 기능
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const results = document.getElementById('results');
 
-    // 검색 대상: p와 a, popup3, skq 제외
     const contents = document.querySelectorAll('p:not(.popup3 p):not(.skq p):not(.open-popup3)');
 
-    // 고유 ID 부여
     contents.forEach((el, idx) => {
         if (!el.id) el.id = 'content-' + idx;
     });
@@ -25,14 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
         contents.forEach(el => {
             let text = el.textContent || '';
 
-            // "제목 :", "번호 :" 제거 후 검색
             const searchableText = text.replace(/제목\s*:\s*/gi, '').replace(/번호\s*:\s*/gi, '').toLowerCase();
 
             if (searchableText.includes(keyword)) {
                 const li = document.createElement('li');
                 li.style.cursor = 'pointer';
 
-                // 검색어 하이라이트는 원래 텍스트에서만 표시
                 const highlightedText = text.replace(
                     new RegExp(`(${keyword})`, 'gi'),
                     '<mark>$1</mark>'
@@ -40,19 +37,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 li.innerHTML = highlightedText;
 
-                li.addEventListener('click', () => {
-                    const target = document.getElementById(el.id);
-                    if (target) {
-                        clearHighlight();
-                        target.style.backgroundColor = '#fffb91';
-                        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+               li.addEventListener('click', () => {
+    const target = document.getElementById(el.id);
+    if (!target) return;
 
-                        setTimeout(() => target.style.backgroundColor = '', 5000);
+    clearHighlight();
 
-                        results.innerHTML = '';
-                        searchInput.value = '';
-                    }
-                });
+    searchInput.value = '';
+    results.innerHTML = '';
+
+    const rect = target.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const targetPos = rect.top + scrollTop;
+
+    window.scrollTo({
+        top: targetPos - 50,
+        behavior: 'smooth'
+    });
+
+    target.style.backgroundColor = '#c6ddffff';
+    setTimeout(() => target.style.backgroundColor = '', 5000);
+});
+
+
+
 
                 results.appendChild(li);
             }
