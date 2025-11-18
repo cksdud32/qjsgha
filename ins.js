@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     searchInput.addEventListener('input', () => {
-        const keyword = searchInput.value.trim().toLowerCase().replace(/\s+/g, '');
+        const keyword = searchInput.value.trim().toLowerCase().replace(/[\s/]+/g, '');
         results.innerHTML = '';
 
         if (!keyword) {
