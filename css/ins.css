@@ -63,8 +63,9 @@ h3 {
 }
 
 #results {
+    width: 99%;
     list-style: none;
-    padding: 0;
+    padding: 2px;
     margin: 0 10px;
     max-height: 350px; 
     overflow-y: auto;
@@ -73,6 +74,10 @@ h3 {
 #results li {
     padding: 5px 0;
     border-bottom: 1px solid #ddd;
+}
+
+#results.show-border {
+    border-bottom: 1px solid #333; /* 검색 결과 있을 때만 */
 }
 
 .song-filter button{
