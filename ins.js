@@ -1,5 +1,5 @@
 function getInitials(text) {
-    const CHO = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+    const CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
     let result = '';
     for (let char of text) {
         const code = char.charCodeAt(0);
@@ -17,8 +17,8 @@ function getInitials(text) {
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const results = document.getElementById('results');
-
     const contents = document.querySelectorAll('p:not(.popup3 p):not(.skq p):not(.open-popup3)');
+
     contents.forEach((el, idx) => {
         if (!el.id) el.id = 'content-' + idx;
     });
@@ -47,20 +47,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchInput.addEventListener('input', () => {
         const keyword = searchInput.value.trim().toLowerCase().replace(/[\s/]+/g, '');
-        results.innerHTML = '';
-
-        if (!keyword) {
+        if (!keyword || (/^[ㄱ-ㅎ]+$/.test(keyword) && keyword.length < 2)) {
+            results.innerHTML = '';
             results.classList.remove('show-border');
             return;
         }
-        results.classList.add('show-border');
 
-        const keywordIsAllCho = /^[ㄱ-ㅎ]+$/.test(keyword);
-        if (keywordIsAllCho && keyword.length < 2) return;
+        results.innerHTML = '';
+        let hasResults = false;
 
         contents.forEach(el => {
             const text = el.textContent || '';
-            const cleanText = text.replace(/제목\s*:\s*/gi, '').replace(/번호\s*:\s*/gi, '').replace(/\s+/g, '').toLowerCase();
+            const cleanText = text.replace(/제목\s*:\s*/gi,'').replace(/번호\s*:\s*/gi,'').replace(/\s+/g,'').toLowerCase();
             const initials = getInitials(cleanText);
 
             let type = 'all';
@@ -93,9 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (matched) {
-                const li = document.createElement('li');
-                li.style.cursor = 'pointer';
+                hasResults = true;
 
+                const li = document.createElement('li');
                 let highlightedText = text;
 
                 if (matchIndex >= 0) {
@@ -107,20 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const removedTitlePattern = /제목\s*:\s*|번호\s*:\s*/gi;
                     let removedMatches = [];
                     let match;
-
                     while ((match = removedTitlePattern.exec(text)) !== null) {
-                        removedMatches.push({
-                            start: match.index,
-                            end: match.index + match[0].length
-                        });
+                        removedMatches.push({start: match.index, end: match.index + match[0].length});
                     }
 
                     for (let i = 0; i < text.length; i++) {
                         const char = text[i];
-
                         const inRemovedPattern = removedMatches.some(r => i >= r.start && i < r.end);
                         const isSpace = /\s/.test(char);
-
                         const isIgnoredChar = inRemovedPattern || isSpace;
 
                         if (!isIgnoredChar) {
@@ -142,9 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         const match = text.slice(startPos, startPos + matchedLength);
                         const after = text.slice(startPos + matchedLength);
                         highlightedText = `${before}<mark>${match}</mark>${after}`;
-                    } else {
-                        const keywordRegex = new RegExp(keyword.split('').map(ch => ch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi');
-                        highlightedText = text.replace(keywordRegex, '<mark>$&</mark>');
                     }
                 }
 
@@ -158,20 +147,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearHighlight();
                     searchInput.value = '';
                     results.innerHTML = '';
+                    results.classList.remove('show-border');
 
                     const rect = target.getBoundingClientRect();
                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                     const targetPos = rect.top + scrollTop;
 
-                    window.scrollTo({
-                        top: targetPos - 50,
-                        behavior: 'smooth'
-                    });
-
+                    window.scrollTo({top: targetPos - 50, behavior: 'smooth'});
                     target.style.backgroundColor = '#c6ddffff';
                     setTimeout(() => target.style.backgroundColor = '', 5000);
                 });
             }
         });
+
+        if (hasResults) results.classList.add('show-border');
+        else results.classList.remove('show-border');
     });
 });
