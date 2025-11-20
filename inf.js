@@ -97,14 +97,19 @@ updateDDay();
 
 // 대기 시간, 주의사항등 버튼 
 document.addEventListener('DOMContentLoaded', () => {
-  const toggles = document.querySelectorAll('.toggle-text');
+  const allToggles = document.querySelectorAll('.toggle-text');
 
-  toggles.forEach(btn => {
+  allToggles.forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.getAttribute('data-target');
       const targetBox = document.getElementById(targetId);
 
-      document.querySelectorAll('.hidden-box').forEach(box => {
+      const area = btn.closest('.data').getAttribute('data-area');
+
+      const toggles = document.querySelectorAll(`.data[data-area="${area}"] .toggle-text`);
+      const boxes = document.querySelectorAll(`.data[data-area="${area}"] ~ .hidden-box`);
+
+      boxes.forEach(box => {
         if (box !== targetBox) box.classList.remove('show');
       });
 
@@ -123,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
 
 // 표 숨김/열기 처리
 document.querySelectorAll(".clickable-row").forEach(row => {
