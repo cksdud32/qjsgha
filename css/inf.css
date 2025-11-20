@@ -3,6 +3,7 @@
 *{
 font-family: "맑은 고딕", sans-serif;
 margin: 0; padding: 0;
+color: #333;
 }
 
 li{list-style-type: none;}
@@ -85,6 +86,10 @@ td, th{
 
 th{
   background-color: #eee;
+}
+
+.fldzm{
+  text-decoration: underline; color: #333;
 }
 
  .clickable-row {
