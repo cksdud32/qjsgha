@@ -60,28 +60,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 디데이
 function updateDDay() {
-  // 1) 날짜 기준: 1월 10일 0시
-  const targetDay = new Date(2026, 0, 10); // 날짜만 사용 (시간 무시)
+  const targetDay = new Date(2026, 0, 10);
 
-  // 2) 시간 기준: 1월 10일 15시
   const targetTime = new Date("2026-01-10T15:00:00+09:00");
 
   const now = new Date();
 
-  // ----------------------------------------
-  // ■ D-Day 계산 (가장 정확한 날짜 방식)
-  // 날짜만 비교하기 위해 '오늘 0시'로 변환
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const diffDays = Math.round((targetDay - today) / 86400000); // 86400000 = 1일(ms)
+  const diffDays = Math.round((targetDay - today) / 86400000);
 
   const ddayElement = document.getElementById("dday");
   const timeLeftElement = document.getElementById("timeLeft");
 
-  // 당일 여부 판별
   const isDDay =
     today.getTime() === targetDay.getTime();
 
-  // 표시 로직
   if (diffDays > 0 && !isDDay) {
     ddayElement.textContent = `D-${diffDays}`;
   } else if (isDDay) {
@@ -90,8 +83,6 @@ function updateDDay() {
     ddayElement.textContent = `D+${Math.abs(diffDays)}`;
   }
 
-  // ----------------------------------------
-  // ■ 시간 카운트다운 계산
   const diffTime = targetTime - now;
 
   const absDiff = Math.abs(diffTime);
