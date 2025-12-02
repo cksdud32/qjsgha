@@ -165,3 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
         else results.classList.remove('show-border');
     });
 });
+
+document.querySelectorAll('.lyrics-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const lyrics = btn.nextElementSibling; // 버튼 아래 가사 div
+        const isOpen = lyrics.style.display === 'block';
+
+        lyrics.style.display = isOpen ? 'none' : 'block';
+        btn.textContent = isOpen ? '가사 보기' : '가사 접기';
+    });
+});

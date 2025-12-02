@@ -254,3 +254,33 @@ li p {
         flex: 1 1 100%;
     }
 }
+
+.lyrics-btn {
+    margin-top: 6px;
+    padding: 6px 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background-color 0.3s;
+    
+}
+
+.lyrics-btn:hover {
+    background-color: #2980b9;
+}
+
+/* 가사는 자동으로 줄바꿈 → flex 아래로 내려감 */
+.lyrics {
+    flex: 0 0 100%;
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #95a5a6;
+    border-radius: 4px;
+    white-space: pre-line;
+    user-select: none;
+}
