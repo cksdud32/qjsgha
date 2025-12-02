@@ -209,6 +209,7 @@ ul {
 }
 
 .dal li, .skq li, .kso li, .kor li, .sks li {
+    flex-wrap: wrap;
     margin-bottom: 8px;
     padding: 8px 10px;
     border-left: 5px solid #3498db;
