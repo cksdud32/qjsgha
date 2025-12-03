@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.addEventListener('click', () => {
       const lyricsDiv = btn.nextElementSibling;
       const songNumber = btn.dataset.number;
-      const lyrics = lyricsData[songNumber] || "가사가 등록되지 않았습니다";
+      const lyrics = lyricsData[songNumber] || "가사가 등록되지 않았습니다.";
 
       const isOpen = lyricsDiv.style.display === 'block';
 
