@@ -166,12 +166,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-document.querySelectorAll('.lyrics-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const lyrics = btn.nextElementSibling; // 버튼 아래 가사 div
-        const isOpen = lyrics.style.display === 'block';
+let lyricsData = {};
 
-        lyrics.style.display = isOpen ? 'none' : 'block';
-        btn.textContent = isOpen ? '가사 보기' : '가사 접기';
+async function loadAllLyrics() {
+  const response = await fetch('lyrics.json');
+  lyricsData = await response.json();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadAllLyrics();
+
+  document.querySelectorAll('.lyrics-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lyricsDiv = btn.nextElementSibling;
+      const songNumber = btn.dataset.number;
+      const lyrics = lyricsData[songNumber] || "가사가 등록되지 않았습니다..";
+
+      const isOpen = lyricsDiv.style.display === 'block';
+
+      lyricsDiv.style.display = isOpen ? 'none' : 'block';
+      lyricsDiv.textContent = isOpen ? '' : lyrics;
+      btn.textContent = isOpen ? '가사 보기' : '가사 접기';
     });
+  });
 });
