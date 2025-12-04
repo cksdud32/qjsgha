@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else results.classList.remove('show-border');
     });
 });
-
+//가사 보기 버튼 및 가사 전체 보기 버튼 (가사 불러오기)
 let lyricsData = {};
 
 async function loadAllLyrics() {
@@ -184,9 +184,46 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const isOpen = lyricsDiv.style.display === 'block';
 
-      lyricsDiv.style.display = isOpen ? 'none' : 'block';
-      lyricsDiv.textContent = isOpen ? '' : lyrics;
-      btn.textContent = isOpen ? '가사 보기' : '가사 접기';
+      if (isOpen) {
+        lyricsDiv.style.display = 'none';
+        lyricsDiv.textContent = '';
+
+        const showAllBtn = lyricsDiv.nextElementSibling;
+        if (showAllBtn && showAllBtn.classList.contains('show-all-btn')) {
+          showAllBtn.remove();
+        }
+
+        btn.textContent = '가사 보기';
+      } else {
+        lyricsDiv.style.display = 'block';
+        lyricsDiv.textContent = lyrics;
+        lyricsDiv.style.maxHeight = '65dvh';
+        btn.textContent = '가사 접기';
+
+        const oldBtn = lyricsDiv.nextElementSibling;
+        if (oldBtn && oldBtn.classList.contains('show-all-btn')) {
+          oldBtn.remove();
+        }
+
+        const showAllBtn = document.createElement('button');
+        showAllBtn.textContent = '전체 보기';
+        showAllBtn.classList.add('show-all-btn');
+        showAllBtn.dataset.expanded = 'false';
+
+        showAllBtn.addEventListener('click', function () {
+          if (this.dataset.expanded === 'false') {
+            lyricsDiv.style.maxHeight = 'none';
+            this.textContent = '축소하기';
+            this.dataset.expanded = 'true';
+          } else {
+            lyricsDiv.style.maxHeight = '65dvh';
+            this.textContent = '전체 보기';
+            this.dataset.expanded = 'false';
+          }
+        });
+
+        lyricsDiv.after(showAllBtn);
+      }
     });
   });
 });
