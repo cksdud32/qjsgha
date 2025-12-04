@@ -273,7 +273,6 @@ li p {
     background-color: #2980b9;
 }
 
-/* 가사는 자동으로 줄바꿈 → flex 아래로 내려감 */
 .lyrics {
     flex: 0 0 100%;
     display: none;
@@ -284,7 +283,7 @@ li p {
     border-radius: 4px;
     white-space: pre-line;
     font-size: 16px;
-    max-height: 650px;
+    max-height: 65dvb;
     overflow-y: auto;
 }
 
