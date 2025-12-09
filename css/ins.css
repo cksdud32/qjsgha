@@ -244,6 +244,10 @@ li p {
     border-left: 5px solid #9b59b6;
 }
 
+li a + a {
+    margin: 1px; /* a태그끼리만 간격 */
+}
+
 @media (max-width: 1000px) {
     .kso, .jap, .ja {
         flex: 1 1 calc(50% - 20px);
