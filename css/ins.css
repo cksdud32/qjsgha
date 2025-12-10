@@ -234,6 +234,12 @@ li p {
     font-size: 0.95em;
 }
 
+.right-group {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* a끼리, a-버튼 간 간격 */
+}
+
 .sks a {
     color: #2980b9;
     text-decoration: none;
