@@ -174,56 +174,19 @@ async function loadAllLyrics() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await loadAllLyrics();
+    await loadAllLyrics();   // ✅ 반드시 필요
 
-  document.querySelectorAll('.lyrics-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const lyricsDiv = btn.nextElementSibling;
-      const songNumber = btn.dataset.number;
-      const lyrics = lyricsData[songNumber] || "가사가 등록되지 않았습니다.";
+    document.querySelectorAll('.lyrics-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const num = btn.dataset.number;
+            const content = lyricsData[num] || "가사가 등록되지 않았습니다.";
 
-      const isOpen = lyricsDiv.style.display === 'block';
-
-      if (isOpen) {
-        lyricsDiv.style.display = 'none';
-        lyricsDiv.textContent = '';
-
-        const showAllBtn = lyricsDiv.nextElementSibling;
-        if (showAllBtn && showAllBtn.classList.contains('show-all-btn')) {
-          showAllBtn.remove();
-        }
-
-        btn.textContent = '가사 보기';
-      } else {
-        lyricsDiv.style.display = 'block';
-        lyricsDiv.textContent = lyrics;
-        lyricsDiv.style.maxHeight = '65dvh';
-        btn.textContent = '가사 접기';
-
-        const oldBtn = lyricsDiv.nextElementSibling;
-        if (oldBtn && oldBtn.classList.contains('show-all-btn')) {
-          oldBtn.remove();
-        }
-
-        const showAllBtn = document.createElement('button');
-        showAllBtn.textContent = '전체 보기';
-        showAllBtn.classList.add('show-all-btn');
-        showAllBtn.dataset.expanded = 'false';
-
-        showAllBtn.addEventListener('click', function () {
-          if (this.dataset.expanded === 'false') {
-            lyricsDiv.style.maxHeight = 'none';
-            this.textContent = '축소하기';
-            this.dataset.expanded = 'true';
-          } else {
-            lyricsDiv.style.maxHeight = '65dvh';
-            this.textContent = '전체 보기';
-            this.dataset.expanded = 'false';
-          }
+            document.getElementById('modalLyrics').innerText = content;
+            document.getElementById('lyricsModal').style.display = 'block';
         });
-
-        lyricsDiv.after(showAllBtn);
-      }
     });
-  });
+
+    document.getElementById('closeBtn').addEventListener('click', () => {
+        document.getElementById('lyricsModal').style.display = 'none';
+    });
 });
