@@ -1,81 +1,112 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
     <style>
         * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    color: #000;
-}
-li{list-style: none;}
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: #000;
+        }
 
-.open-popup{
-    display: inline-block;
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    z-index: 10000;
-}
+        li {
+            list-style: none;
+        }
 
-.open-popup:hover {
-    background: #0056b3;
-}
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 100001;
+        }
 
-.popup{
-    display: none;
-    z-index: 1000;
-}
+        .open-popup {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            z-index: 10000;
+        }
 
-.popup:target {
-  display: block;
-}
+        .open-popup:hover {
+            background: #0056b3;
+        }
 
-.popup ul{
-    width: 320px; height: 250px;
-    background: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    position: fixed;
-    transform: translate(-50%, -50%);
-    left: 50%; top: 50%;
-    margin: 0 auto;
-}
+        .popup-content1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
 
-.popup ul li{
-   height: 50px;
-}
-.popup a{
-       display: block;
-       border-bottom: #000 1px solid;
-       text-decoration: none;
-}
-.popup a:hover{
-    color: blue; text-decoration: none;}
+
+        .popup:target {
+            display: block;
+        }
+
+        .popup ul {
+            width: 320px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            margin: 0 auto;
+        }
+
+        .popup ul li {
+            height: 50px;
+        }
+
+        .popup a {
+            display: block;
+            border-bottom: #000 1px solid;
+            text-decoration: none;
+        }
+
+        .popup a:hover {
+            color: blue;
+            text-decoration: none;
+        }
     </style>
 </head>
+
 <body>
     <div>
         <a href="#popup1" class="open-popup">바로가기 메뉴</a>
-    <div id="popup1" class="popup">
-        <ul>
-            <li><a href="../index.html">메인페이지 이동</a></li>
-            <li><a href="inf.html">류현준 오프라인 일정 바로가기</a></li>
-            <li><a href="ins.html">류현준 TJ노래방 번호 모음집 바로가기</a></li>
-        <!--   <li><a href="inw.html">류현준 정보 바로가기</a></li> -->
-            <li><a href="#">닫기</a></li>
-        </ul>
-    </div>
+        <div id="popup1" class="popup">
+            <div class="popup-content1">
+                <ul>
+                    <li><a href="../index.html">메인페이지 이동</a></li>
+                    <li><a href="inf.html">류현준 오프라인 일정 바로가기</a></li>
+                    <li><a href="ins.html">류현준 TJ노래방 번호 모음집 바로가기</a></li>
+                    <!--   <li><a href="inw.html">류현준 정보 바로가기</a></li> -->
+                    <li><a href="#">닫기</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 </body>
+
 </html>
