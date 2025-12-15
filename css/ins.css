@@ -238,7 +238,7 @@ li p {
 .right-group {
     display: flex;
     align-items: center;
-    gap: 12px; /* a끼리, a-버튼 간 간격 */
+    gap: 12px;
 }
 
 .sks a {
