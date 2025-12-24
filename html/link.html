@@ -1,92 +1,132 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
-   
+
     <title>Document</title>
     <style>
         * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    color: #000;
-}
-li{list-style: none;}
-a {text-decoration: none; color: inherit;}
-a:hover{
-    text-decoration: underline;
-}
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: #000;
+        }
 
-.open-popup1{
-    display: inline-block;
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    position: fixed;
-    bottom: 60px;
-    left: 10px;
-    z-index: 10000;
-}
+        li {
+            list-style: none;
+        }
 
-.open-popup1:hover {
-    background: #0056b3;
-}
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-.popup1{
-    display: none;
-    z-index: 1000;
-    width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-}
+        a:hover {
+            text-decoration: underline;
+        }
 
-.popup1:target {
-  display: block;
-}
+        .open-popup1 {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            position: fixed;
+            bottom: 60px;
+            left: 10px;
+            z-index: 10000;
+        }
 
-.popup1 ul{
-    width: 700px; height: 400px;
-    background: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    position: fixed;
-    transform: translate(-50%, -50%);
-    left: 50%; top: 50%;
-    margin: 0 auto;
-}
+        .open-popup1:hover {
+            background: #0056b3;
+        }
 
-.popup1 ul li{
-   padding: 20px 0 0 0;
-   text-align: center;
-}
+        .popup-content2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
 
-.popup1 > ul > li > a{
-       display: block;
-       font-size: 18px;
-}
-.popup1 ul li:hover {
-    background-color: #dce1e4;
-}
+        .popup1 {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 100001;
+        }
+
+        .popup1:target {
+            display: block;
+        }
+
+        .popup1 ul {
+            width: 700px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .popup1 li {
+            height: 50px;
+            display: block;
+            line-height: 50px;
+            text-align: center;
+        }
+
+        .popup1 li:hover{
+            color: blue;
+        }
+        .popup1 a {
+            display: block;
+            font-size: 18px;
+        }
+
+        .popup1 ul li:hover {
+            background-color: #dce1e4;
+        }
     </style>
 </head>
+
 <body>
-     <a href="#popup2" class="open-popup1">류현준 관련 링크 모음집</a>
+    <a href="#popup2" class="open-popup1">류현준 관련 링크 모음집</a>
     <div id="popup2" class="popup1">
-        
-        <ul>
-            <h2>류현준 관련 링크 목록</h2>
-            <li><a href="https://www.youtube.com/@RYU_814" target="_blank" rel="noopener noreferrer">류현준 official</a></li>
-            <li><a href="https://cafe.naver.com/ryu814" target="_blank" rel="noopener noreferrer">체리 숲</a></li>
-            <li><a href="https://www.instagram.com/comfort_hyun/" target="_blank" rel="noopener noreferrer">인스타</a></li>
-            <li><a href="https://www.threads.com/@comfort_hyun" target="_blank" rel="noopener noreferrer">스레드</a></li>
-            <li><a href="https://xn--oy2bo3kfwkc1j.com/goods/?cate=001" target="_blank" rel="noopener noreferrer">체리상회</a></li>
-            <li><a href="#">닫기</a></li>
-        </ul>
+        <div class="popup-cpmtrmt2">
+            <ul>
+                <h2>류현준 관련 링크 목록</h2>
+                <li><a href="https://www.youtube.com/@RYU_814" target="_blank" rel="noopener noreferrer">
+                        류현준 official</a></li>
+                <li><a href="https://cafe.naver.com/ryu814" target="_blank" rel="noopener noreferrer">체리 숲</a></li>
+                <li><a href="https://www.instagram.com/comfort_hyun/" target="_blank" rel="noopener noreferrer">인스타</a>
+                </li>
+                <li><a href="https://www.threads.com/@comfort_hyun" target="_blank" rel="noopener noreferrer">스레드</a>
+                </li>
+                <li><a href="https://xn--oy2bo3kfwkc1j.com/goods/?cate=001" target="_blank"
+                        rel="noopener noreferrer">체리상회</a></li>
+                <li><a href="#">닫기</a></li>
+            </ul>
+        </div>
     </div>
     </div>
 </body>
+
 </html>
