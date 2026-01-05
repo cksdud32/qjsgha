@@ -277,6 +277,9 @@ tbody tr.goods-clickable.calc-on:hover {
   background-color: #eaf4ff;
 }
 
+#price-row{
+  cursor: pointer;
+}
   .content {
     padding: 10px;
     background: #f5f5f5;
