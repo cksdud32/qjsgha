@@ -155,3 +155,80 @@ document.querySelectorAll(".clickable-row").forEach(row => {
     });
   });
 });
+
+// 계산기
+let calculatorOn = false;
+const cart = {};
+
+const openBtn  = document.querySelector('.Calculator');
+const calcRow  = document.getElementById('calculator-row');
+const closeBtn = document.getElementById('closeCalc');
+const resetBtn = document.getElementById('resetCalc');
+const calcList = document.getElementById('calcList');
+const calcTotal = document.getElementById('calcTotal');
+
+openBtn.addEventListener('click', () => {
+  calculatorOn = true;
+  calcRow.style.display = 'table-row';
+  setActiveState(true);
+});
+
+closeBtn.addEventListener('click', () => {
+  calculatorOn = false;
+  calcRow.style.display = 'none';
+  resetCart();
+  setActiveState(false);
+});
+
+resetBtn.addEventListener('click', () => {
+  resetCart();
+});
+
+document.querySelectorAll('tbody tr[id^="price-"]').forEach(row => {
+  row.addEventListener('click', () => {
+    if (!calculatorOn) {
+      alert('계산기를 열어야 추가할 수 있습니다.');
+      return;
+    }
+
+    const name = row.cells[0].innerText.trim();
+
+    const priceMatch = row.innerText.match(/([0-9,]+)원/);
+    if (!priceMatch) return;
+
+    const price = Number(priceMatch[1].replace(/,/g, ''));
+
+    cart[name] = cart[name] || { count: 0, price };
+    cart[name].count++;
+
+    renderCalculator();
+  });
+});
+
+function renderCalculator() {
+  calcList.innerHTML = '';
+  let total = 0;
+
+  for (const key in cart) {
+    const item = cart[key];
+    total += item.count * item.price;
+
+    const li = document.createElement('li');
+    li.textContent = `${key} × ${item.count}`;
+    calcList.appendChild(li);
+  }
+
+  calcTotal.textContent = total.toLocaleString();
+}
+
+function setActiveState(on) {
+  document.querySelectorAll('tbody tr[id^="price-"]').forEach(row => {
+    row.classList.toggle('calc-on', on);
+  });
+}
+
+function resetCart() {
+  for (const key in cart) delete cart[key];
+  calcList.innerHTML = '';
+  calcTotal.textContent = '0';
+}

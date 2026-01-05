@@ -219,12 +219,12 @@
                 <td>디자인당 80장</td>
                 <td>정보 없음</td>
               </tr>
-              <tr class="hidden-row" data-group="poster">
+              <tr class="hidden-row" data-group="poster" id="price-row">
                 <td>A2</td>
                 <td>메인 사인 포스터<br> 일러스트 / 20,000원</td>
                 <td>정보 없음</td>
               </tr>
-              <tr class="hidden-row" data-group="poster">
+              <tr class="hidden-row" data-group="poster" id="price-row">
                 <td>B4</td>
                 <td>서브 사인 포스터<br>선물 상자 사진 / 20,000원</td>
                 <td>정보 없음</td>
@@ -234,13 +234,13 @@
                 <td>패키지당 80개</td>
                 <td>정보 없음</td>
               </tr>
-              <tr class="hidden-row" data-group="keyring">
-                <td>메인 포스터</td>
+              <tr class="hidden-row" data-group="keyring" id="price-row">
+                <td>메인 포스터 패키지</td>
                 <td>20,000원 <br> 엽서, 포카, 카드텍, 티켓</td>
                 <td>정보 없음</td>
               </tr>
-              <tr class="hidden-row" data-group="keyring">
-                <td>서브 포스터</td>
+              <tr class="hidden-row" data-group="keyring" id="price-row">
+                <td>서브 포스터 패키지</td>
                 <td>20,000원 <br> 엽서, 포카, 카드텍, 티켓</td>
                 <td>정보 없음</td>
               </tr>
@@ -249,28 +249,29 @@
                 <td>전체 뱃지 보기</td>
                 <td>정보 없음</td>
               </tr>
-              <tr class="hidden-row" data-group="Badge">
+              <tr class="hidden-row" data-group="Badge" id="price-row">
                 <td>털 뱃지</td>
                 <td>10,000원 / 60개</td>
                 <td>정보 없음</td>
               </tr>
-              <tr class="hidden-row" data-group="Badge">
+              <tr class="hidden-row" data-group="Badge" id="price-row">
                 <td>고양이 뱃지 3종</td>
                 <td>각각 10,000원 / 디자인당 60개</td>
                 <td>정보 없음</td>
               </tr>
-              <tr class="hidden-row" data-group="Badge">
+              <tr class="hidden-row" data-group="Badge" id="price-row">
                 <td>사진 뱃지</td>
                 <td>5,000원 / 일러 4종 - 왕뱃지 <br>
                   디자인당 40개</td>
                 <td>정보 없음</td>
               </tr>
-              <tr>
+              <tr >
+              <!-- <tr id="price-row"> -->
                 <td>카드텍</td>
                 <td> × </td>
                 <td>개당 2,000원 <br>한세트에 0원</td>
               </tr>
-              <tr>
+              <tr id="price-row">
                 <td>랜덤 포카</td>
                 <td> 개당 2,000원 <br> 한세트에 18,000원</td>
                 <td>개당 2,000원 <br>한세트에 0원</td>
@@ -281,13 +282,13 @@
                   투명 포카 특전</td>
                 <td>정보 없음</td>
               </tr>
-              <tr>
+              <tr id="price-row">
                 <td>슬로건</td>
                 <td>너 진짜 눈물나게 예뻐 일러 <br>
                   25,000원 / 80장</td>
                 <td>정보 없음</td>
               </tr>
-              <tr>
+              <tr id="price-row">
                 <td>아크릴 코롯토</td>
                 <td>25,000원 / 40개</td>
                 <td>정보 없음</td>
@@ -295,15 +296,15 @@
               <tr class="clickable-row" data-group="Calendar">
                 <td><span class="arrow">▼</span> 2026 달력</td>
                 <td>각각 100개<br>
-                안팔리면 통판 판매 예정 / 25,000원</td>
+                  안팔리면 통판 판매 예정 / 25,000원</td>
                 <td>정보 없음</td>
               </tr>
-              <tr class="hidden-row" data-group="Calendar">
+              <tr class="hidden-row" data-group="Calendar" id="price-row">
                 <td>세로 사진 중심 달력</td>
                 <td>22,000원</td>
                 <td>정보 없음</td>
               </tr>
-              <tr class="hidden-row" data-group="Calendar">
+              <tr class="hidden-row" data-group="Calendar" id="price-row">
                 <td>가로 일러 중심 달력</td>
                 <td>22,000원</td>
                 <td>정보 없음</td>
@@ -313,15 +314,31 @@
                 <td>252,000원<br>(카드텍 한세트 기준)</td>
                 <td>원<br>(카드텍 한세트 기준)</td>
               </tr>
+              <tr id="calculator-row" style="display:none;">
+                <td colspan="3">
+                  <div class="calculator">
+                    <div class="calculator-header">
+                      🟢 계산기 활성화 중
+                      <button id="resetCalc">초기화</button>
+                      <button id="closeCalc">닫기</button>
+                    </div>
+                    <ul id="calcList"></ul>
+                    <div class="calc-total">
+                      총합: <span id="calcTotal">0</span>원
+                    </div>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
 
           <p>사이트 내에서의 카드텍 한세트 기준은 카드텍 한 세트 + 3입니다. <br> (<b>예:</b> 한 세트가 12개일 경우, 12 + 3 = 15개)</p>
           <br><br>
           <p>이미지 및 자세한 내용은 아래 링크 클릭<br> <a href="https://cafe.naver.com/ryu814/49240" class="link-as" target="_blank"
-              rel="noopener noreferrer" >콘서트 굿즈 목록 보러가기(체리 숲)<br>https://cafe.naver.com/ryu814/49240</a> </p>
+              rel="noopener noreferrer">콘서트 굿즈 목록 보러가기(체리 숲)<br>https://cafe.naver.com/ryu814/49240</a> </p>
           <div class="data" data-area="goods">
             <div class="toggle-text" data-target="hiddenContent4">▼ 굿즈 관련 정보 보기</div>
+            <div class="Calculator">계산기 열기</div>
           </div>
           <div class="hidden-box" id="hiddenContent4">
             <div class="content">
@@ -331,6 +348,9 @@
                 (<b>예:</b> 포스터가 B4, A2 두 종류로 있을 경우 각각 다르게 표시됩니다.<br>
                 <b>포스터</b>등에 적힌 가격은 해당 굿즈의 가격을 모두 합한 금액입니다.)
               </p>
+            </div>
+          </div>
+
         </li>
     </div>
     </ul>
