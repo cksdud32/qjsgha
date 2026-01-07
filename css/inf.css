@@ -268,6 +268,35 @@ th{
   margin-top: 8px;
 }
 
+#calculator-row .calculator {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#calcList {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 6px 0;
+  margin: 0;
+  list-style: none;
+}
+
+#calcList li {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  height: 200px;
+  width: 50px;
+  border: 1px solid #333;
+  background-color: #fff;
+  border-radius: 10px;
+  text-align: center;
+  line-height: 9px;
+}
+
 /* 굿즈 클릭 가능 표시 */
 tbody tr.goods-clickable {
   cursor: pointer;
