@@ -488,10 +488,18 @@
         <input type="checkbox" id="check122" onchange="toggleStrike(this)">
         <label for="check122" style="cursor: pointer;">물티슈/손수건</label>
       </div>
-      <div class="check-item" style="border-bottom: 1px solid #333; padding-bottom: 10px;">
+
+      <div class="check-item">
         <input type="checkbox" id="check123" onchange="toggleStrike(this)">
         <label for="check123" style="cursor: pointer;">편지</label>
       </div>
+
+        <h2 style="border-top: 1px solid #333;">사용자 준비물 추가</h2>
+      <div class="add-item-box" style="margin-bottom: 20px;">
+        <input type="text" id="customItemInput" placeholder="준비물 직접 추가" class="qpsj">
+        <button type="button" id="addCustomItemBtn">추가하기</button>
+      </div>
+
       <div id="clearStrikesBtn" class="clear-btn" role="button" tabindex="0">
         선택된 준비물 초기화
       </div>

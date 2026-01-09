@@ -1,62 +1,152 @@
 // 준비물 취소선(데이터 저장)
 function toggleStrike(checkbox) {
-  const p = checkbox.nextElementSibling;
-  p.classList.toggle("checked-text", checkbox.checked);
-}
+  const label = checkbox.nextElementSibling;
+  if (!label) return;
 
-function saveCheckboxState(checkbox) {
+  label.classList.toggle("checked-text", checkbox.checked);
   localStorage.setItem(checkbox.id, checkbox.checked);
 }
 
 function loadCheckboxState() {
-  const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
-  checkboxes.forEach(cb => {
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
     const saved = localStorage.getItem(cb.id);
     cb.checked = saved === "true";
-    toggleStrike(cb);
-  });
-}
 
-function toggleStrike(checkbox) {
-  const p = checkbox.nextElementSibling;
-  p.classList.toggle("checked-text", checkbox.checked);
-  saveCheckboxState(checkbox);
-}
-
-document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
-  cb.addEventListener('change', () => toggleStrike(cb));
-});
-
-window.addEventListener('DOMContentLoaded', loadCheckboxState);
-
-// 모든 취소선(체크) 해제
-function clearAllStrikes() {
-  const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
-  checkboxes.forEach(cb => {
-    if (cb.checked) {
-      cb.checked = false;
-      toggleStrike(cb);
-    } else {
-      const p = cb.nextElementSibling;
-      if (p && p.classList.contains('checked-text')) {
-        p.classList.remove('checked-text');
-        saveCheckboxState(cb);
-      }
+    const label = cb.nextElementSibling;
+    if (label) {
+      label.classList.toggle("checked-text", cb.checked);
     }
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const clearBtn = document.getElementById('clearStrikesBtn');
-  if (clearBtn) {
-    clearBtn.addEventListener('click', () => {
-      if (!confirm('선택된 모든 준비물을 초기화하시겠습니까?')) return;
+function clearAllStrikes() {
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
+    cb.checked = false;
+    const label = cb.nextElementSibling;
+    if (label) label.classList.remove('checked-text');
+    localStorage.setItem(cb.id, false);
+  });
 
-      clearAllStrikes();
+  saveCustomItems();
+  updateCustomItemBorder();
+}
+
+// 사용자 준비물 추가 / 삭제
+
+function addCustomItem(text, id = null, checked = false) {
+  const container = document.querySelector('.scd');
+  const clearBtn = document.getElementById('clearStrikesBtn');
+  if (!container || !clearBtn) return;
+
+  const itemId = id || `custom_${Date.now()}`;
+
+  const div = document.createElement('div');
+  div.className = 'check-item custom-item';
+
+  div.innerHTML = `
+    <input type="checkbox" id="${itemId}">
+    <label for="${itemId}" style="cursor: pointer;">${text}</label>
+    <button type="button" class="delete-btn" aria-label="삭제">삭제하기</button>
+  `;
+
+  container.insertBefore(div, clearBtn);
+
+  const checkbox = div.querySelector('input');
+  const deleteBtn = div.querySelector('.delete-btn');
+
+  checkbox.checked = checked;
+  toggleStrike(checkbox);
+
+  checkbox.addEventListener('change', () => {
+    toggleStrike(checkbox);
+    saveCustomItems();
+  });
+
+  deleteBtn.addEventListener('click', () => {
+    localStorage.removeItem(itemId);
+    div.remove();
+    saveCustomItems();
+    updateCustomItemBorder();
+  });
+
+  saveCustomItems();
+  updateCustomItemBorder();
+}
+
+function saveCustomItems() {
+  const items = [];
+  document.querySelectorAll('.custom-item').forEach(item => {
+    const cb = item.querySelector('input[type="checkbox"]');
+    items.push({
+      id: cb.id,
+      text: cb.nextElementSibling.textContent,
+      checked: cb.checked
+    });
+  });
+  localStorage.setItem('customItems', JSON.stringify(items));
+}
+
+function loadCustomItems() {
+  const saved = localStorage.getItem('customItems');
+  if (!saved) return;
+
+  JSON.parse(saved).forEach(item => {
+    addCustomItem(item.text, item.id, item.checked);
+  });
+}
+
+function updateCustomItemBorder() {
+  const items = document.querySelectorAll('.custom-item');
+
+  items.forEach(item => {
+    item.style.borderBottom = 'none';
+    item.style.paddingBottom = '0';
+  });
+
+  if (items.length > 0) {
+    const lastItem = items[items.length - 1];
+    lastItem.style.borderBottom = '1px solid #333';
+    lastItem.style.paddingBottom = '10px';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => toggleStrike(cb));
+  });
+
+  loadCheckboxState();
+  loadCustomItems();
+
+  // 사용자 준비물 추가
+  const addBtn = document.getElementById('addCustomItemBtn');
+  const input = document.getElementById('customItemInput');
+
+  if (addBtn && input) {
+    addBtn.addEventListener('click', () => {
+      const value = input.value.trim();
+      if (!value) return;
+
+      addCustomItem(value);
+
+      input.value = '';
+      input.focus();
+    });
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addBtn.click();
+      }
     });
   }
-});
 
+  // 전체 초기화
+  const clearBtn = document.getElementById('clearStrikesBtn');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', clearAllStrikes);
+  }
+});
 
 // 디데이
 function updateDDay() {
