@@ -144,7 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 전체 초기화
   const clearBtn = document.getElementById('clearStrikesBtn');
   if (clearBtn) {
-    clearBtn.addEventListener('click', clearAllStrikes);
+    clearBtn.addEventListener('click', () => {
+      if (!confirm('선택된 모든 준비물을 초기화하시겠습니까?')) return;
+
+      clearAllStrikes();
+    });
   }
 });
 
