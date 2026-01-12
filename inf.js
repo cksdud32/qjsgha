@@ -326,3 +326,21 @@ function resetCart() {
   calcList.innerHTML = '';
   calcTotal.textContent = '0';
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const openBtn = document.querySelector('.Live-Setlist');
+  const popup = document.querySelector('.popup_12');
+  const closeBtn = document.querySelector('.popup_12_popi a');
+
+  // 팝업 열기
+  openBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    popup.style.display = 'block';
+  });
+
+  // 팝업 닫기
+  closeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    popup.style.display = 'none';
+  });
+});
