@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 디데이
 function updateDDay() {
-  const targetDay = new Date(2026, 1, 07);
+  const targetDay = new Date(2026, 1, 7);
 
   const targetTime = new Date("2026-02-07T15:00:00+09:00");
 
