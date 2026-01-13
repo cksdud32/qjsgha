@@ -63,13 +63,19 @@ body{
 }
 
 .popup_12_popi{
-  width: 370px; height: calc(100% - 300px);
+  width: 370px; max-height: 1000px;
   top: 50%; left: 50%;
   background-color: #fff;
   z-index: 100001;
   position: absolute;
   transform: translate(-50%, -50%);
   padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #333;
+}
+
+.Live-Setlist{
+  text-decoration: underline;
 }
 
 .popup_12_popi a{
@@ -257,7 +263,7 @@ th{
   }
 
   .hidden-box.show {
-    max-height: 1000px; /* 내용 길이에 맞게 조정 */
+    max-height: 1000px;
     opacity: 1;
   }
 

@@ -281,7 +281,7 @@ resetBtn.addEventListener('click', () => {
 document.querySelectorAll('tbody tr[id^="price-"]').forEach(row => {
   row.addEventListener('click', () => {
     if (!calculatorOn) {
-      alert('계산기를 열어야 추가할 수 있습니다.');
+      alert('계산기를 열어 추가해주세요.');
       return;
     }
 
