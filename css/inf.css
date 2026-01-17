@@ -267,7 +267,7 @@ th{
     opacity: 1;
   }
 
-  .Calculator{
+  #Calculator{
     width: 160px; height: 30px;
     border: 1px solid #333;
     margin: 5px;

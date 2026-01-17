@@ -250,95 +250,123 @@ document.querySelectorAll(".clickable-row").forEach(row => {
   });
 });
 
+
 // 계산기
-let calculatorOn = false;
-const cart = {};
+document.addEventListener('DOMContentLoaded', () => {
+  const calcRow   = document.getElementById('calculator-row');
+  const calcList  = document.getElementById('calcList');
+  const calcTotal = document.getElementById('calcTotal');
+  const header    = document.querySelector('.calculator-header');
 
-const openBtn  = document.querySelector('.Calculator');
-const calcRow  = document.getElementById('calculator-row');
-const closeBtn = document.getElementById('closeCalc');
-const resetBtn = document.getElementById('resetCalc');
-const calcList = document.getElementById('calcList');
-const calcTotal = document.getElementById('calcTotal');
+  const openBtn  = document.getElementById('Calculator');
+  const resetBtn = document.getElementById('resetCalc');
+  const closeBtn = document.getElementById('closeCalc');
 
-openBtn.addEventListener('click', () => {
-  calculatorOn = true;
-  calcRow.style.display = 'table-row';
-  setActiveState(true);
-});
+  let isCalcOpen = false;
+  let activeConcert = null; // 'jan' | 'feb'
+  const cart = {};
 
-closeBtn.addEventListener('click', () => {
-  calculatorOn = false;
-  calcRow.style.display = 'none';
-  resetCart();
-  setActiveState(false);
-});
 
-resetBtn.addEventListener('click', () => {
-  resetCart();
-});
-
-document.querySelectorAll('tbody tr[id^="price-"]').forEach(row => {
-  row.addEventListener('click', () => {
-    if (!calculatorOn) {
-      alert('계산기를 열어 추가해주세요.');
-      return;
-    }
-
-    const name = row.cells[0].innerText.trim();
-
-    const priceMatch = row.innerText.match(/([0-9,]+)원/);
-    if (!priceMatch) return;
-
-    const price = Number(priceMatch[1].replace(/,/g, ''));
-
-    cart[name] = cart[name] || { count: 0, price };
-    cart[name].count++;
-
-    renderCalculator();
+  openBtn.addEventListener('click', () => {
+    calcRow.style.display = 'table-row';
+    isCalcOpen = true;
+    updateHeader();
   });
-});
 
-function renderCalculator() {
-  calcList.innerHTML = '';
-  let total = 0;
+  closeBtn.addEventListener('click', () => {
+    calcRow.style.display = 'none';
+    isCalcOpen = false;
+    resetCalculator();
+  });
 
-  for (const key in cart) {
-    const item = cart[key];
-    total += item.count * item.price;
+  resetBtn.addEventListener('click', resetCalculator);
 
-    const li = document.createElement('li');
-    li.textContent = `${key} × ${item.count}`;
-    calcList.appendChild(li);
+  function resetCalculator() {
+    activeConcert = null;
+    for (const k in cart) delete cart[k];
+    calcList.innerHTML = '';
+    calcTotal.textContent = '0';
+    updateHeader();
   }
 
-  calcTotal.textContent = total.toLocaleString();
-}
+  function updateHeader() {
+    let text = '🟢 계산기 활성화 중';
+    if (activeConcert === 'jan') text += ' (1월콘)';
+    if (activeConcert === 'feb') text += ' (2월콘)';
+    header.childNodes[0].nodeValue = text + ' ';
+  }
 
-function setActiveState(on) {
-  document.querySelectorAll('tbody tr[id^="price-"]').forEach(row => {
-    row.classList.toggle('calc-on', on);
+
+  function render() {
+    let total = 0;
+    calcList.innerHTML = '';
+
+    Object.values(cart).forEach(item => {
+      total += item.price * item.count;
+      const li = document.createElement('li');
+      li.textContent = `${item.name} × ${item.count}`;
+      calcList.appendChild(li);
+    });
+
+    calcTotal.textContent = total.toLocaleString();
+  }
+
+
+  document.querySelectorAll('#price-row').forEach(row => {
+    const tds = row.querySelectorAll('td');
+    if (tds.length !== 3) return;
+
+    tds.forEach((td, index) => {
+      if (index === 0) return;
+
+      td.addEventListener('click', () => {
+        if (!isCalcOpen) {
+          alert('계산기 열기 버튼을 클릭하여 추가하십시오');
+          return;
+        }
+
+        if (!activeConcert) {
+          activeConcert = index === 1 ? 'jan' : 'feb';
+          updateHeader();
+        }
+
+        const priceTd =
+          activeConcert === 'jan' ? tds[1] : tds[2];
+
+        const priceMatch = priceTd.innerText.match(/([0-9,]+)원/);
+        if (!priceMatch) return;
+
+        const price = Number(priceMatch[1].replace(/,/g, ''));
+        if (!price) return;
+
+        const name = row.cells[0].innerText.trim();
+        const key = `${name}_${price}_${activeConcert}`;
+
+        cart[key] = cart[key] || {
+          name,
+          price,
+          count: 0
+        };
+
+        cart[key].count++;
+        render();
+      });
+    });
   });
-}
+});
 
-function resetCart() {
-  for (const key in cart) delete cart[key];
-  calcList.innerHTML = '';
-  calcTotal.textContent = '0';
-}
 
+// 셋리스트 팝업
 document.addEventListener('DOMContentLoaded', () => {
   const openBtn = document.querySelector('.Live-Setlist');
   const popup = document.querySelector('.popup_12');
   const closeBtn = document.querySelector('.popup_12_popi a');
 
-  // 팝업 열기
   openBtn.addEventListener('click', (e) => {
     e.preventDefault();
     popup.style.display = 'block';
   });
 
-  // 팝업 닫기
   closeBtn.addEventListener('click', (e) => {
     e.preventDefault();
     popup.style.display = 'none';
