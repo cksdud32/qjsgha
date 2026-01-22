@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const openBtn = document.querySelector('.Live-Setlist');
   const popup = document.querySelector('.popup_12');
-  const closeBtn = document.querySelector('.popup_12_popi a');
+  const closeBtn = document.querySelector('.popup_exe');
 
   openBtn.addEventListener('click', (e) => {
     e.preventDefault();
