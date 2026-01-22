@@ -252,7 +252,7 @@ li p {
 }
 
 li a + a {
-    margin-left: 10px; /* a태그끼리만 간격 */
+    margin-left: 10px;
 }
 
 @media (max-width: 1000px) {
