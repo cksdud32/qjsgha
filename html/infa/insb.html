@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/ins.css">
+</head>
+
+<body>
+    <h1>
+        관리자 전용 페이지
+        <p>이 페이지는 관리자 전용 페이지입니다. 일반 사용자는 접근할 수 없습니다.</p>
+    </h1>
+    <div class="dal">
+        <div class="jap">
+            <h3>찬영의 개사 노트</h3>
+            <li>
+                <p>제목 : 행복 / 번호 : 98957 </p>
+                <button class="lyrics-btn" data-number="989571">가사 보기</button>
+            </li>
+        </div>
+    </div>
+    <div id="lyricsModal" class="modal">
+        <div class="modal-content">
+
+            <div class="close-wrapper">
+                <button id="closeBtn" class="close-btn">닫기</button>
+            </div>
+
+            <div class="lyrics-box">
+                <div id="modalTitle" class="modal-title"></div>
+                <div id="modalLyrics"></div>
+            </div>
+
+        </div>
+    </div>
+    <script src="js/insb.js"></script>
+</body>
+
+</html>
