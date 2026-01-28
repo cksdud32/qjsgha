@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const admins = {
     "cksdud32": "614ec5208959c8ddd7a4267c36dbdaec90820694a94d9c6c50a3c4feebed9dbf",
-    "뚜별이": "1f3e6f9f15da54d134791a69239619c93385ebe44dda07c8a8cbbcc339065875",
+    "chebyeol": "d2397c90af6579e77dd04602e27065d9b53cef7cf2cce64845bea2d9be75510f",
     "admin3":   "여기에_admin3_비밀번호_해시"
   };
 
@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const hashedPw = await sha256(pw);
 
-    // ✅ 아이디 존재 + 해당 아이디의 비밀번호 해시 일치
     if (admins[id] && admins[id] === hashedPw) {
       alert('로그인 성공');
       location.href = 'insb.html';
