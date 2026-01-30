@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const admins = {
     "cksdud32": "614ec5208959c8ddd7a4267c36dbdaec90820694a94d9c6c50a3c4feebed9dbf",
-    "chebyeol": "d2397c90af6579e77dd04602e27065d9b53cef7cf2cce64845bea2d9be75510f",
+    "chebyeol": "e64efd1b097ac2594f2d5112c63721da2e0f76f29aad40e7812cfe4ac2990b6f",
     "":   ""
   };
 
