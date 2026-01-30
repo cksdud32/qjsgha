@@ -2,8 +2,9 @@
 let lyricsData = {};
 
 const lyricsPasswords = {
-    "cksdud32": "cksdud32",
-    "chebyeol":"sterche!babo"
+    "cksdud32": "cksdud32!",
+    "chebyeol": "sterche!babo",
+    " yeonho_831":""
 };
 
 async function loadAllLyrics() {

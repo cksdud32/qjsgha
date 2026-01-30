@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const admins = {
     "cksdud32": "614ec5208959c8ddd7a4267c36dbdaec90820694a94d9c6c50a3c4feebed9dbf",
     "chebyeol": "e64efd1b097ac2594f2d5112c63721da2e0f76f29aad40e7812cfe4ac2990b6f",
-    "":   ""
+    "yeonho_831": "7144f9a06da927210350112d46191f381dd5a511a3367d28b6b7df8d91627e12"
   };
 
   loginForm.addEventListener('submit', async (e) => {
