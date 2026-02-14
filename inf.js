@@ -154,20 +154,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 디데이
 function updateDDay() {
-  const targetDay = new Date(2026, 1, 7);
-
-  const targetTime = new Date("2026-02-07T15:00:00+09:00");
-
-  const now = new Date();
-
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const diffDays = Math.round((targetDay - today) / 86400000);
+  const targetDay = new Date(""); //형식 ex: 2026, 1, 7 (2026년 2월 7일)
+  const targetTime = new Date(""); //형식 ex: 2026-02-15T15:00:00
 
   const ddayElement = document.getElementById("dday");
   const timeLeftElement = document.getElementById("timeLeft");
 
-  const isDDay =
-    today.getTime() === targetDay.getTime();
+  if (isNaN(targetDay.getTime()) || isNaN(targetTime.getTime())) {
+    ddayElement.textContent = "일정 미정";
+    timeLeftElement.textContent = "";
+    return; 
+  }
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const diffDays = Math.round((targetDay - today) / 86400000);
+
+  const isDDay = today.getTime() === targetDay.getTime();
 
   if (diffDays > 0 && !isDDay) {
     ddayElement.textContent = `D-${diffDays}`;
