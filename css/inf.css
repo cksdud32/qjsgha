@@ -370,3 +370,61 @@ tbody tr.goods-clickable.calc-on:hover {
     margin-top: 15px;
     color: #999;
   }
+
+  .open-popup3 {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    list-style: circle;
+    position: fixed;
+    bottom: 110px;
+    left: 10px;
+}
+
+.open-popup3:hover {
+  background: #0056b3;
+}
+
+.popup3 {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 100001;
+}
+
+.popup-content3 {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  width: 640px;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.popup3:target {
+  display: block;
+}
+
+.close3 {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 16px;
+  background: #4CAF50;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.close3:hover {
+  background: #45a049;
+}
