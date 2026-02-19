@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadNotices() {
-    fetch("index.json")
+    fetch("../index.json")
         .then(response => {
             if (!response.ok) {
                 throw new Error("공지 데이터를 불러오지 못했습니다.");
@@ -42,6 +42,13 @@ function renderNotices(notices) {
     }
 }
 
+// URL을 <a> 링크로 변환
+function linkify(text) {
+    if (!text) return "";
+    const urlRegex = /(https?:\/\/[^\s<]+)/g; // < 포함하지 않도록 수정
+    return text.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+}
+
 function createNoticeElement(notice, isImportant) {
     const wrapper = document.createElement("div");
     wrapper.className = isImportant ? "notice-item important" : "notice-item";
@@ -55,7 +62,8 @@ function createNoticeElement(notice, isImportant) {
 
     const content = document.createElement("div");
     content.className = "notice-content";
-    content.innerHTML = `<p>${notice.content || ""}</p>`;
+    // 줄바꿈 먼저 <br>로 변환 후 linkify 적용
+    content.innerHTML = `<p>${linkify((notice.content || "").replace(/\n/g, "<br>"))}</p>`;
     content.style.display = "none";
 
     header.addEventListener("click", () => {
@@ -65,9 +73,7 @@ function createNoticeElement(notice, isImportant) {
             document.querySelectorAll(".notice-content").forEach(el => {
                 if (el !== content) el.style.display = "none";
             });
-
-            content.style.display =
-                content.style.display === "none" ? "block" : "none";
+            content.style.display = content.style.display === "none" ? "block" : "none";
         }
     });
 
@@ -94,9 +100,9 @@ function openModal(notice) {
 
     titleEl.textContent = notice.title;
     dateEl.textContent = notice.date;
-    contentEl.innerHTML = notice.content || "";
 
-    contentEl.innerHTML = (notice.content || "").replace(/\n/g, "<br>");
+    // 줄바꿈 먼저 적용 후 링크 변환
+    contentEl.innerHTML = linkify((notice.content || "").replace(/\n/g, "<br>"));
 
     modal.classList.add("active");
     overlay.classList.add("active");
