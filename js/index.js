@@ -35,14 +35,6 @@ function renderNotices(notices) {
         latestFive.forEach(n => {
             normalArea.appendChild(createNoticeElement(n, false));
         });
-
-        const btn = document.createElement("button");
-        btn.textContent = "전체 공지 보기";
-        btn.className = "notice-more-btn";
-        btn.addEventListener("click", () => {
-            window.location.href = "/html/inw.html";
-        });
-        normalArea.appendChild(btn);
     }
 }
 
