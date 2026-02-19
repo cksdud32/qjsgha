@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "title": "사이트 공지 사항 추가 안내",
+    "date": "2026-02-19",
+    "content": "오늘부터 사이트의 대부분 공지사항은 이 공지사항으로 이루어 집니다. \n 꼭 확인 부탁드리며, 항상 사이트를 이용해주셔서 감사합니다.",
+    "important": true,
+    "useModal": true
+  },
+  {
+    "id": 2,
+    "title": "테스트 공지",
+    "date": "2026-02-19",
+    "content": "테스트용 공지입니다.",
+    "important": false,
+    "useModal": false
+  }
+]

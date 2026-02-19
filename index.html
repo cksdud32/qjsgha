@@ -23,7 +23,7 @@
     <main>
         <section style="width: 100%;">
             <ul style="display: flex;">
-                <li>
+                <li style="width: 50%;">
                     <h2>소개</h2>
                     <p>안녕하세요 찬영이라고 합니다. <br>
                         코딩을 하다가 갑자기 준님 관련 사이트를
@@ -31,7 +31,7 @@
                         나중에 이것보다 더 예쁘게 사이트 만들어보겠습니다. 다들 항상 감사하고 사랑합니다 :> <br>
                         (이 사이트 내가 쓸려고 만든건 안비밀 ㅎㅅㅎ)</p>
                 </li>
-                <li class="sec-li">
+                <li class="sec-li" style="width: 50%;">
                     <h2>사이트 정보</h2>
                     <p>
                         이 사이트는 <strong>TJ 노래방 번호</strong>와 <strong>오프라인 일정</strong>을 한눈에 확인할 수 있도록 정리한 공간입니다. <br><br>
@@ -44,25 +44,51 @@
                 </li>
             </ul>
         </section>
-
-        <div class="cks">
-            <h2>사이트 바로가기</h2>
-            <div class="dud32">
-                <!--  <ul>
+        <div class="cksd">
+            <div class="cks">
+                <h2>사이트 바로가기</h2>
+                <div class="dud32">
+                    <!--  <ul>
                         <li><a href="html/inw.html">류현준 관련 정보(개발중)</a></li>
                     </ul>-->
-                <ul>
-                    <li><a href="html/ins.html">준님 TJ노래방 번호 모음집</a></li>
-                </ul>
+                    <ul>
+                        <li><a href="html/ins.html">준님 TJ노래방 번호 모음집</a></li>
+                        <li><a href="html/inf.html">준님 오프라인 일정 보러가기</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="ckd2">
+                <h2>공지</h2>
+                <div class="main-Ann">
 
-                <ul>
-                    <li><a href="html/inf.html">준님 오프라인 일정 보러가기</a></li>
-                </ul>
+                    <div id="important-area"></div>
+                    <div id="normal-area"></div>
+
+                    <div id="notice-modal" class="modal">
+                        <div class="modal-content">
+                            <span id="modal-close">&times;</span>
+                            <h2 id="modal-title"></h2>
+                            <p id="modal-date"></p>
+                            <div id="modal-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="popup-overlay"></div>
+
+        <div class="popup-3">
+            <div class="popup-inner">
+                <h2 class="popup-title"></h2>
+                <div class="popup-date"></div>
+                <div class="popup-content"></div>
+                <button onclick="closeModal()">닫기</button>
             </div>
         </div>
         <div id="footer"></div>
     </main>
     <script src="loadHeaderFooter.js"></script>
+    <script src="index.js"></script>
 </body>
 
 </html>
