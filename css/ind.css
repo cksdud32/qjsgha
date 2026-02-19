@@ -89,18 +89,30 @@ main {
 }
 
 .dud32 li {
+    width: 220px;height: 50px;
     margin-bottom: 10px;
     text-align: center;
+    background-color: bisque;
+    border: 1px solid #333;
+    border-radius: 14px;
 }
 
 .dud32 a {
+    width: 100%; height: 100%;
     text-decoration: none;
     color: #007bff;
     font-weight: bold;
+    text-align: center;
+    line-height: 50px;
+    display: block;
 }
 
 .dud32 a:hover {
     text-decoration: underline;
+}
+
+.ckd2 h2{
+    padding: 5px 20px;
 }
 
 .maun-link{
@@ -180,4 +192,24 @@ main {
     margin-top: 15px;
     padding: 8px 16px;
     cursor: pointer;
+}
+
+.main-modal{
+    width: 100%; min-height: 400px;
+    display: flex;
+    padding: 20px;
+    box-sizing: border-box;
+    max-height: calc(100vh - 200px);
+    border-top: 1px solid #333;
+}
+
+#important-area{
+    width: 50%;
+    border-right: 1px solid #333;
+}
+
+#normal-area{
+    width: 50%;
+    padding: 0 0 0 10px;
+    border-left: 1px solid #333;
 }
