@@ -17,13 +17,11 @@ function renderNotices(notices) {
     importantArea.innerHTML = "";
     normalArea.innerHTML = "";
 
-    // 최신순 정렬
     notices.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     const important = notices.filter(n => n.important === true);
     const normal = notices.filter(n => !n.important);
 
-    // 중요 공지 (전체 표시)
     if (important.length > 0) {
         importantArea.innerHTML += "<h3>중요 공지</h3>";
         important.forEach(n => {
@@ -31,7 +29,6 @@ function renderNotices(notices) {
         });
     }
 
-    // 일반 공지 (최신 5개만)
     if (normal.length > 0) {
         normalArea.innerHTML += "<h3>일반 공지</h3>";
         const latestFive = normal.slice(0, 5);
@@ -39,7 +36,6 @@ function renderNotices(notices) {
             normalArea.appendChild(createNoticeElement(n, false));
         });
 
-        // 전체 공지 보기 버튼
         const btn = document.createElement("button");
         btn.textContent = "전체 공지 보기";
         btn.className = "notice-more-btn";
@@ -50,10 +46,9 @@ function renderNotices(notices) {
     }
 }
 
-// URL을 <a> 링크로 변환
 function linkify(text) {
     if (!text) return "";
-    const urlRegex = /(https?:\/\/[^\s<]+)/g; // < 포함하지 않도록 수정
+    const urlRegex = /(https?:\/\/[^\s<]+)/g;
     return text.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
 }
 
@@ -70,7 +65,6 @@ function createNoticeElement(notice, isImportant) {
 
     const content = document.createElement("div");
     content.className = "notice-content";
-    // 줄바꿈 먼저 <br>로 변환 후 linkify 적용
     content.innerHTML = `<p>${linkify((notice.content || "").replace(/\n/g, "<br>"))}</p>`;
     content.style.display = "none";
 
@@ -109,7 +103,6 @@ function openModal(notice) {
     titleEl.textContent = notice.title;
     dateEl.textContent = notice.date;
 
-    // 줄바꿈 먼저 적용 후 링크 변환
     contentEl.innerHTML = linkify((notice.content || "").replace(/\n/g, "<br>"));
 
     modal.classList.add("active");
