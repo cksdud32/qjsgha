@@ -188,6 +188,12 @@ main {
     margin-top: 20px;
 }
 
+.popup-inner button{
+    width: 100px; height: 30px;
+    border-radius: 10px;
+    cursor: pointer;    
+}
+
 .notice-more-btn {
     margin-top: 15px;
     padding: 8px 16px;
