@@ -1,15 +1,51 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
-    <title>.</title>
+    <title>사이트 관련 공지 사항</title>
     <link rel="stylesheet" href="../css/inw.css">
 </head>
+
 <body>
-    <div id="Shor"></div>
     <div id="link"></div>
-        
+    <header>
+        <h1>공지 사항 사이트</h1>
+        <h2>현재 있는 사이트는 모든 공지사항을 저장해둔 곳입니다.</h2>
+        <p>과거 공지사항 또한 볼수 있으며, 모든 공지사항은 이곳에서 확인 가능합니다. <br>
+            메인페이지에서는 최대 일반 공지 5개까지만 노출되며 이후부터는 이곳에서만 확인할수 있습니다.</p>
+    </header>
+
+    <nav><a href="../index.html">메인메뉴로 돌아가기</a> <a href="inf.html">오프라인정보 보러가기</a> <a href="ins.html">노래방 정보 보러가기</a>
+    </nav>
+    <div class="main-Ann">
+        <div class="main-modal">
+            <div id="important-area"></div>
+            <div id="normal-area"></div>
+        </div>
+        <div id="notice-modal" class="modal">
+            <div class="modal-content">
+                <span id="modal-close">&times;</span>
+                <h2 id="modal-title"></h2>
+                <p id="modal-date"></p>
+                <div id="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay"></div>
+
+    <div class="popup-3">
+        <div class="popup-inner">
+            <h2 class="popup-title"></h2>
+            <div class="popup-date"></div>
+            <div class="popup-content"></div>
+            <button onclick="closeModal()">닫기</button>
+        </div>
+    </div>
     <div id="footer"></div>
     <script src="../loadHeaderFooter.js"></script>
+    <script src="../js/inw.js"></script>
 </body>
+
 </html>

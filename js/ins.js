@@ -165,7 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else results.classList.remove('show-border');
     });
 });
-//가사 보기 버튼 및 가사 전체 보기 버튼 (가사 불러오기)
+
+//가사 보기 버튼(가사 불러오기)
 let lyricsData = {};
 
 async function loadAllLyrics() {

@@ -14,7 +14,7 @@
 
     footer {
       width: 100%;
-      height: 160px;
+      height: 200px;
       margin: 50px 0;
       padding: 10px 0;
       text-align: center;
@@ -33,18 +33,73 @@
       text-decoration: underline;
       color: blue;
     }
+    
+    .img-popup {
+  display: none;
+}
+
+.img-popup:target {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 99911;
+}
+
+.img-popup img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 8px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #444;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: #666;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 24px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
   <footer>
     <p>
-      &copy; 2025 cksdud3. All rights reserved.<br>
-      본 사이트는 체리들을 위한 공간입니다.<br>
-      수익을 목적으로 하지 않으며, 수익이 발생하는 곳도 없습니다.<br>
-      또한, 친목의 목적이 아닌,<br> 체리분들이 현준님에 관한 정보를 더 편하게 접하실수 있도록 만든것입니다.<br>
+      &copy; 2026 cksdud3. All rights reserved.<br>
+      본 사이트는 체리들을 위한 공간으로,<br>
+      공식 운영 사이트가 아닌 팬 제작 비공식·비영리 사이트입니다.<br>
+      친목 목적이 아닌, 체리분들이 현준님 정보를 편하게 확인할 수 있도록 제작되었습니다.<br>
       문의: Instagram →
-      <a href="https://www.instagram.com/cksdud3/" target="_blank" rel="noopener noreferrer">@cksdud3</a>
+      <a href="https://www.instagram.com/cksdud3/" target="_blank" rel="noopener noreferrer">@cksdud3</a> <br>
+      <a href="#img12" style="color: blue;"> 사진 및 자료 사용 안내 </a>
     </p>
+     <div id="img12" class="img-popup">
+        <a href="#" class="close-btn">✕</a>
+        <img src="image/as.PNG" alt="사용 허가 이미지">
+    </div>
   </footer>
 
   <script src="../loadHeaderFooter.js"></script>

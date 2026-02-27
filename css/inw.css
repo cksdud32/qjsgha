@@ -11,3 +11,130 @@
 li{list-style: none;}
 a {text-decoration: none;}
 
+header{
+    width: 100%; height: 200px;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #333;
+}
+
+header h1{
+    text-align: center;
+    padding: 10px 0 5px 0;
+}
+
+header h2{
+    text-align: center;
+    padding: 0 0 10px 0;
+    font-size: 24px;
+}
+
+header p{
+    font-size: 17px;
+    text-align: center;
+}
+
+nav{
+    width: 100%; height: 60px;
+    padding: 10px;
+    display: flex;
+}
+
+nav a{
+    width: 170px; height: 40px;
+    margin-right: 20px;
+    color: blue;
+    background-color: antiquewhite;
+    text-align: center;
+    line-height: 39px;
+    border: 1px solid #333;
+    border-radius: 20px;
+}
+
+.main-modal{
+    width: 100%; min-height: 400px;
+    display: flex;
+    padding: 20px;
+    box-sizing: border-box;
+    max-height: calc(100vh - 200px);
+    border-top: 1px solid #333;
+}
+
+#important-area{
+    width: 50%;
+    border-right: 1px solid #333;
+    overflow-y: auto;
+}
+
+#normal-area{
+    width: 50%;
+    padding: 0 0 0 10px;
+    border-left: 1px solid #333;
+    overflow-y: auto;
+
+}
+
+.notice-header {
+    cursor: pointer;
+    padding: 10px;
+    transition: 0.2s;
+}
+
+.notice-header:hover {
+    background: #f2f2f2;
+    transform: translateY(-2px);
+}
+
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    z-index: 999;
+}
+
+.popup-overlay.active {
+    display: block;
+}
+
+.popup-3 {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    max-width: 90%;
+    padding: 30px;
+    display: none;
+    z-index: 1000;
+    border-radius: 15px;
+}
+
+.popup-3.active {
+    display: block;
+}
+
+.popup-title {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.popup-date {
+    text-align: left;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.popup-content {
+    line-height: 1.6;
+}
+
+.popup-close {
+    margin-top: 20px;
+}
+
+.notice-more-btn {
+    margin-top: 15px;
+    padding: 8px 16px;
+    cursor: pointer;
+}

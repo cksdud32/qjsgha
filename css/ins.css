@@ -252,7 +252,7 @@ li p {
 }
 
 li a + a {
-    margin-left: 10px; /* a태그끼리만 간격 */
+    margin-left: 10px;
 }
 
 @media (max-width: 1000px) {
@@ -349,22 +349,6 @@ li a + a {
     z-index: 10;
 }
 
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #444;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.close-btn:hover {
-    background: #666;
-}
-
 .modal-title {
     font-weight: bold;
     margin-bottom: 12px;
@@ -386,4 +370,24 @@ li a + a {
     text-align: center;
     padding: 10px 0;
     margin-bottom: -70px;
+}
+
+.footer a{
+    text-decoration: none;
+    color: #3498db;
+}
+
+.infa{
+    width: 200px; height: 50px;
+    background-color: #007bff;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 10px;
+    color: #ffffff;
+    float: right;
+    margin: 10px;
+}
+
+.infa a{
+    display: block;
 }
