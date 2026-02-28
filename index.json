@@ -38,5 +38,13 @@
     "content": "테스트용 공지입니다.",
     "important": false,
     "useModal": false
+  },
+  {
+    "id": 6,
+    "title": "노래 가사 오타 수정",
+    "date": "2026-02-28",
+    "content": "오타를 수정하였습니다.\n 혹시라도 오타를 발견하시면 알려주시면 수정하겠습니다. 감사합니다.",
+    "important": false,
+    "useModal": true
   }
 ]
