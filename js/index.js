@@ -23,7 +23,7 @@ function renderNotices(notices) {
     const normal = notices.filter(n => !n.important);
 
     if (important.length > 0) {
-        importantArea.innerHTML += "<h3>중요 공지</h3>";
+        importantArea.innerHTML += "<h3>고정 공지</h3>";
         important.forEach(n => {
             importantArea.appendChild(createNoticeElement(n, true));
         });

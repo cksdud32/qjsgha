@@ -45,8 +45,13 @@ main {
 .cksd{
     width: 100%; min-height: 350px;
     display: flex;
+    border-bottom: 1px solid #333;
 }
 
+.cksd h2{
+    margin-top: 20px;
+    border-bottom: 1px solid #333;
+}
 .cksd2{
     width: 50%;
     height: 350px;
@@ -62,8 +67,6 @@ main {
 
 .cks {
     width: 50%;
-    height: 350px;
-    padding: 20px;
     box-sizing: border-box;
 }
 
@@ -113,10 +116,6 @@ main {
 
 .ckd2{
     width: 50%;
-}
-
-.ckd2 h2{
-    padding: 5px 20px;
 }
 
 .maun-link{
@@ -210,9 +209,7 @@ main {
     padding: 20px;
     box-sizing: border-box;
     max-height: calc(100vh - 200px);
-    border-top: 1px solid #333;
 }
-
 #important-area{
     width: 50%;
     border-right: 1px solid #333;
