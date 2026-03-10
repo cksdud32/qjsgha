@@ -45,7 +45,7 @@ function renderNotices(notices) {
 // URL을 <a> 링크로 변환
 function linkify(text) {
     if (!text) return "";
-    const urlRegex = /(https?:\/\/[^\s<]+)/g; // < 포함하지 않도록 수정
+    const urlRegex = /(https?:\/\/[^\s<]+)/g;
     return text.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
 }
 

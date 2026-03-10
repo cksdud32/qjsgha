@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeBtn = document.getElementById('closeCalc');
 
   let isCalcOpen = false;
-  let activeConcert = null; // 'jan' | 'feb'
+  let activeConcert = null;
   const cart = {};
 
 
