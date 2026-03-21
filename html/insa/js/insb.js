@@ -64,7 +64,7 @@ function updateDDay() {
   if (diffDays > 0 && !isDDay) {
     ddayElement.textContent = `D-${diffDays}`;
   } else if (isDDay) {
-    ddayElement.textContent = "🎉 D-DAY! 🎉";
+    ddayElement.textContent = "데이트 날이다앙!";
   } else {
     ddayElement.textContent = `D+${Math.abs(diffDays)}`;
   }

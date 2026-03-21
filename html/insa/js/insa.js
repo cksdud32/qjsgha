@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const admins = {
     "cksdud32": "614ec5208959c8ddd7a4267c36dbdaec90820694a94d9c6c50a3c4feebed9dbf",
-    "chebyeol": "6d583ac0a75e9ec75538bfb7afe7667ebcd3a1bd33ca608cd34600f1c0cb2272",
+    "chebyeol": "e64efd1b097ac2594f2d5112c63721da2e0f76f29aad40e7812cfe4ac2990b6f",
     "yeonho_831": "7144f9a06da927210350112d46191f381dd5a511a3367d28b6b7df8d91627e12"
   };
 
@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       alert('아이디 또는 비밀번호가 올바르지 않습니다.');
 
-      // 입력값 초기화
       idInput.value = '';
       pwInput.value = '';
       idInput.focus();
