@@ -9,13 +9,45 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            color: #000;
+            color: inherit;
         }
 
         li {
             list-style: none;
         }
 
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Modern floating action button */
+        .open-popup {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            color: #ffffff !important;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: fixed !important;
+            bottom: 20px !important;
+            left: 20px !important;
+            z-index: 999999 !important;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .open-popup:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
+            background: linear-gradient(135deg, #059669, #0891b2);
+            text-decoration: none;
+        }
+
+        /* Overlay */
         .popup {
             display: none;
             position: fixed;
@@ -23,76 +55,100 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
             z-index: 100001;
+            animation: fadeIn 0.3s ease-out;
         }
-
-        .open-popup {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            z-index: 10000;
-        }
-
-        .open-popup:hover {
-            background: #0056b3;
-        }
-
-        .popup-content1 {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
 
         .popup:target {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .popup ul {
-            width: 320px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 15px;
+        /* Modal Content */
+        .popup-content1 {
+            width: 90%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 24px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            position: fixed;
-            transform: translate(-50%, -50%);
-            left: 50%;
-            top: 50%;
-            margin: 0 auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .popup-content1 {
+                background: rgba(30, 41, 59, 0.95);
+                color: #f8fafc;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
         }
 
-        .popup li {
-            height: 50px;
-            display: block;
-            line-height: 50px;
+        .popup-content1 ul {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .popup li:hover{
-            background-color: #c7c7c7;
-        }
-        .popup a {
+        .popup-content1 li a {
             display: block;
-            border-bottom: #000 1px solid;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #475569;
+            background: #f1f5f9;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .popup-content1 li a {
+                color: #cbd5e1;
+                background: #334155;
+            }
+        }
+
+        .popup-content1 li a:hover {
+            background: #10b981;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
             text-decoration: none;
         }
+        
+        /* Close button specific styling */
+        .popup-content1 li:last-child a {
+            background: #e2e8f0;
+            color: #64748b;
+            margin-top: 10px;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .popup-content1 li:last-child a {
+                background: #0f172a;
+                color: #94a3b8;
+            }
+        }
 
-        .popup a:hover {
-            color: blue;
-            text-decoration: none;
+        .popup-content1 li:last-child a:hover {
+            background: #ef4444;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
     </style>
 </head>
@@ -106,7 +162,7 @@
                     <li><a href="../index.html">메인페이지 이동</a></li>
                     <li><a href="inf.html">류현준 오프라인 일정 바로가기</a></li>
                     <li><a href="ins.html">류현준 TJ노래방 번호 모음집 바로가기</a></li>
-                    <!--   <li><a href="inw.html">류현준 정보 바로가기</a></li> -->
+                    <li><a href="inw.html">공지사항 바로가기</a></li>
                     <li><a href="#">닫기</a></li>
                 </ul>
             </div>

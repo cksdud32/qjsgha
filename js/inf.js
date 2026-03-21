@@ -154,8 +154,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 디데이
 function updateDDay() {
-  const targetDay = new Date(""); //형식 ex: 2026, 1, 7 (2026년 2월 7일)
-  const targetTime = new Date(""); //형식 ex: 2026-02-15T15:00:00
+  const targetDay = new Date("2026, 8, 25"); //형식 ex: 2026, 1, 7 (2026년 2월 7일)
+  const targetTime = new Date("2026-07-25T15:00:00"); //형식 ex: 2026-02-15T15:00:00
 
   const ddayElement = document.getElementById("dday");
   const timeLeftElement = document.getElementById("timeLeft");
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeBtn = document.getElementById('closeCalc');
 
   let isCalcOpen = false;
-  let activeConcert = null; // 'jan' | 'feb'
+  let activeConcert = null;
   const cart = {};
 
 

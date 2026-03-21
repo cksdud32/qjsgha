@@ -3,12 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>메인 페이지</title>
     <link rel="stylesheet" href="css/ind.css">
 </head>
 
 <body>
-    <div id="link"></div>
     <header>
         <h1>안녕하세요!</h1>
         <nav>
@@ -21,62 +21,55 @@
     </header>
 
     <main>
-        <section style="width: 100%;">
-            <ul style="display: flex;">
-                <li style="width: 50%;">
-                    <h2>소개</h2>
-                    <p>안녕하세요 찬영이라고 합니다. <br>
-                        코딩을 하다가 갑자기 준님 관련 사이트를
-                        만들어보고 싶다란 생각이 들어서 이렇게 만들고 있네요. <br>
-                        나중에 이것보다 더 예쁘게 사이트 만들어보겠습니다. 다들 항상 감사하고 사랑합니다 :> <br>
-                        (이 사이트 내가 쓸려고 만든건 안비밀 ㅎㅅㅎ)</p>
-                </li>
-                <li class="sec-li" style="width: 50%;">
-                    <h2>사이트 정보</h2>
-                    <p>
-                        이 사이트는 <strong>TJ 노래방 번호</strong>와 <strong>오프라인 일정</strong>을 한눈에 확인할 수 있도록 정리한 공간입니다. <br><br>
-                        ‘류현준’ 님을 좋아하는 체리들을 위해 만들어졌으며, <br>
-                        현준 님의 <strong>오프라인 일정 바로가기</strong>를 통해 콘서트, 현판 굿즈 등의 정보를 빠르게 확인할 수 있습니다. <br>
-                        또한 <strong>TJ 노래방 번호 모음집</strong>에서는 그동안 노래방에 등록된 곡들과 <strong>현준님이 커버한 곡의 TJ 번호</strong>도 함께 확인할
-                        수 있습니다.
-                    </p>
-
-                </li>
-            </ul>
+        <section class="hero-section">
+            <div class="card intro-card">
+                <h2>소개</h2>
+                <p>안녕하세요 찬영이라고 합니다. <br>
+                    코딩을 하다가 갑자기 준님 관련 사이트를
+                    만들어보고 싶다란 생각이 들어서 이렇게 만들고 있네요. <br>
+                    나중에 이것보다 더 예쁘게 사이트 만들어보겠습니다. 다들 항상 감사하고 사랑합니다 :> <br>
+                    <span style="font-size: 0.85rem; opacity: 0.7; display: block; margin-top: 10px;">(이 사이트 내가 쓸려고 만든건
+                        안비밀 ㅎㅅㅎ)</span>
+                </p>
+            </div>
+            <div class="card info-card">
+                <h2>사이트 정보</h2>
+                <p>
+                    이 사이트는 <strong>TJ 노래방 번호</strong>와 <strong>오프라인 일정</strong>을 한눈에 확인할 수 있도록 정리한 공간입니다. <br><br>
+                    ‘류현준’ 님을 좋아하는 체리들을 위해 만들어졌으며, <br>
+                    현준 님의 <strong>오프라인 일정 바로가기</strong>를 통해 콘서트, 현판 굿즈 등의 정보를 빠르게 확인할 수 있습니다. <br>
+                    또한 <strong>TJ 노래방 번호 모음집</strong>에서는 그동안 노래방에 등록된 곡들과 <strong>현준님이 커버한 곡의 TJ 번호</strong>도 함께 확인할 수
+                    있습니다.
+                </p>
+            </div>
         </section>
-        <div class="cksd">
-            <div class="cks">
-                <h2>사이트 바로가기</h2>
-                <div class="dud32">
-                    <ul>
-                        <li><a href="html/ins.html">준님 TJ노래방 번호 모음집</a></li>
-                        <li><a href="html/inf.html">준님 오프라인 일정 보러가기</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="ckd2">
-                <h2>공지사항</h2>
-                <div class="main-Ann">
-                    <div class="main-modal">
-                        <div id="important-area"></div>
-                        <div id="normal-area"></div>
-                    </div>
-                    <div class="maun-link">
-                        <a href="html/inw.html">전체 공지 보기</a>
-                    </div>
-                    <div id="notice-modal" class="modal">
-                        <div class="modal-content">
-                            <span id="modal-close">&times;</span>
-                            <h2 id="modal-title"></h2>
-                            <p id="modal-date"></p>
-                            <div id="modal-content"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="popup-overlay"></div>
 
+        <section class="content-grid">
+            <div class="card shortcut-card">
+                <h2>사이트 바로가기</h2>
+                <div class="links-container">
+                    <a href="html/ins.html" class="link-btn">준님 TJ노래방 번호 모음집</a>
+                    <a href="html/inf.html" class="link-btn">준님 오프라인 일정 보러가기</a>
+                </div>
+            </div>
+
+            <div class="card notice-card">
+                <h2>공지사항</h2>
+                <div class="notice-board">
+                    <div class="notice-areas">
+                        <div id="important-area" class="notice-area"></div>
+                        <div id="normal-area" class="notice-area"></div>
+                    </div>
+                    <a href="html/inw.html" class="view-all-btn">전체 공지 보기</a>
+                    <div class="notice-shortcuts">
+                        <a href="javascript:void(0)" onclick="openLinkPopup()" class="notice-shortcut-btn link-btn-purple"> 류현준 관련 링크 모음집</a>
+                        <a href="javascript:void(0)" onclick="openShorPopup()" class="notice-shortcut-btn link-btn-green"> 바로가기 메뉴</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="popup-overlay"></div>
         <div class="popup-3">
             <div class="popup-inner">
                 <h2 class="popup-title"></h2>
@@ -85,8 +78,40 @@
                 <button onclick="closeModal()">닫기</button>
             </div>
         </div>
+
+        <!-- 링크 모음집 팝업 -->
+        <div id="link-popup-overlay" class="sp-overlay" onclick="closeLinkPopup()"></div>
+        <div id="link-popup" class="sp-popup">
+            <div class="sp-popup-inner">
+                <h2>류현준 관련 링크 목록</h2>
+                <ul>
+                    <li><a href="https://www.youtube.com/@RYU_814" target="_blank" rel="noopener noreferrer">류현준 official</a></li>
+                    <li><a href="https://cafe.naver.com/ryu814" target="_blank" rel="noopener noreferrer">체리 숲</a></li>
+                    <li><a href="https://www.instagram.com/comfort_hyun/" target="_blank" rel="noopener noreferrer">인스타</a></li>
+                    <li><a href="https://www.threads.com/@comfort_hyun" target="_blank" rel="noopener noreferrer">스레드</a></li>
+                    <li><a href="https://xn--oy2bo3kfwkc1j.com/goods/?cate=001" target="_blank" rel="noopener noreferrer">체리상회</a></li>
+                    <li><a href="javascript:void(0)" onclick="closeLinkPopup()" class="sp-close">닫기</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 바로가기 메뉴 팝업 -->
+        <div id="shor-popup-overlay" class="sp-overlay" onclick="closeShorPopup()"></div>
+        <div id="shor-popup" class="sp-popup">
+            <div class="sp-popup-inner">
+                <ul>
+                    <li><a href="index.html">메인페이지 이동</a></li>
+                    <li><a href="html/inf.html">류현준 오프라인 일정 바로가기</a></li>
+                    <li><a href="html/ins.html">류현준 TJ노래방 번호 모음집 바로가기</a></li>
+                    <li><a href="html/inw.html">공지사항 바로가기</a></li>
+                    <li><a href="javascript:void(0)" onclick="closeShorPopup()" class="sp-close">닫기</a></li>
+                </ul>
+            </div>
+        </div>
+
         <div id="footer"></div>
     </main>
+
     <script src="loadHeaderFooter.js"></script>
     <script src="js/index.js"></script>
 </body>

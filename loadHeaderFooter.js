@@ -1,48 +1,85 @@
-const isGitHub = location.hostname.includes("github.io");
+const scriptRoot = (() => {
+    if (document.currentScript?.src) {
+        return new URL("./", document.currentScript.src);
+    }
 
-let basePath = "";
+    return new URL("./", location.href);
+})();
 
-if (isGitHub) {
-    const pathParts = location.pathname.split("/");
-    const repoName = pathParts[1];
-    basePath = repoName ? `/${repoName}` : "";
+function ensureFloatingContainer(elementId) {
+    let container = document.getElementById(elementId);
+
+    if (container) {
+        return container;
+    }
+
+    container = document.createElement("div");
+    container.id = elementId;
+
+    if (elementId === "link") {
+        document.body.prepend(container);
+        return container;
+    }
+
+    const linkContainer = document.getElementById("link");
+
+    if (linkContainer) {
+        linkContainer.insertAdjacentElement("afterend", container);
+    } else {
+        document.body.prepend(container);
+    }
+
+    return container;
 }
 
-function loadHTML(url, elementId) {
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! 상태 코드: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(data => {
-            const container = document.getElementById(elementId);
-            container.innerHTML = data;
-            fixImagePaths(container);
-        })
-        .catch(error => console.error(`${elementId} 불러오기 실패:`, error));
-}
+function rewriteFragmentPaths(container, sourceUrl) {
+    const relativeHrefPattern = /^(?![a-z]+:|\/\/|#|javascript:|mailto:|tel:).+/i;
 
-function fixImagePaths(container) {
-    const images = container.querySelectorAll("img");
+    container.querySelectorAll("a[href]").forEach(anchor => {
+        const href = anchor.getAttribute("href");
 
-    images.forEach(img => {
-        const originalSrc = img.getAttribute("src");
-
-        if (originalSrc && originalSrc.startsWith("image/")) {
-            img.src = `${basePath}/${originalSrc}`;
+        if (href && relativeHrefPattern.test(href)) {
+            anchor.href = new URL(href, sourceUrl).href;
         }
+    });
+
+    container.querySelectorAll("img[src]").forEach(image => {
+        const src = image.getAttribute("src");
+
+        if (!src || /^(?:[a-z]+:|\/\/|data:)/i.test(src)) {
+            return;
+        }
+
+        const baseUrl = src.startsWith("image/") ? scriptRoot : sourceUrl;
+        image.src = new URL(src, baseUrl).href;
     });
 }
 
-const pathPrefix = location.pathname.includes('/html/')
-    ? '../html/'
-    : 'html/';
+function loadHTML(url, elementId) {
+    const container = document.getElementById(elementId);
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadHTML(`${pathPrefix}link.html`, 'link');
-    loadHTML(`${pathPrefix}Shor.html`, 'Shor');
-    loadHTML(`${pathPrefix}footer.html`, 'footer');
+    if (!container) {
+        return;
+    }
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status code: ${response.status}`);
+            }
+
+            return response.text();
+        })
+        .then(data => {
+            container.innerHTML = data;
+            rewriteFragmentPaths(container, url);
+        })
+        .catch(error => console.error(`${elementId} load failed:`, error));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    loadHTML(new URL("html/link.html", scriptRoot), "link");
+    loadHTML(new URL("html/Shor.html", scriptRoot), "Shor");
+    loadHTML(new URL("html/footer.html", scriptRoot), "footer");
 });
-``

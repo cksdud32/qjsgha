@@ -3,6 +3,31 @@ document.addEventListener("DOMContentLoaded", () => {
     setupModalClose();
 });
 
+/* ── 링크 모음집 팝업 ── */
+function openLinkPopup() {
+    document.getElementById("link-popup").classList.add("active");
+    document.getElementById("link-popup-overlay").classList.add("active");
+    document.body.style.overflow = "hidden";
+}
+function closeLinkPopup() {
+    document.getElementById("link-popup").classList.remove("active");
+    document.getElementById("link-popup-overlay").classList.remove("active");
+    document.body.style.overflow = "";
+}
+
+/* ── 바로가기 메뉴 팝업 ── */
+function openShorPopup() {
+    document.getElementById("shor-popup").classList.add("active");
+    document.getElementById("shor-popup-overlay").classList.add("active");
+    document.body.style.overflow = "hidden";
+}
+function closeShorPopup() {
+    document.getElementById("shor-popup").classList.remove("active");
+    document.getElementById("shor-popup-overlay").classList.remove("active");
+    document.body.style.overflow = "";
+}
+
+
 function loadNotices() {
     fetch("index.json")
         .then(res => res.json())
@@ -123,6 +148,8 @@ function setupModalClose() {
     document.addEventListener("keydown", function (e) {
         if (e.key === "Escape") {
             closeModal();
+            closeLinkPopup();
+            closeShorPopup();
         }
     });
 }
