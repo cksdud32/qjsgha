@@ -356,6 +356,11 @@ li p {
 }
 .open-popup3:hover { background: var(--primary); transform: translateY(-3px); text-decoration: none; color: white;}
 
+/* Footer & Admin */
+.footer {
+    text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.95rem; margin-top: 50px; border-top: 1px solid var(--border);
+}
+
 .infa {
     position: fixed;
     bottom: 130px; left: 30px;
