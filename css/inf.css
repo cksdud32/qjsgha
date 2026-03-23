@@ -479,3 +479,7 @@ tbody tr.goods-clickable.calc-on:hover { background-color: var(--primary-light);
     margin-top: 20px;
     border-top: 1px solid var(--border);
 }
+
+#clsa{ max-width: 1300px; padding: 20px; margin: 0 auto;}
+
+@m

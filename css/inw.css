@@ -27,9 +27,6 @@ body {
     background-color: var(--background);
     color: var(--text-main);
     line-height: 1.6;
-    padding: 20px;
-    max-width: 1100px;
-    margin: 0 auto;
 }
 
 header {
@@ -297,3 +294,5 @@ h3::before {
     .main-modal { padding: 0; }
     #important-area, #normal-area { padding: 20px; }
 }
+
+#clsa{ max-width: 1200px; padding: 20px; margin: 0 auto; padding: 20px;}
