@@ -55,31 +55,26 @@ function addCustomItem(text, id = null, checked = false) {
   container.insertBefore(div, clearBtn);
 
   const checkbox = div.querySelector('input');
-  const deleteBtn = div.querySelector('.delete-btn');
+const deleteBtn = div.querySelector('.delete-btn');
 
-  div.addEventListener('click', (e) => {
-    if (e.target.closest('button')) return; // 삭제 버튼 예외
+checkbox.checked = checked;
+toggleStrike(checkbox);
 
-    checkbox.checked = !checkbox.checked;
-    toggleStrike(checkbox);
-    saveCustomItems();
-  });
-
-  checkbox.checked = checked;
+checkbox.addEventListener('change', () => {
   toggleStrike(checkbox);
+  saveCustomItems();
+});
 
-  checkbox.addEventListener('change', () => {
-    toggleStrike(checkbox);
-    saveCustomItems();
-  });
+deleteBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
 
-  deleteBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    localStorage.removeItem(itemId);
-    div.remove();
-    saveCustomItems();
-    updateCustomItemBorder();
-  });
+  if (!confirm('추가한 준비물을 삭제하시겠습니까?')) return;
+
+  localStorage.removeItem(itemId);
+  div.remove();
+  saveCustomItems();
+  updateCustomItemBorder();
+});
 
   saveCustomItems();
   updateCustomItemBorder();

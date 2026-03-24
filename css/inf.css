@@ -379,6 +379,10 @@ tbody tr.goods-clickable.calc-on:hover { background-color: var(--primary-light);
     height: 100%;
 }
 
+#price-row{
+    cursor: pointer;
+}
+
 .delete-btn {
     align-self: center; /* 버튼만 가운데 정렬 */
 }
