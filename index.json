@@ -70,5 +70,13 @@
     "content": "사이트의 UI가 조금 더 보기 편하게 수정되었습니다.",
     "important": false,
     "useModal": false
+  },
+  {
+    "id": 10,
+    "title": "가사 추가 및 오프라인 사이트 수정 사항",
+    "date": "2026-03-24",
+    "content": "•가사 추가: 헬로하와유의 2018년도 가사가 추가되었습니다.\n•오프라인 사이트: 조금의 오류가 발견되어 수정되었습니다.",
+    "important": false,
+    "useModal": true
   }
 ]

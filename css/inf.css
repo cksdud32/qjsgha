@@ -284,7 +284,8 @@ tbody tr.goods-clickable.calc-on:hover { background-color: var(--primary-light);
 #calcList li {
     writing-mode: vertical-rl;
     text-orientation: mixed;
-    height: 180px;
+    max-height: 200px;
+    min-height: 120px;
     width: 44px;
     background: white;
     border: 1px solid var(--border);
@@ -345,12 +346,13 @@ tbody tr.goods-clickable.calc-on:hover { background-color: var(--primary-light);
 
 .check-item {
     display: flex;
-    align-items: center;
     padding: 12px 15px;
     margin-bottom: 8px;
     background: #f8fafc;
     border-radius: 8px;
     transition: background 0.2s;
+    cursor: pointer;
+    align-items: stretch;
 }
 .check-item:hover { background: #f1f5f9; }
 .check-item input[type="checkbox"] {
@@ -359,7 +361,7 @@ tbody tr.goods-clickable.calc-on:hover { background-color: var(--primary-light);
     cursor: pointer;
     accent-color: var(--primary);
 }
-.check-item label {
+.check-item span {
     cursor: pointer;
     font-size: 1.05rem;
     flex: 1;
@@ -367,6 +369,18 @@ tbody tr.goods-clickable.calc-on:hover { background-color: var(--primary-light);
 .checked-text {
     text-decoration: line-through;
     color: #94a3b8;
+}
+
+.check-item-inner {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    cursor: pointer;
+    height: 100%;
+}
+
+.delete-btn {
+    align-self: center; /* 버튼만 가운데 정렬 */
 }
 
 /* Inputs & Buttons */

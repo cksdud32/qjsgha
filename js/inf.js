@@ -1,6 +1,6 @@
 // 준비물 취소선(데이터 저장)
 function toggleStrike(checkbox) {
-  const label = checkbox.nextElementSibling;
+  const label = checkbox.parentElement.querySelector('span');
   if (!label) return;
 
   label.classList.toggle("checked-text", checkbox.checked);
@@ -12,7 +12,7 @@ function loadCheckboxState() {
     const saved = localStorage.getItem(cb.id);
     cb.checked = saved === "true";
 
-    const label = cb.nextElementSibling;
+    const label = cb.parentElement.querySelector('span');
     if (label) {
       label.classList.toggle("checked-text", cb.checked);
     }
@@ -22,8 +22,10 @@ function loadCheckboxState() {
 function clearAllStrikes() {
   document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
     cb.checked = false;
-    const label = cb.nextElementSibling;
+
+    const label = cb.parentElement.querySelector('span');
     if (label) label.classList.remove('checked-text');
+
     localStorage.setItem(cb.id, false);
   });
 
@@ -32,7 +34,6 @@ function clearAllStrikes() {
 }
 
 // 사용자 준비물 추가 / 삭제
-
 function addCustomItem(text, id = null, checked = false) {
   const container = document.querySelector('.scd');
   const clearBtn = document.getElementById('clearStrikesBtn');
@@ -44,15 +45,25 @@ function addCustomItem(text, id = null, checked = false) {
   div.className = 'check-item custom-item';
 
   div.innerHTML = `
-    <input type="checkbox" id="${itemId}">
-    <label for="${itemId}" style="cursor: pointer;">${text}</label>
-    <button type="button" class="delete-btn" aria-label="삭제">삭제하기</button>
+    <label class="check-item-inner">
+      <input type="checkbox" id="${itemId}">
+      <span>${text}</span>
+    </label>
+    <button type="button" class="delete-btn">삭제하기</button>
   `;
 
   container.insertBefore(div, clearBtn);
 
   const checkbox = div.querySelector('input');
   const deleteBtn = div.querySelector('.delete-btn');
+
+  div.addEventListener('click', (e) => {
+    if (e.target.closest('button')) return; // 삭제 버튼 예외
+
+    checkbox.checked = !checkbox.checked;
+    toggleStrike(checkbox);
+    saveCustomItems();
+  });
 
   checkbox.checked = checked;
   toggleStrike(checkbox);
@@ -62,7 +73,8 @@ function addCustomItem(text, id = null, checked = false) {
     saveCustomItems();
   });
 
-  deleteBtn.addEventListener('click', () => {
+  deleteBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     localStorage.removeItem(itemId);
     div.remove();
     saveCustomItems();
@@ -79,7 +91,7 @@ function saveCustomItems() {
     const cb = item.querySelector('input[type="checkbox"]');
     items.push({
       id: cb.id,
-      text: cb.nextElementSibling.textContent,
+      text: cb.parentElement.querySelector('span').textContent,
       checked: cb.checked
     });
   });
@@ -146,12 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
       if (!confirm('선택된 모든 준비물을 초기화하시겠습니까?')) return;
-
       clearAllStrikes();
     });
   }
 });
-
 // 디데이
 function updateDDay() {
   const targetDay = new Date("2026, 8, 25"); //형식 ex: 2026, 1, 7 (2026년 2월 7일)
@@ -163,7 +173,7 @@ function updateDDay() {
   if (isNaN(targetDay.getTime()) || isNaN(targetTime.getTime())) {
     ddayElement.textContent = "일정 미정";
     timeLeftElement.textContent = "";
-    return; 
+    return;
   }
 
   const now = new Date();
@@ -257,12 +267,12 @@ document.querySelectorAll(".clickable-row").forEach(row => {
 
 // 계산기
 document.addEventListener('DOMContentLoaded', () => {
-  const calcRow   = document.getElementById('calculator-row');
-  const calcList  = document.getElementById('calcList');
+  const calcRow = document.getElementById('calculator-row');
+  const calcList = document.getElementById('calcList');
   const calcTotal = document.getElementById('calcTotal');
-  const header    = document.querySelector('.calculator-header');
+  const header = document.querySelector('.calculator-header');
 
-  const openBtn  = document.getElementById('Calculator');
+  const openBtn = document.getElementById('Calculator');
   const resetBtn = document.getElementById('resetCalc');
   const closeBtn = document.getElementById('closeCalc');
 

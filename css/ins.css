@@ -62,21 +62,18 @@ h3::before {
 
 /* Banner / Top */
 .skq {
+    display: block;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     padding: 15px 0;
     text-align: center;
-    margin-bottom: 0px; 
-}
-.skq li a {
-    color: white;
     font-weight: 700;
     font-size: 1.1rem;
-    display: inline-block;
-    padding: 5px 20px;
-}
-.skq li a:hover {
-    color: var(--primary-light);
+    color: white;
     text-decoration: none;
+}
+
+.skq:hover {
+    color: var(--primary-light);
 }
 
 /* Search Area */

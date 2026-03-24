@@ -1,6 +1,6 @@
 //곡,번호 검색 기능
 function getInitials(text) {
-    const CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+    const CHO = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
     let result = '';
     for (let char of text) {
         const code = char.charCodeAt(0);
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         contents.forEach(el => {
             const text = el.textContent || '';
-            const cleanText = text.replace(/제목\s*:\s*/gi,'').replace(/번호\s*:\s*/gi,'').replace(/\s+/g,'').toLowerCase();
+            const cleanText = text.replace(/제목\s*:\s*/gi, '').replace(/번호\s*:\s*/gi, '').replace(/\s+/g, '').toLowerCase();
             const initials = getInitials(cleanText);
 
             let type = 'all';
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     let removedMatches = [];
                     let match;
                     while ((match = removedTitlePattern.exec(text)) !== null) {
-                        removedMatches.push({start: match.index, end: match.index + match[0].length});
+                        removedMatches.push({ start: match.index, end: match.index + match[0].length });
                     }
 
                     for (let i = 0; i < text.length; i++) {
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                     const targetPos = rect.top + scrollTop;
 
-                    window.scrollTo({top: targetPos - 50, behavior: 'smooth'});
+                    window.scrollTo({ top: targetPos - 50, behavior: 'smooth' });
                     target.style.backgroundColor = '#c6ddffff';
                     setTimeout(() => target.style.backgroundColor = '', 5000);
                 });
@@ -182,7 +182,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const num = btn.dataset.number;
             const content = lyricsData[num] || "가사가 등록되지 않았습니다.";
 
-            const titleText = btn.previousElementSibling.innerText;
+            const titleText = btn.closest('li').querySelector('p').innerText;
+
             document.getElementById('modalTitle').innerText = titleText;
             document.getElementById('modalLyrics').innerText = content;
             document.getElementById('lyricsModal').style.display = 'block';
