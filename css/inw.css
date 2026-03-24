@@ -296,3 +296,8 @@ h3::before {
 }
 
 #clsa{ max-width: 1200px; padding: 20px; margin: 0 auto; padding: 20px;}
+
+.main-Ann{
+    max-height: 1000px;
+    overflow-y: auto;
+}
