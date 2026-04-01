@@ -379,7 +379,7 @@ tbody tr.goods-clickable.calc-on:hover { background-color: var(--primary-light);
     height: 100%;
 }
 
-#price-row{
+.price-row{
     cursor: pointer;
 }
 

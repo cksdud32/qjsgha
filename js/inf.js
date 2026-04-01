@@ -320,8 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
     calcTotal.textContent = total.toLocaleString();
   }
 
-
-  document.querySelectorAll('#price-row').forEach(row => {
+  document.querySelectorAll('.price-row').forEach(row => {
     const tds = row.querySelectorAll('td');
     if (tds.length !== 3) return;
 
