@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const targetPos = rect.top + scrollTop;
 
                     window.scrollTo({ top: targetPos - 50, behavior: 'smooth' });
-                    target.style.backgroundColor = '#c6ddffff';
+                    target.style.backgroundColor = '#e7dfff';
                     setTimeout(() => target.style.backgroundColor = '', 5000);
                 });
             }
