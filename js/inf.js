@@ -118,6 +118,13 @@ function updateCustomItemBorder() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach((cb, index) => {
+    if (!cb.id) {
+      cb.id = `default_${index}`;
+    }
+  });
+
   document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
     cb.addEventListener('change', () => toggleStrike(cb));
   });
