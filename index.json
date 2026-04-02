@@ -94,5 +94,13 @@
     "content": "행복 2018 가사 추가",
     "important": false,
     "useModal": false
+  },
+  {
+    "id": 13,
+    "title": "체리제 관련 업데이트",
+    "date": "2026-04-02",
+    "content": "체리제의 일정과 굿즈(가격 제외)가 추가되었습니다.",
+    "important": false,
+    "useModal": false
   }
 ]

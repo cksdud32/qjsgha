@@ -159,8 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 // 디데이
 function updateDDay() {
-  const targetDay = new Date("2026, 8, 25"); //형식 ex: 2026, 1, 7 (2026년 2월 7일)
-  const targetTime = new Date("2026-07-25T15:00:00"); //형식 ex: 2026-02-15T15:00:00
+  const targetDay = new Date("2026, 4, 18"); //형식 ex: 2026, 1, 7 (2026년 2월 7일)
+  const targetTime = new Date("2026-04-18T15:00:00"); //형식 ex: 2026-02-15T15:00:00
 
   const ddayElement = document.getElementById("dday");
   const timeLeftElement = document.getElementById("timeLeft");
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateHeader() {
     let text = '🟢 계산기 활성화 중';
-    if (activeConcert === 'jan') text += ' (1월콘)';
+    if (activeConcert === 'jan') text += ' (체리제)';
     if (activeConcert === 'feb') text += ' (2월콘)';
     header.childNodes[0].nodeValue = text + ' ';
   }
