@@ -128,6 +128,20 @@ body {
 
 .gang p { margin-top: 10px; }
 
+.map-wrap {
+  width: calc(100% + 80px);
+  height: 250px;
+  overflow: hidden;
+}
+
+.map-wrap iframe {
+  width: calc(100% + 68px);
+  height: calc(100% + 76px);
+  margin-left: -68px;
+  margin-top: -76px;
+  border: none;
+}
+
 /* Tables */
 table {
     width: 100%;
