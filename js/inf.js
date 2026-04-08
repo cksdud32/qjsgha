@@ -387,3 +387,17 @@ document.addEventListener('DOMContentLoaded', () => {
     popup.style.display = 'none';
   });
 });
+
+// 네이버 앱에서만 지도 숨김 처리
+window.addEventListener('DOMContentLoaded', function() {
+    var agent = navigator.userAgent.toLowerCase();
+    
+    // 네이버 앱인지 확인
+    if (agent.indexOf('naver') !== -1) {
+        var mapArea = document.getElementById('map-area');
+        if (mapArea) {
+            // 지도 영역만 숨김 클래스 추가
+            mapArea.classList.add('hide-in-naver');
+        }
+    }
+});

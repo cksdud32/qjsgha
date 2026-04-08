@@ -102,5 +102,13 @@
     "content": "체리제의 일정과 굿즈(가격 제외)가 추가되었습니다.",
     "important": false,
     "useModal": false
+  },
+  {
+    "id": 14,
+    "title": "오프라인 사이트 업데이트",
+    "date": "2026-04-08",
+    "content": "정보 표에서 위치 영역에 지도 추가 및 입장 시간 반으로 수정",
+    "important": false,
+    "useModal": true
   }
 ]
