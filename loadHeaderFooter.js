@@ -79,7 +79,7 @@ function loadHTML(url, elementId) {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    loadHTML(new URL("html/link.html", scriptRoot), "link");
-    loadHTML(new URL("html/Shor.html", scriptRoot), "Shor");
-    loadHTML(new URL("html/footer.html", scriptRoot), "footer");
+    loadHTML(new URL("html/list/link.html", scriptRoot), "link");
+    loadHTML(new URL("html/list/Shor.html", scriptRoot), "Shor");
+    loadHTML(new URL("html/list/footer.html", scriptRoot), "footer");
 });

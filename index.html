@@ -28,7 +28,6 @@
                         <span style="font-size: 0.85rem; opacity: 0.7; display: block; margin-top: 10px;">(이 사이트 내가 쓸려고
                             만든건 안비밀 ㅎㅅㅎ)</span>
                     </p>
-                    <button onclick="toggleDarkMode()" class="theme-toggle-btn">다크 모드 전환</button>
                 </div>
                 <div class="card info-card">
                     <h2>사이트 정보</h2>
@@ -60,12 +59,7 @@
                             <div id="normal-area" class="notice-area"></div>
                         </div>
                         <a href="html/inw.html" class="view-all-btn">전체 공지 보기</a>
-                        <div class="notice-shortcuts">
-                            <a href="javascript:void(0)" onclick="openLinkPopup()"
-                                class="notice-shortcut-btn link-btn-purple"> 류현준 관련 링크 모음집</a>
-                            <a href="javascript:void(0)" onclick="openShorPopup()"
-                                class="notice-shortcut-btn link-btn-green"> 바로가기 메뉴</a>
-                        </div>
+                    <button onclick="toggleDarkMode()" class="theme-toggle-btn">다크 모드 전환</button>
                     </div>
                 </div>
             </section>
@@ -79,42 +73,6 @@
                     <button onclick="closeModal()">닫기</button>
                 </div>
             </div>
-
-            <!-- 링크 모음집 팝업 -->
-            <div id="link-popup-overlay" class="sp-overlay" onclick="closeLinkPopup()"></div>
-            <div id="link-popup" class="sp-popup">
-                <div class="sp-popup-inner">
-                    <h2>류현준 관련 링크 목록</h2>
-                    <ul>
-                        <li><a href="https://www.youtube.com/@RYU_814" target="_blank" rel="noopener noreferrer">류현준
-                                official</a></li>
-                        <li><a href="https://cafe.naver.com/ryu814" target="_blank" rel="noopener noreferrer">체리 숲</a>
-                        </li>
-                        <li><a href="https://www.instagram.com/comfort_hyun/" target="_blank"
-                                rel="noopener noreferrer">인스타</a></li>
-                        <li><a href="https://www.threads.com/@comfort_hyun" target="_blank"
-                                rel="noopener noreferrer">스레드</a></li>
-                        <li><a href="https://xn--oy2bo3kfwkc1j.com/goods/?cate=001" target="_blank"
-                                rel="noopener noreferrer">체리상회</a></li>
-                        <li><a href="javascript:void(0)" onclick="closeLinkPopup()" class="sp-close">닫기</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- 바로가기 메뉴 팝업 -->
-            <div id="shor-popup-overlay" class="sp-overlay" onclick="closeShorPopup()"></div>
-            <div id="shor-popup" class="sp-popup">
-                <div class="sp-popup-inner">
-                    <ul>
-                        <li><a href="index.html">메인페이지 이동</a></li>
-                        <li><a href="html/inf.html">류현준 오프라인 일정 바로가기</a></li>
-                        <li><a href="html/ins.html">류현준 TJ노래방 번호 모음집 바로가기</a></li>
-                        <li><a href="html/inw.html">공지사항 바로가기</a></li>
-                        <li><a href="javascript:void(0)" onclick="closeShorPopup()" class="sp-close">닫기</a></li>
-                    </ul>
-                </div>
-            </div>
-
     </div>
     </main>
     <div id="footer"></div>

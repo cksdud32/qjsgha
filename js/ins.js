@@ -155,8 +155,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     const targetPos = rect.top + scrollTop;
 
                     window.scrollTo({ top: targetPos - 50, behavior: 'smooth' });
-                    target.style.backgroundColor = '#e7dfff';
-                    setTimeout(() => target.style.backgroundColor = '', 5000);
+                    // 기존 코드: target.style.backgroundColor = '#e7dfff'; 부분을 아래로 교체
+                    const isDarkMode = document.body.classList.contains('dark-mode');
+
+                    if (isDarkMode) {
+                        // 다크 모드일 때: 진한 보라색 배경 + 글자색 흰색 유지
+                        target.style.backgroundColor = '#370089'; // 진한 보라 (Deep Purple)
+                        target.style.color = '#ffffff';
+                    } else {
+                        // 라이트 모드일 때: 기존 연한 보라 배경 + 글자색 검정
+                        target.style.backgroundColor = '#e7dfff';
+                        target.style.color = '#000000';
+                    }
+
+                    // 5초 뒤에 초기화할 때 색상도 같이 초기화
+                    setTimeout(() => {
+                        target.style.backgroundColor = '';
+                        target.style.color = '';
+                    }, 5000);
                 });
             }
         });

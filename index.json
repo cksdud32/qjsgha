@@ -109,7 +109,7 @@
     "date": "2026-04-08",
     "content": "모든 페이지에 다크 모드가 추가되었으며,\n업데이트 팝업이 있는 페이지에는 팝업 안에 '설정'이 추가되었습니다.",
     "important": true,
-    "useModal": false
+    "useModal": true
   },
   {
     "id": 15,

@@ -423,7 +423,7 @@ body.dark-mode .sks {
 }
 
 /* 1. 특정 영역(#songList) 안의 li만 스타일 적용 */
-body.dark-mode #clsa li {
+body.dark-mode #limo li {
     transition: background-color 0.2s ease, transform 0.2s ease !important;
     border-radius: 8px !important;
     padding: 10px !important;
@@ -435,15 +435,15 @@ body.dark-mode #clsa li {
 }
 
 /* 2. 노래 목록 리스트에만 마우스를 올렸을 때 */
-body.dark-mode #clsa li:hover {
+body.dark-mode #limo li:hover {
     background-color: #1e293b !important; /* 살짝 밝아지는 남회색 */
     box-shadow: inset 0 0 10px rgba(204, 166, 232, 0.1) !important;
     cursor: pointer;
 }
 
 /* 3. 해당 리스트 안의 텍스트만 흰색으로 강조 */
-body.dark-mode #clsa li:hover p,
-body.dark-mode #clsa li:hover span {
+body.dark-mode #limo li:hover p,
+body.dark-mode #limo li:hover span {
     color: #ffffff !important;
 }
 

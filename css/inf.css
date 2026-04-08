@@ -52,7 +52,7 @@ body {
     margin-bottom: 5px;
 }
 
-.opas ul, .opas li { height: auto; }
+.opas dl, .opas dt { height: auto; }
 .opas * { color: white; }
 
 .opas h1 {
