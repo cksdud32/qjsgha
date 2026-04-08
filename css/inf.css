@@ -143,7 +143,6 @@ body {
   border: none;
 }
 
-/* 네이버 앱 전용 숨김 클래스 */
 .hide-in-naver {
   display: none !important;
 }

@@ -3,39 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
+    <link rel="stylesheet" href="../css/Dark.css">
     <style>
-    *{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: #000;
-    }
+    /* color: #000; <- 이 부분을 지우거나 아래처럼 변수로 바꾸세요 */
+    color: var(--text-main); 
+}
 
-    li{list-style: none;}
+li { list-style: none; }
 
-    footer {
-     width: 100%;
-     padding: 20px 0;   
-     text-align: center;
-     font-size: 14.4px;
-     color: #666;
-     background-color: #f1f1f1;
-    }
+footer {
+    width: 100%;
+    padding: 20px 0;   
+    text-align: center;
+    font-size: 14.4px;
+    /* 고정값 대신 변수 사용 */
+    color: var(--text-muted);
+    background-color: var(--background); /* 혹은 var(--card-bg) */
+    transition: all 0.3s ease; /* 부드러운 전환을 위해 추가 */
+}
 
-    footer p {
-     line-height: 1.6;
-     
-    }
-    footer a {
-      text-decoration: none;
-      color: inherit;
-    }
+footer p {
+    line-height: 1.6;
+}
 
-    footer a:hover {
-      text-decoration: underline;
-      color: blue;
-    }
-    
+footer a {
+    text-decoration: none;
+    color: var(--primary); /* 인스타그램 링크 등을 강조색으로 */
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* 팝업 내부도 다크모드 대응 */
+.img-popup-inner {
+    background: var(--card-bg);
+    color: var(--text-main);
+}
+
     .img-popup {
   display: none;
 }

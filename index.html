@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>메인 페이지</title>
     <link rel="stylesheet" href="css/ind.css">
+    <link rel="stylesheet" href="css/Dark.css">
 </head>
 
 <body>
@@ -13,14 +14,9 @@
         <header>
             <h1>안녕하세요!</h1>
             <nav>
-                <ul>
-                    <li>
-                        <p>※ 본 사이트는 팬 제작 비공식·비영리 사이트입니다.</p>
-                    </li>
-                </ul>
+                       <p>※ 본 사이트는 팬 제작 비공식·비영리 사이트입니다.</p>
             </nav>
         </header>
-
         <main>
             <section class="hero-section">
                 <div class="card intro-card">
@@ -32,6 +28,7 @@
                         <span style="font-size: 0.85rem; opacity: 0.7; display: block; margin-top: 10px;">(이 사이트 내가 쓸려고
                             만든건 안비밀 ㅎㅅㅎ)</span>
                     </p>
+                    <button onclick="toggleDarkMode()" class="theme-toggle-btn">다크 모드 전환</button>
                 </div>
                 <div class="card info-card">
                     <h2>사이트 정보</h2>
@@ -123,6 +120,7 @@
     <div id="footer"></div>
     <script src="loadHeaderFooter.js"></script>
     <script src="js/index.js"></script>
+    <script src="js/Dark.js"></script>
 </body>
 
 </html>

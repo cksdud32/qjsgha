@@ -1,0 +1,650 @@
+/* 기본 상태 (라이트 모드) 에서의 버튼 */
+.theme-toggle-btn {
+    background-color: #ffffff !important; /* 밝은 배경 */
+    color: #1a202c !important;           /* 어두운 글자색 */
+    border: 1px solid #cbd5e0 !important; /* 연한 테두리 */
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 살짝 그림자 추가 */
+}
+
+/* 기본 상태에서 마우스 올렸을 때 */
+.theme-toggle-btn:hover {
+    background-color: #f7fafc !important;
+    border-color: #CCA6E8 !important; /* 보라색 포인트 */
+}
+
+/* 다크 모드 활성화 시 버튼 스타일 변화 */
+body.dark-mode .theme-toggle-btn {
+    background-color: #2d3748 !important; /* 어두운 배경 */
+    color: #ffffff !important;           /* 밝은 글자색 */
+    border: 1.5px solid #CCA6E8 !important; /* 보라색 테두리 강조 */
+    box-shadow: 0 0 10px rgba(204, 166, 232, 0.3);
+}
+
+:root {
+    --primary: #4CAF50;
+    --primary-dark: #2E7D32;
+    --primary-light: #E8F5E9;
+    --background: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+    --border: #E2E8F0;
+    --radius: 20px;
+    --shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+    --hover-shadow: 0 20px 40px -10px rgba(76, 175, 80, 0.15);
+}
+
+/* 다크 모드 변수 설정 */
+body.dark-mode {
+    --background: #0F172A; /* 어두운 네이비톤 */
+    --card-bg: #1E293B;
+    --text-main: #F1F5F9;
+    --text-muted: #94A3B8;
+    --border: #334155;
+    --primary-light: #14532D; /* 어두운 초록 배경 */
+    --shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
+    --hover-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* 부드러운 전환을 위해 body에 transition 추가 */
+body {
+    background-color: var(--background);
+    color: var(--text-main);
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 다크 모드 시 카드 테두리 조정 */
+body.dark-mode .card {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 다크 모드 시 공지사항 아이템 호버 효과 조정 */
+body.dark-mode .notice-item:hover {
+    background: #2D3748;
+}
+
+.theme-toggle-btn {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    backdrop-filter: blur(5px);
+    transition: 0.2s;
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* 다크 모드일 때 특정 요소 강제 색상 변경 */
+body.dark-mode .notice-item.important {
+    background: #2D1B1E !important; /* 짙은 붉은 기가 도는 어두운 배경 */
+    border-color: #ef4444 !important;
+    color: #fecaca !important; /* 글자색도 연한 핑크로 변경 */
+}
+
+body.dark-mode .notice-item.important .notice-title,
+body.dark-mode .notice-item.important .notice-date {
+    color: #fecaca !important;
+}
+
+/* '전체 공지 보기' 버튼 (흰색 배경인 경우) */
+body.dark-mode .view-all-btn {
+    background: #1E293B !important;
+    color: #F8FAFC !important;
+    border-color: #334155 !important;
+}
+
+body.dark-mode .view-all-btn:hover {
+    background: var(--primary) !important;
+    color: white !important;
+}
+
+/* 일반 공지 아이템의 제목 색상 보정 (혹시 검은색으로 나온다면) */
+body.dark-mode .notice-title {
+    color: #F1F5F9 !important;
+}
+
+/* 다크 모드 팝업 컨텐츠 */
+body.dark-mode .popup-content3,
+body.dark-mode .popup_12_popi, 
+body.dark-mode .hidden-box {
+    background-color: #1e293b !important; /* 진한 남회색 */
+    color: #f1f5f9 !important; /* 밝은 글자색 */
+    border: 1px solid #334155 !important;
+}
+
+/* 팝업 내 소제목 */
+body.dark-mode .popup-content3 h2, 
+body.dark-mode .popup-content3 h4 {
+    color: #e2e8f0 !important;
+}
+
+/* 팝업 내 일반 텍스트 및 링크 */
+body.dark-mode .popup-content3 p, 
+body.dark-mode .popup_12_popi p {
+    color: #cbd5e0 !important;
+}
+
+/* 닫기 버튼 */
+body.dark-mode .close3, 
+body.dark-mode .popup_exe {
+    color: #94a3b8 !important;
+}
+
+/* 체크리스트 항목 카드 */
+body.dark-mode .check-item {
+    background-color: #242933 !important; /* 항목별 배경색 */
+    border: 1px solid #3b4252 !important;
+    color: #eceff4 !important; /* 글자색 */
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    transition: background 0.3s;
+}
+
+/* 체크된 항목 스타일 */
+body.dark-mode .check-item input:checked + span {
+    color: #64748b !important; /* 체크 시 글자 흐리게 */
+    text-decoration: line-through;
+}
+
+/* 준비물 직접 추가 입력창 */
+body.dark-mode .qpsj {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border: 1px solid #475569 !important;
+}
+
+/* 추가하기 버튼 및 초기화 버튼 */
+body.dark-mode #addCustomItemBtn, 
+body.dark-mode .clear-btn {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+/* 테이블 전체 및 셀 테두리 */
+body.dark-mode table {
+    border-collapse: collapse;
+    background-color: #1a202c !important;
+}
+
+body.dark-mode th, 
+body.dark-mode td {
+    border: 1px solid #2d3748 !important;
+    color: #e2e8f0 !important;
+}
+
+/* 테이블 헤더(제목줄) 강조 */
+body.dark-mode th {
+    background-color: #2d3748 !important;
+    color: #f8fafc !important;
+}
+
+/* 테이블 내 링크(티켓팅/셋리스트 등) */
+body.dark-mode table a {
+    color: #60a5fa !important; /* 밝은 파랑 */
+}
+
+/* 계산기 박스 */
+body.dark-mode .calculator {
+    background-color: #0f172a !important;
+    border: 2px solid #3b82f6 !important;
+}
+
+/* 계산기 내부 텍스트 */
+body.dark-mode .calculator-header, 
+body.dark-mode .calc-total {
+    color: #ffffff !important;
+}
+
+/* 계산기 하단 버튼 공통 (다크 모드) */
+body.dark-mode #resetCalc,
+body.dark-mode #closeCalc {
+    background-color: #334155 !important; /* 버튼 배경: 진회색 */
+    color: #f1f5f9 !important;           /* 글자색: 밝은 흰색 */
+    border: 1px solid #475569 !important; /* 테두리 */
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 버튼에 마우스 올렸을 때 (Hover) */
+body.dark-mode #resetCalc:hover,
+body.dark-mode #closeCalc:hover {
+    background-color: #CCA6E8 !important; /* 포인트 보라색으로 강조 */
+    color: #1e293b !important;           /* 글자는 어둡게 */
+    border-color: #CCA6E8 !important;
+}
+
+/* 초기화 버튼은 조금 더 눈에 띄게 하고 싶다면 (선택) */
+body.dark-mode #resetCalc {
+    margin-right: 10px;
+}
+
+/* 토글 버튼 텍스트 (다크 모드) */
+body.dark-mode .toggle-text {
+    color: #94a3b8 !important; /* 연한 회청색 */
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+body.dark-mode .toggle-text:hover {
+    color: #f1f5f9 !important;
+    background-color: #334155 !important;
+}
+
+/* 열리는 박스 내부 컨텐츠 (다크 모드) */
+body.dark-mode .hidden-box {
+    background-color: #0f172a !important; /* 더 어두운 배경 */
+    border: 1px solid #334155 !important;
+    color: #cbd5e0 !important;
+}
+
+body.dark-mode .hidden-box h3 {
+    color: #CCA6E8 !important; /* 포인트 컬러 유지 */
+    border-bottom: 1px solid #334155;
+}
+
+body.dark-mode .hidden-box b, 
+body.dark-mode .hidden-box strong {
+    color: #e2e8f0 !important;
+}
+
+/* 실제 내용이 담긴 content 영역 */
+body.dark-mode .hidden-box .content {
+    background-color: #0f172a !important; /* 배경색 확정 */
+    color: #cbd5e0 !important;           /* 전체 글자색 */
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* 텍스트 가독성을 위한 세부 설정 */
+body.dark-mode .content h3 {
+    color: #CCA6E8 !important; /* 소제목: 보라색 계열 */
+    border-bottom: 1px solid #334155;
+    padding-bottom: 5px;
+    margin-top: 15px;
+}
+
+body.dark-mode .content b, 
+body.dark-mode .content strong {
+    color: #f1f5f9 !important; /* 강조 텍스트: 더 밝은 흰색 */
+}
+
+body.dark-mode .content p, 
+body.dark-mode .content div {
+    color: #cbd5e0 !important; /* 일반 설명글 */
+}
+
+body.dark-mode .content i {
+    color: #94a3b8 !important; /* 기울임꼴 안내문: 회색 */
+    font-style: normal;
+}
+
+/* 클릭하는 행 (▼ 전체 뱃지 보기 등) */
+body.dark-mode .clickable-row {
+    background-color: #1e293b !important;
+    color: #CCA6E8 !important; /* 포인트 보라색 */
+    cursor: pointer;
+}
+
+/* 숨겨져 있다가 나타나는 가격 정보 행 */
+body.dark-mode .price-row, 
+body.dark-mode .hidden-row {
+    background-color: #1a202c !important; /* 기본 테이블보다 살짝 밝게 구분 */
+}
+
+body.dark-mode .price-row td {
+    color: #cbd5e0 !important;
+    border-color: #2d3748 !important;
+}
+
+/* 화살표 아이콘 색상 보정 */
+body.dark-mode .arrow {
+    color: #CCA6E8 !important;
+}
+
+/* 안내 사항 이탤릭체 가독성 */
+body.dark-mode .hidden-box i {
+    color: #94a3b8 !important;
+    font-style: normal; /* 다크모드에선 가독성을 위해 기울임 해제 권장 */
+    display: block;
+    line-height: 1.6;
+}
+
+/* 링크 텍스트 (체리 숲 바로가기 등) */
+body.dark-mode .fldzm {
+    color: #60a5fa !important;
+    text-decoration: underline;
+}
+
+/* 전체 배경 및 기본 글자색 */
+body.dark-mode {
+    background-color: #0f172a !important;
+    color: #e2e8f0 !important;
+}
+
+/* 상단 링크 (TJ 신청, 공지 보기 등) */
+body.dark-mode #clsa a, 
+body.dark-mode .open-popup3 {
+    color: #CCA6E8 !important; /* 보라색 포인트 */
+}
+
+/* 제목(h1) 및 섹션 제목(h3) */
+body.dark-mode h1, 
+body.dark-mode h3 {
+    color: #f1f5f9 !important;
+}
+
+/* 검색창 */
+body.dark-mode #searchInput {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+    border: 1px solid #334155 !important;
+}
+
+/* 필터 버튼 (전체, 일본곡, 오리지널 등) */
+body.dark-mode .song-filter button {
+    background-color: #334155 !important;
+    color: #cbd5e0 !important;
+    border: 1px solid #475569 !important;
+}
+
+body.dark-mode .song-filter button:hover {
+    background-color: #CCA6E8 !important;
+    color: #1e293b !important;
+}
+
+/* 노래 목록 아이템 */
+body.dark-mode li {
+    border-bottom: 1px solid #1e293b !important;
+}
+
+/* 가사 보기 버튼 (lyrics-btn) */
+body.dark-mode .lyrics-btn {
+    background-color: #2d3748 !important;
+    color: #ffffff !important;
+    border: 1px solid #CCA6E8 !important;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+/* 리스트 내의 외부 링크(유튜브, 체리숲) */
+body.dark-mode li a {
+    color: #93c5fd !important; /* 밝은 파란색 */
+}
+
+/* 모달 배경 */
+body.dark-mode .modal {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* 모달 컨텐츠 박스 */
+body.dark-mode .modal-content {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #334155 !important;
+}
+
+/* 모달 내 제목 및 가사 텍스트 */
+body.dark-mode #modalTitle {
+    color: #CCA6E8 !important;
+    border-bottom: 1px solid #334155;
+}
+
+/* 모달 닫기 버튼 (#closeBtn) */
+body.dark-mode #closeBtn {
+    background-color: #ef4444 !important; /* 닫기는 빨간색 계열이나 */
+    color: white !important;
+    border: none !important;
+}
+
+body.dark-mode .jap, body.dark-mode .ja, 
+body.dark-mode .kso, body.dark-mode .kor,
+body.dark-mode .sks {
+    background-color: transparent !important;
+}
+
+/* 1. 특정 영역(#songList) 안의 li만 스타일 적용 */
+body.dark-mode #clsa li {
+    transition: background-color 0.2s ease, transform 0.2s ease !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    margin-bottom: 5px !important;
+    background-color: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 2. 노래 목록 리스트에만 마우스를 올렸을 때 */
+body.dark-mode #clsa li:hover {
+    background-color: #1e293b !important; /* 살짝 밝아지는 남회색 */
+    box-shadow: inset 0 0 10px rgba(204, 166, 232, 0.1) !important;
+    cursor: pointer;
+}
+
+/* 3. 해당 리스트 안의 텍스트만 흰색으로 강조 */
+body.dark-mode #clsa li:hover p,
+body.dark-mode #clsa li:hover span {
+    color: #ffffff !important;
+}
+
+/* 2. 다크 모드일 때 닫기 버튼 (여기서 하얗게 뜨는 걸 잡습니다) */
+body.dark-mode .close3 {
+    background-color: #1e293b !important; /* 배경을 어두운 남색으로 */
+    color: #CCA6E8 !important;           /* 글자를 보라색으로 */
+    border: 1px solid #334155 !important; /* 테두리도 어둡게 */
+}
+
+/* 3. 다크 모드에서 마우스 올렸을 때 */
+body.dark-mode .close3:hover {
+    background-color: #CCA6E8 !important; /* 배경이 보라색으로 변함 */
+    color: #0f172a !important;           /* 글자는 아주 어둡게 */
+}
+
+/* 팝업 1 다크 모드 본체 */
+body.dark-mode .popup-content1 {
+    background: rgba(30, 41, 59, 0.98) !important; /* 진한 네이비 */
+    color: #f8fafc !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 팝업 1 리스트 아이템 */
+body.dark-mode .popup-content1 li a {
+    color: #cbd5e1 !important;
+    background: #334155 !important; /* 항목 배경색 */
+}
+
+/* 리스트 아이템 호버 (초록색 포인트) */
+body.dark-mode .popup-content1 li a:hover {
+    background: #10b981 !important;
+    color: #ffffff !important;
+}
+
+/* 팝업 1 닫기 버튼 (마지막 항목) */
+body.dark-mode .popup-content1 li:last-child a {
+    background: #0f172a !important; /* 더 어두운 배경 */
+    color: #94a3b8 !important;
+}
+
+body.dark-mode .popup-content1 li:last-child a:hover {
+    background: #ef4444 !important; /* 닫기 호버는 빨간색 */
+    color: #ffffff !important;
+}
+
+/* 팝업 2 다크 모드 본체 */
+body.dark-mode .popup-cpmtrmt2 {
+    background: rgba(30, 41, 59, 0.98) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 제목 색상 */
+body.dark-mode .popup-cpmtrmt2 h2 {
+    color: #f8fafc !important;
+}
+
+/* 팝업 2 리스트 아이템 */
+body.dark-mode .popup-cpmtrmt2 li a {
+    color: #cbd5e1 !important;
+    background: #334155 !important;
+}
+
+/* 리스트 아이템 호버 (보라/파랑 포인트) */
+body.dark-mode .popup-cpmtrmt2 li a:hover {
+    background: #4f46e5 !important;
+    color: #ffffff !important;
+}
+
+/* 팝업 2 닫기 버튼 */
+body.dark-mode .popup-cpmtrmt2 li:last-child a {
+    background: #0f172a !important;
+    color: #94a3b8 !important;
+}
+
+body.dark-mode .popup-cpmtrmt2 li:last-child a:hover {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+/* 전체 배경 및 기본 글자색 */
+body.dark-mode #clsa {
+    background-color: #0f172a !important;
+    color: #e2e8f0 !important;
+}
+
+/* 상단 헤더 영역 */
+body.dark-mode header h1 {
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode header h2 {
+    color: #CCA6E8 !important; /* 포인트 컬러 */
+}
+
+body.dark-mode header p {
+    color: #94a3b8 !important;
+}
+
+/* 네비게이션 메뉴 (메인메뉴로 돌아가기 등) */
+body.dark-mode nav a {
+    background-color: #1e293b !important;
+    color: #cbd5e0 !important;
+    border: 1px solid #334155 !important;
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+body.dark-mode nav a:hover {
+    background-color: #CCA6E8 !important;
+    color: #0f172a !important;
+}
+
+/* 공지 사항 리스트 영역 (중요/일반 공지) */
+body.dark-mode #important-area, 
+body.dark-mode #normal-area {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* 개별 공지 항목 (Notice Item) */
+body.dark-mode .notice-item {
+    border-bottom: 1px solid #334155 !important;
+    padding: 10px 0;
+}
+
+body.dark-mode .notice-item:hover {
+    background-color: #2d3748 !important;
+}
+
+/* 공지 사항 팝업/모달 (popup-3) */
+body.dark-mode .popup-3 {
+    background-color: rgba(15, 23, 42, 0.9) !important; /* 배경 흐리게 */
+}
+
+body.dark-mode .popup-inner {
+    background-color: #1e293b !important; /* 모달 본체 */
+    color: #f1f5f9 !important;
+    border: 1px solid #475569 !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+}
+
+/* 팝업 내부 텍스트 */
+body.dark-mode .popup-title {
+    color: #CCA6E8 !important;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 10px;
+}
+
+body.dark-mode .popup-date {
+    color: #94a3b8 !important;
+}
+
+body.dark-mode .popup-content {
+    color: #cbd5e0 !important;
+}
+
+/* 팝업 닫기 버튼 */
+body.dark-mode .popup-inner button {
+    background-color: #334155 !important;
+    color: #f1f5f9 !important;
+    border: 1px solid #475569 !important;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+body.dark-mode .popup-inner button:hover {
+    background-color: #ef4444 !important; /* 닫기는 빨간색 포인트 */
+    color: white !important;
+    border-color: #ef4444 !important;
+}
+
+/* 하단 푸터 (있는 경우) */
+body.dark-mode #footer {
+    border-top: 1px solid #334155 !important;
+    color: #64748b !important;
+}
+
+/* 기본 필터 버튼 스타일 (다크 모드) */
+body.dark-mode .song-filter button {
+    background-color: #334155 !important;
+    color: #cbd5e0 !important;
+    border: 1px solid #475569 !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* ★ 선택된 필터 버튼 강조 (Active 상태) ★ */
+body.dark-mode .song-filter button.active {
+    background-color: #CCA6E8 !important; /* 포인트 보라색 배경 */
+    color: #1e293b !important;           /* 글자는 어둡게 해서 대비 증폭 */
+    border-color: #ffffff !important;     /* 테두리 흰색으로 강조 */
+    font-weight: bold;
+    box-shadow: 0 0 12px rgba(204, 166, 232, 0.4); /* 살짝 빛나는 효과 */
+    transform: translateY(-2px);          /* 살짝 위로 들림 */
+}
