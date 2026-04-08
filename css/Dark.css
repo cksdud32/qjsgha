@@ -27,7 +27,7 @@ body.dark-mode .theme-toggle-btn {
 
 :root {
     --primary: #4CAF50;
-    --primary-dark: #2E7D32;
+    --primary-dark: #53ce59;
     --primary-light: #E8F5E9;
     --background: #F8FAFC;
     --card-bg: #FFFFFF;
@@ -373,7 +373,7 @@ body.dark-mode .song-filter button:hover {
 }
 
 /* 노래 목록 아이템 */
-body.dark-mode li {
+body.dark-mode #limo li {
     border-bottom: 1px solid #1e293b !important;
 }
 
@@ -422,16 +422,28 @@ body.dark-mode .sks {
     background-color: transparent !important;
 }
 
-/* 1. 특정 영역(#songList) 안의 li만 스타일 적용 */
+/* 1. 특정 영역(#limo) 안의 li만 스타일 적용 */
 body.dark-mode #limo li {
     transition: background-color 0.2s ease, transform 0.2s ease !important;
     border-radius: 8px !important;
-    padding: 10px !important;
-    margin-bottom: 5px !important;
+    padding: 20px !important;
+    margin: 20px 0 !important;
     background-color: transparent;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+body.dark-mode .sks > ul > li{
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 10px !important;
+}
+
+body.dark-mode .sks > ul > li > a{
+     padding: 0 !important;
+    margin: 0 !important;
+    line-height: 0 !important;
 }
 
 /* 2. 노래 목록 리스트에만 마우스를 올렸을 때 */
