@@ -85,6 +85,14 @@ body.dark-mode .notice-item:hover {
     background: rgba(255, 255, 255, 0.3);
 }
 
+body.dark-mode .opas{
+background: #4c3597 !important;
+}
+
+body.dark-mode header{
+    background: #4c3597 !important;
+}
+
 /* 다크 모드일 때 특정 요소 강제 색상 변경 */
 body.dark-mode .notice-item.important {
     background: #2D1B1E !important; /* 짙은 붉은 기가 도는 어두운 배경 */
@@ -434,17 +442,10 @@ body.dark-mode #limo li {
     align-items: center;
 }
 
-body.dark-mode .sks > ul > li{
-    padding: 0 !important;
-    margin: 0 !important;
-    height: 10px !important;
+body.dark-mode .sks > ul > li:hover{
+    background-color: #1a202c;
 }
 
-body.dark-mode .sks > ul > li > a{
-     padding: 0 !important;
-    margin: 0 !important;
-    line-height: 0 !important;
-}
 
 /* 2. 노래 목록 리스트에만 마우스를 올렸을 때 */
 body.dark-mode #limo li:hover {
@@ -581,12 +582,6 @@ body.dark-mode #normal-area {
     margin-bottom: 20px;
 }
 
-/* 개별 공지 항목 (Notice Item) */
-body.dark-mode .notice-item {
-    border-bottom: 1px solid #334155 !important;
-    padding: 10px 0;
-}
-
 body.dark-mode .notice-item:hover {
     background-color: #2d3748 !important;
 }
@@ -594,6 +589,7 @@ body.dark-mode .notice-item:hover {
 /* 공지 사항 팝업/모달 (popup-3) */
 body.dark-mode .popup-3 {
     background-color: rgba(15, 23, 42, 0.9) !important; /* 배경 흐리게 */
+    padding: 0 !important;
 }
 
 body.dark-mode .popup-inner {
@@ -601,7 +597,13 @@ body.dark-mode .popup-inner {
     color: #f1f5f9 !important;
     border: 1px solid #475569 !important;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-    border-radius: 20px;
+    width: 100%;
+    padding: 40px;
+    background: var(--text-main);
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: background 0.2s;
 }
 
 /* 팝업 내부 텍스트 */
