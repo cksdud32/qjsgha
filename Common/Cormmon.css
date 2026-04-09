@@ -1,0 +1,36 @@
+/* 탭 버튼 기본 스타일 */
+.tab-btn {
+    cursor: pointer;
+    padding-bottom: 8px;
+    font-weight: bold;
+    color: #94a3b8;
+    transition: 0.3s;
+}
+
+/* 탭 선택 시 보라색 강조 */
+#tab1:checked ~ div label[for="tab1"],
+#tab2:checked ~ div label[for="tab2"] {
+    color: #CCA6E8;
+    border-bottom: 2px solid #CCA6E8;
+}
+
+/* 내용 전환 로직 */
+.tab-content1, .tab-content2 {
+    display: none; /* 기본은 숨김 */
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 라디오 버튼 체크 상태에 따라 보여주기 */
+#tab1:checked ~ .tab-content1 {
+    display: block;
+}
+
+#tab2:checked ~ .tab-content2 {
+    display: block;
+}
+
+/* 부드러운 전환 효과 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}

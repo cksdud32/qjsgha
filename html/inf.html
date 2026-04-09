@@ -6,6 +6,7 @@
   <title>류현준 오프라인 정보</title>
   <link rel="stylesheet" href="../css/inf.css">
   <link rel="stylesheet" href="../Common/Dark.css">
+  <link rel="stylesheet" href="../Common/Cormmon.css">
 </head>
 
 <body>
@@ -13,38 +14,51 @@
   <div id="link"></div>
   <div id="clsa">
     <a href="#popup3" class="open-popup3"> 업데이트 내용 및 정보 보기</a>
-
     <div id="popup3" class="popup3">
-
       <div class="popup-content3">
+        <input type="radio" id="tab1" name="p-tab" checked style="display:none;">
+        <input type="radio" id="tab2" name="p-tab" style="display:none;">
 
-        <h2>업데이트 날짜:2025-04-08 <br><br>업데이트 내용</h2>
+        <div style="display: flex; gap: 20px; margin-bottom: 15px; border-bottom: 1px solid slategrey;">
+          <label for="tab1" class="tab-btn">📢 업데이트</label>
+          <label for="tab2" class="tab-btn">⚙️ 설정</label>
+        </div>
 
-        <p>정보 표의 위치 영역에 지도를 추가하고,<br>
-          링크 문구를 “길찾기 / 상세 위치 보기”로 간결하게 정리하였으며,<br>
-          입장 시간 관련 내용은 ‘반’으로 수정하였습니다.</p><br>
+        <div class="tab-content1">
+          <h2>업데이트 날짜:2025-04-08 <br><br>업데이트 내용</h2>
+
+          <p>정보 표의 위치 영역에 지도를 추가하고,<br>
+            링크 문구를 “길찾기 / 상세 위치 보기”로 간결하게 정리하였으며,<br>
+            입장 시간 관련 내용은 ‘반’으로 수정하였습니다.</p><br>
+
+          <br>
+          <h4 style="border-bottom: 1px solid slategrey; color: #CCA6E8;">추가 정보</h4>
+          <p>사이트의 오프라인 정보는 변경된 내용이 포함되어 있을 수 있습니다. <br>
+            그러니 사실과 다른 내용을 발견하시면<br> 인스타
+            <a href="https://www.instagram.com/cksdud3/" target="_blank" rel="noopener noreferrer"
+              style="color: blue; text-decoration: underline;">(cksdud3)</a>
+            또는 스레드
+            <a href="https://www.threads.com/@cksdud3/post/DQsxOzuktfz?xmt=AQF0Op5Ai6rAT0JfCwFVqehP2BO0gLhXRyLfJJFtEZV4Gn9jN64cwXihXL1ghr-4khrQuFpY&slof=1"
+              target="_blank" rel="noopener noreferrer" style="color: blue; text-decoration: underline;">(cksdud3 고정된 글)
+
+            </a>에 <br> 알려주시면 즉시 수정 예정입니다.
+          </p>
+        </div>
+
+        <div class="tab-content2 popup-31">
+          <h4 style="border-bottom: 1px solid slategrey; color: #CCA6E8;">사이트 설정</h4>
+          <br>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <span>화면 모드</span>
+            <button onclick="toggleDarkMode()" class="theme-toggle-btn">다크모드 전환</button>
+          </div>
+        </div>
 
         <br>
-        <h4 style="border-bottom: 1px solid slategrey; color: #CCA6E8;">추가 정보</h4>
-        <p>사이트의 오프라인 정보는 변경된 내용이 포함되어 있을 수 있습니다. <br>
-          그러니 사실과 다른 내용을 발견하시면<br> 인스타
-          <a href="https://www.instagram.com/cksdud3/" target="_blank" rel="noopener noreferrer"
-            style="color: blue; text-decoration: underline;">(cksdud3)</a>
-          또는 스레드
-          <a href="https://www.threads.com/@cksdud3/post/DQsxOzuktfz?xmt=AQF0Op5Ai6rAT0JfCwFVqehP2BO0gLhXRyLfJJFtEZV4Gn9jN64cwXihXL1ghr-4khrQuFpY&slof=1"
-            target="_blank" rel="noopener noreferrer" style="color: blue; text-decoration: underline;">(cksdud3 고정된 글)
-
-          </a>에 <br> 알려주시면 즉시 수정 예정입니다.
-        </p><br>
-        <br>
-        <h4 style="border-bottom: 1px solid slategrey; color: #CCA6E8;">설정</h4>
-        <br>
-        <button onclick="toggleDarkMode()" class="theme-toggle-btn">다크 모드 전환</button>
-
         <a href="#none" class="close3">닫기</a>
-
       </div>
     </div>
+
     <div class="popup_12">
       <div class="popup_12_popi">
         <h2 style="text-align: center; margin-bottom: 10px;">체리제 셋리스트<br>
@@ -313,8 +327,8 @@
                   마음들을 담아주시면 무대 위에서 Q&A처럼 읽어주실 예정입니다. <br>
                   현장에서 궁금하신 내용이나 하고 싶은 얘기를 적어, <br>
                   추후 스텝이 수거할 때 전달해 주시면 됩니다. <br>
-                  <a href="https://naver.me/5RAcqCLC"  class="fldzm" target="_blank"
-                    rel="noopener noreferrer">관련 공지 보기</a>
+                  <a href="https://naver.me/5RAcqCLC" class="fldzm" target="_blank" rel="noopener noreferrer">관련 공지
+                    보기</a>
                   <br>
                   • 이번 체리제는 모든 곡이 밴드로 진행됩니다. <br>
                   <br><br>
@@ -676,5 +690,6 @@
 </body>
 <script src="../js/inf.js"></script>
 <script src="../Common/Dark.js"></script>
+<script src="../Common/Cormmon.js"></script>
 
 </html>
