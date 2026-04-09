@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <title>준님 TJ노래방 번호 정리</title>
     <link rel="stylesheet" href="../css/ins.css">
-    <link rel="stylesheet" href="../css/Dark.css">
+    <link rel="stylesheet" href="../Common/Dark.css">
+    <!-- <link rel="stylesheet" href="../Common/fint.css">-->
 </head>
 
 <body>
@@ -18,32 +19,44 @@
             <a href="#popup3" class="open-popup3"> 업데이트 및 정보/공지 보기</a>
 
             <div id="popup3" class="popup3">
-
                 <div class="popup-content3">
+                    <input type="radio" id="tab1" name="p-tab" checked style="display:none;">
+                    <input type="radio" id="tab2" name="p-tab" style="display:none;">
 
-                    <h2>업데이트 날짜:2025-03-27 <br><br>업데이트 내용</h2>
+                    <div style="display: flex; gap: 20px; margin-bottom: 15px; border-bottom: 1px solid slategrey;">
+                        <label for="tab1" class="tab-btn">📢 업데이트</label>
+                        <label for="tab2" class="tab-btn">⚙️ 설정</label>
+                    </div>
 
-                    <p> 행복 2018 가사 추가<br>
+                    <div class="tab-content1">
+                        <h2>업데이트 날짜:2025-03-27 <br><br>업데이트 내용</h2>
+                        <p> 행복 2018 가사 추가<br>
+                            <br>
+                        <h4 style="border-bottom: 1px solid slategrey; color: tomato; font-size: 20px;">정보</h4>
+                        123, ABC, 가나다 순으로 정리 <br>
+                        현재 곡 수:102곡(일본 커버곡: 71곡, 오리지널 곡: 8곡, 한국 커버 곡 23곡)<br>
+                        체리 숲·타 유튜버 콜라보 곡은 옆 링크 클릭 시 해당 유튜브 또는 체리숲으로 이동<br>
                         <br>
-                    <h4 style="border-bottom: 1px solid slategrey; color: tomato; font-size: 20px;">정보</h4>
-                    123, ABC, 가나다 순으로 정리 <br>
-                    현재 곡 수:102곡(일본 커버곡: 71곡, 오리지널 곡: 8곡, 한국 커버 곡 23곡)<br>
-                    체리 숲·타 유튜버 콜라보 곡은 옆 링크 클릭 시 해당 유튜브 또는 체리숲으로 이동<br>
-                    <br>
-                    <h4 style="border-bottom: 1px solid slategrey; color: #CCA6E8;">가사 관련</h4>
-                    가사는 모든 곡에 적용되어 있습니다.<br>
-                    <br>
-                    가사에 코멘트, 멘트는 앞에 - 기호를 붙여 표시합니다. <br>
-                    (줄바꿈이 되어 있어도, 줄바꿈이 두번 이상 되어 있지않으면 코멘트 일부입니다.)
-                    </p>
-                    <br>
-                    <h4 style="border-bottom: 1px solid slategrey; color: #CCA6E8;">설정</h4>
-                    <br>
-                    <button onclick="toggleDarkMode()" class="theme-toggle-btn">다크모드 전환</button>
+                        <h4 style="border-bottom: 1px solid slategrey; color: #CCA6E8;">가사 관련</h4>
+                        가사는 모든 곡에 적용되어 있습니다.<br>
+                        <br>
+                        가사에 코멘트, 멘트는 앞에 - 기호를 붙여 표시합니다. <br>
+                        (줄바꿈이 되어 있어도, 줄바꿈이 두번 이상 되어 있지않으면 코멘트 일부입니다.)
+                        </p>
+                    </div>
 
+                    <div class="tab-content2 popup-31">
+                        <h4 style="border-bottom: 1px solid slategrey; color: #CCA6E8;">사이트 설정</h4>
+                        <br>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <span>화면 모드</span>
+                            <button onclick="toggleDarkMode()" class="theme-toggle-btn">다크모드 전환</button>
+                        </div>
+                    </div>
 
+                    <br>
                     <a href="#none" class="close3">닫기</a>
-
                 </div>
             </div>
         </div>
@@ -566,7 +579,8 @@
     <div id="footer"></div>
     <script src="../loadHeaderFooter.js"></script>
     <script src="../js/ins.js"></script>
-    <script src="../js/Dark.js"></script>
+    <script src="../Common/Dark.js"></script>
+    <!--  <script src="../Common/font.js"></script> -->
 </body>
 
 </html>
