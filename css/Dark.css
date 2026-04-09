@@ -221,6 +221,10 @@ body.dark-mode .calc-total {
     color: #ffffff !important;
 }
 
+body.dark-mode #calcList li{
+    background-color: #69a5ead0;
+}
+
 /* 계산기 하단 버튼 공통 (다크 모드) */
 body.dark-mode #resetCalc,
 body.dark-mode #closeCalc {
@@ -361,9 +365,13 @@ body.dark-mode {
 }
 
 /* 상단 링크 (TJ 신청, 공지 보기 등) */
-body.dark-mode #clsa a, 
 body.dark-mode .open-popup3 {
     color: #CCA6E8 !important; /* 보라색 포인트 */
+    background-color: slateblue;
+}
+
+body.dark-mode .skq{
+    background: #ff8cf29f !important;
 }
 
 /* 제목(h1) 및 섹션 제목(h3) */
