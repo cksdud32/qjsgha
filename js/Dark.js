@@ -1,17 +1,49 @@
-// 다크 모드 전환 함수
+// 다크 모드 적용 함수
+function applyDarkMode(isDark) {
+    document.body.classList.toggle('dark-mode', isDark);
+}
+
+// 다크 모드 토글 (버튼 클릭용)
 function toggleDarkMode() {
-    const body = document.body;
-    body.classList.toggle('dark-mode');
-    
-    // 로컬 스토리지에 상태 저장
-    const isDark = body.classList.contains('dark-mode');
+    const isDark = document.body.classList.toggle('dark-mode');
+
+    // 사용자 선택 저장
     localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
 }
 
-// 페이지 로드 시 저장된 설정 불러오기
-document.addEventListener('DOMContentLoaded', () => {
+// 초기 설정 적용
+function initDarkMode() {
     const savedMode = localStorage.getItem('darkMode');
+
+    // 1순위: 사용자 설정
     if (savedMode === 'enabled') {
-        document.body.classList.add('dark-mode');
+        applyDarkMode(true);
+    } else if (savedMode === 'disabled') {
+        applyDarkMode(false);
+    } 
+    // 2순위: 시스템 설정
+    else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyDarkMode(prefersDark);
     }
+}
+
+// 시스템 다크모드 변경 감지
+function watchSystemTheme() {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    mediaQuery.addEventListener('change', (e) => {
+        const savedMode = localStorage.getItem('darkMode');
+
+        // 사용자가 직접 설정한 경우는 시스템 변화 무시
+        if (savedMode) return;
+
+        applyDarkMode(e.matches);
+    });
+}
+
+// 실행
+document.addEventListener('DOMContentLoaded', () => {
+    initDarkMode();
+    watchSystemTheme();
 });
