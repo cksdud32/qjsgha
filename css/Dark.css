@@ -178,7 +178,7 @@ body.dark-mode .qpsj {
 /* 추가하기 버튼 및 초기화 버튼 */
 body.dark-mode #addCustomItemBtn, 
 body.dark-mode .clear-btn {
-    background-color: #3b82f6 !important;
+    background-color: #286bd8 !important;
     color: white !important;
 }
 
@@ -188,7 +188,11 @@ body.dark-mode table {
     background-color: #1a202c !important;
 }
 
-body.dark-mode th, 
+body.dark-mode th{
+    border: solid 1px rgba(255, 255, 255, 0.175) !important;
+    color: #e2e8f0 !important;
+}
+
 body.dark-mode td {
     border: 1px solid #2d3748 !important;
     color: #e2e8f0 !important;
@@ -335,6 +339,13 @@ body.dark-mode .hidden-box i {
     font-style: normal; /* 다크모드에선 가독성을 위해 기울임 해제 권장 */
     display: block;
     line-height: 1.6;
+}
+
+.delete-btn{
+    background-color: blueviolet !important;
+    cursor: pointer;
+    width: 70px; height: 30px;
+    border: 1px solid white;
 }
 
 /* 링크 텍스트 (체리 숲 바로가기 등) */
