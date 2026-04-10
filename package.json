@@ -1,6 +1,7 @@
 {
   "name": "qjsgha",
   "version": "1.0.0",
+  "type": "module",
   "main": "loadHeaderFooter.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
