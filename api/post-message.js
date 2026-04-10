@@ -1,16 +1,17 @@
-import { db } from '@vercel/postgres';
+import { sql } from '@vercel/postgres';
 
 export default async function handler(request, response) {
-  // 브라우저에서 보낸 데이터를 가져옵니다
   const { name, content } = request.body;
 
   try {
-    // DB 테이블 컬럼명에 맞춰 소문자(name, content)로 작성했습니다
-    await db.sql`INSERT INTO Messages (name, content) VALUES (${name}, ${content});`;
+    // db.sql 대신 그냥 sql`쿼리`를 사용합니다.
+    // Vercel이 자동으로 'Pooled' 연결을 사용하게 해줍니다.
+    await sql`INSERT INTO Messages (name, content) VALUES (${name}, ${content});`;
     
     return response.status(200).json({ message: "성공적으로 저장되었습니다! 🍒" });
   } catch (error) {
     console.error(error);
+    // 에러 내용을 구체적으로 확인하기 위해 로그 출력
     return response.status(500).json({ error: error.message });
   }
 }
