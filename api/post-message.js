@@ -1,5 +1,5 @@
 // api/post-message.js
-import { db } from '@vercel/postgres';
+const { db } = require('@vercel/postgres');
 
 export default async function handler(request, response) {
   const { name, content } = request.body;
