@@ -19,7 +19,7 @@ export default async function handler(request, response) {
     // 4. DB 저장 시도 (Messages 테이블에 삽입)
     // 테이블 이름 대소문자 주의: Messages가 맞는지 확인!
     await sql`
-      INSERT INTO Messages (name, content) 
+      INSERT INTO messages (name, content) 
       VALUES (${name}, ${content});
     `;
 
