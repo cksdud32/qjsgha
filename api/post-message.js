@@ -1,8 +1,8 @@
 import { createPool } from '@vercel/postgres';
 
-// 1. 여기서 POSTGRES_URL을 직접 가져와서 연결 풀(Pool)을 만듭니다.
+// 우리가 새로 만든 이름을 직접 지정합니다.
 const pool = createPool({
-  connectionString: process.env.POSTGRES_URL
+  connectionString: process.env.MY_SAFE_DB_URL 
 });
 
 export default async function handler(request, response) {
@@ -22,7 +22,7 @@ export default async function handler(request, response) {
       return response.status(400).json({ error: '닉네임과 내용을 입력해주세요.' });
     }
 
-    // 2. sql 대신 pool.sql을 사용하여 강제로 연결된 주소를 사용하게 합니다.
+    // pool.sql을 사용하여 저장
     await pool.sql`
       INSERT INTO "messages" (name, content, created_at) 
       VALUES (${name}, ${content}, NOW());
@@ -32,7 +32,6 @@ export default async function handler(request, response) {
 
   } catch (error) {
     console.error('DB 상세 에러:', error);
-    
     return response.status(500).json({ 
       error: "전송 실패", 
       details: error.message 
