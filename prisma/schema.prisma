@@ -1,0 +1,17 @@
+// 설계도 시작
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PRISMA_DATABASE_URL") // 여기 이름을 맞췄습니다!
+}
+
+// 방명록 테이블 구조
+model messages {
+  id         Int      @id @default(autoincrement())
+  name       String
+  content    String
+  created_at DateTime @default(now())
+}

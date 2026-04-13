@@ -19,6 +19,12 @@
   "homepage": "https://github.com/cksdud32/qjsgha#readme",
   "description": "",
   "dependencies": {
-    "@vercel/postgres": "^0.10.0"
+    "@prisma/client": "^6.19.3",
+    "@vercel/postgres": "^0.10.0",
+    "dotenv": "^17.4.2",
+    "prisma": "^6.19.3"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }
