@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>류현준 미니게임</title>
+    <link rel="stylesheet" href="../../css/ina.css">
+    <link rel="stylesheet" href="../../Common/Common.css">
+    <link rel="stylesheet" href="../../Common/Dark.css">
+</head>
+
+<body>
+    <div id="Shor"></div>
+    <div id="link"></div>
+    <div id="clsa">
+        <a href="#popup3" class="open-popup3">규칙 및 안내 사항/설정 보기</a>
+        <div id="popup3" class="popup3">
+            <div class="popup-content3">
+                <input type="radio" id="tab1" name="p-tab" checked style="display:none;">
+                <input type="radio" id="tab2" name="p-tab" style="display:none;">
+
+                <div style="display: flex; gap: 20px; margin-bottom: 15px; border-bottom: 1px solid slategrey;">
+                    <label for="tab1" class="tab-btn">📢 규칙 및 안내</label>
+                    <label for="tab2" class="tab-btn">⚙️ 설정</label>
+                </div>
+
+                <div class="tab-content1">
+                    <h2>미니게임 센터 규칙</h2>
+                    <p>1. 소통 수단 미제공: <br> 이용자 간 채팅이나 댓글 등 소통 기능을 지원하지 않는 <br>순수 팬 메이드 사이트입니다. <br><br>
+                        2. 닉네임 마스킹: <br>개인 식별 방지를 위해 랭킹보드 닉네임은 일부 마스킹 처리되며,<br> 클릭 시 정보를 제공하지 않습니다.<br><br>
+                        3. 외부 공유 자제:<br> 팬카페나 타 사이트에 <br>과도한 점수 인증 및 개인 공지성 게시글 작성을<br> 지양해 주시기 바랍니다.</p>
+                </div>
+
+                <div class="tab-content2 popup-31">
+                    <h4 style="border-bottom: 1px solid slategrey; color: #CCA6E8;">사이트 설정</h4>
+                    <br>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <span>화면 모드</span>
+                        <button onclick="toggleDarkMode()" class="theme-toggle-btn">다크모드 전환</button>
+                    </div>
+                </div>
+
+                <br>
+                <a href="#none" class="close3">닫기</a>
+            </div>
+        </div>
+        <header>
+            <h1>류현준 미니게임 센터</h1>
+            <p>이곳에서는 류현준관련 미니게임을 즐길 수 있습니다. <br>
+                단, 규칙을 꼭 지켜주시기 바랍니다.</p>
+        </header>
+        
+    </div>
+    <div id="footer"></div>
+</body>
+<script src="../../Common/Common.js"></script>
+<script src="../../js/ina.js"></script>
+<script src="../../loadHeaderFooter.js"></script>
+</html>

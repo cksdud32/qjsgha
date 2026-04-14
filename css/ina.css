@@ -8,3 +8,70 @@
 body{
     background-color: rgb(219, 219, 219);
 }
+
+.popup_12, .popup3 {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: none;
+}
+.popup3:target { display: block; }
+
+.popup_12_popi, .popup-content3 {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    text-align: left; /* generally better, but original used center. Let's stick with left and center titles */
+}
+
+.popup-content3 { text-align: center; }
+
+.popup_12_popi h2, .popup-content3 h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--text-main);
+    text-align: center;
+}
+.popup_exe, .close3 {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: var(--text-main);
+    color: white !important;
+    text-align: center;
+    border-radius: 8px;
+    font-weight: 600;
+}
+.popup_exe:hover, .close3:hover { background: var(--primary); text-decoration: none; }
+
+/* Floating Update Button */
+.open-popup3 {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    left: auto;
+    background: var(--primary-dark);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 100;
+}
+.open-popup3:hover {
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
