@@ -517,8 +517,8 @@ tbody tr.goods-clickable.calc-on:hover { background-color: var(--primary-light);
 }
 
 #clsa{
-    max-width: 1500px;
-    padding: 10px;
-    margin:0 auto;
-    min-width: 800px;
+    max-width: 1500px !important;
+    padding: 10px !important;
+    margin:0 auto !important;
+    min-width: 800px !important;
 }

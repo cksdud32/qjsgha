@@ -373,5 +373,3 @@ li p {
 }
 .infa a { display: block; color: var(--text-main); font-size: 0.95rem;}
 .infa a:hover { color: var(--primary); text-decoration: none;}
-
-#clsa{ max-width: 1200px; padding: 20px; margin: 0 auto;}

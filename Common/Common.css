@@ -34,3 +34,5 @@
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+#clsa{ max-width: 1200px; padding: 20px; margin: 0 auto;}
