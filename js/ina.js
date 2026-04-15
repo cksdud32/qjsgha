@@ -158,7 +158,7 @@ function displayQuestion() {
     document.getElementById('checkBtn').style.display = "inline-block";
     document.getElementById('nextBtn').style.display = "none";
     
-    // Difficulty 테이블에서 가져온 time_limit 적용 (기본값 30초)
+    // difficulty 테이블에서 가져온 time_limit 적용 (기본값 30초)
     startTimer(q.time_limit || 30);
     input.focus();
 }

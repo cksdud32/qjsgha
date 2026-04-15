@@ -22,7 +22,7 @@ export default async function handler(request, response) {
   try {
     /**
      * [쿼리 설명]
-     * 1. questions(q) 테이블과 Difficulty(d) 테이블을 조인합니다.
+     * 1. questions(q) 테이블과 difficulty(d) 테이블을 조인합니다.
      * 2. 사용자가 선택한 난이도(db_value)와 일치하는 행을 찾습니다.
      * 3. ORDER BY RANDOM()으로 무작위 섞기 후 10개만 가져옵니다.
      * ※ 에러 방지를 위해 테이블 이름에 큰따옴표를 추가했습니다.
@@ -30,7 +30,7 @@ export default async function handler(request, response) {
     const queryText = `
       SELECT q.id, q.question_text, q.answer, d.time_limit
       FROM "questions" q
-      JOIN "Difficulty" d ON q.difficulty_id = d.id
+      JOIN "difficulty" d ON q.difficulty_id = d.id
       WHERE d.db_value = $1
       ORDER BY RANDOM()
       LIMIT 10
