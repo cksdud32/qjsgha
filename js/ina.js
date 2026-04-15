@@ -231,3 +231,47 @@ document.addEventListener('keypress', (e) => {
         }
     }
 });
+
+// 페이지 로드 시 이번 달 랭킹 먼저 로드
+window.onload = () => changeRankView('current');
+
+async function changeRankView(type) {
+    const currentTab = document.getElementById('currentTab');
+    const lastTab = document.getElementById('lastTab');
+
+    // 1. 탭 UI 활성화/비활성화 제어
+    if (type === 'current') {
+        currentTab.classList.add('active');
+        lastTab.classList.remove('active');
+    } else {
+        lastTab.classList.add('active');
+        currentTab.classList.remove('active');
+    }
+
+    // 2. API 호출하여 데이터 로드 (기존 매달 초기화 로직 유지된 API 호출)
+    try {
+        const response = await fetch(`/api/get-ranking?type=${type}`);
+        const rankings = await response.json();
+        const rankList = document.getElementById('rankList');
+
+        rankList.innerHTML = ''; 
+
+        if (rankings.length === 0) {
+            const msg = (type === 'current') ? '이번 달 기록이 없습니다.' : '지난 달 기록이 없습니다.';
+            rankList.innerHTML = `<p style="text-align:center; padding-top:30px; font-size:12px; color:#888;">${msg}</p>`;
+            return;
+        }
+
+        rankings.forEach((rank, index) => {
+            const div = document.createElement('div');
+            div.className = 'rank-item';
+            div.innerHTML = `
+                <span class="rank-name">${index + 1}. ${rank.name}</span>
+                <span class="rank-score">${rank.score}점</span>
+            `;
+            rankList.appendChild(div);
+        });
+    } catch (error) {
+        console.error("랭킹 로드 에러:", error);
+    }
+}

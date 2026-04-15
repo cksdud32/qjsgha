@@ -103,13 +103,18 @@
                     </div>
                 </div>
                 <nav class="ranking-board">
-    <div class="rank-header">
-        🏆 실시간 랭킹
-    </div>
-    <div id="rankList" class="rank-list-container">
-        <p class="loading-text">랭킹 불러오는 중...</p>
-    </div>
-</nav>
+                    <div class="rank-header-tabs">
+                        <div id="currentTab" class="rank-tab active" onclick="changeRankView('current')">
+                            🏆 이번 달 랭킹
+                        </div>
+                        <div id="lastTab" class="rank-tab" onclick="changeRankView('last')">
+                            ⏳ 전달 기록 보기
+                        </div>
+                    </div>
+
+                    <div id="rankList" class="rank-list-container">
+                    </div>
+                </nav>
             </div>
         </div>
         <div id="footer"></div>

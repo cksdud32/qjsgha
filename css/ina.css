@@ -91,29 +91,60 @@ header{
     display: flex;
 }
 
-/* 랭킹보드 본체 */
+/* 1. 랭킹보드 본체 (기존 테두리 등은 유지) */
 .ranking-board {
-    width: 20%;             /* 전체 1200px 중 20% 차지 */
-    height: 500px;          /* 높이 고정 */
-    background-color: rgba(235, 235, 235, 0.8); /* 어두운 배경 */
-    border: 1px solid #e989ff; /* 현준님 테마 연두색 테두리 */
+    width: 20%;
+    height: 500px;
+    background-color: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(200, 255, 172, 0.3);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;  /* 패딩이 너비에 포함되도록 설정 */
+    box-sizing: border-box;
     overflow: hidden;
-    margin-left: 20px;      /* 게임 화면과 간격 */
 }
 
-/* 랭킹 타이틀 영역 */
-.rank-header {
-    padding: 15px;
-    background-color: rgba(200, 255, 172, 0.1);
-    color: #000000;
+/* 2. [변경] 헤더 탭 컨테이너 (두 번째 이미지처럼 일자로 배치) */
+.rank-header-tabs {
+    display: flex;
+    justify-content: space-around; /* 탭 사이 간격 균등 배치 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* 하단 가로선 */
+    background-color: transparent; /* 배경색 제거 */
+}
+
+/* 3. 개별 탭 기본 스타일 (두 번째 이미지 스타일) */
+.rank-tab {
+    flex: 1; /* 동일한 너비 차지 */
     text-align: center;
+    padding: 15px 0;
+    color: #aaaaaa; /* 비활성화 상태 글자색 (연한 회색) */
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative; /* 밑줄 배치를 위한 기준 */
+}
+
+/* 4. [핵심] 활성화된 탭 스타일 (두 번째 이미지처럼 보라색 밑줄) */
+.rank-tab.active {
+    color: white; /* 활성화 상태 글자색 (하얀색) */
     font-weight: bold;
-    font-size: 16px;
-    border-bottom: 1px solid rgba(200, 255, 172, 0.3);
+}
+
+/* 활성화 상태일 때 아래에 보라색 밑줄 그리기 */
+.rank-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; /* 탭 맨 아래 배치 */
+    left: 10%; /* 밑줄 양끝 여백 */
+    width: 80%; /* 밑줄 너비 */
+    height: 2px; /* 밑줄 두께 */
+    background-color: #a29bfe; /* 보라색 밑줄 색상 (두 번째 이미지와 유사) */
+    border-radius: 2px;
+}
+
+/* 마우스 올렸을 때 효과 */
+.rank-tab:not(.active):hover {
+    color: white;
 }
 
 /* 랭킹 리스트 스크롤 영역 */

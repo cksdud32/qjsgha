@@ -1,0 +1,46 @@
+import pg from 'pg';
+const { Pool } = pg;
+
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+  ssl: { rejectUnauthorized: false }
+});
+
+export default async function handler(request, response) {
+  const { type } = request.query; // 'current' 또는 'last'
+
+  try {
+    // 1. [자동 삭제] 전전달(2개월 전) 데이터는 조회할 때마다 삭제 (관리 효율화)
+    await pool.query(`
+      DELETE FROM quiz_ranking 
+      WHERE created_at < DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+    `);
+
+    let queryText = "";
+    if (type === 'last') {
+      // 2. 지난달 데이터 조회 (지난달 1일 ~ 마지막 날)
+      queryText = `
+        SELECT r.name, r.score, d.level_name 
+        FROM quiz_ranking r
+        JOIN Difficulty d ON r.difficulty_id = d.id
+        WHERE r.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+          AND r.created_at < DATE_TRUNC('month', CURRENT_DATE)
+        ORDER BY r.score DESC, r.created_at DESC LIMIT 10
+      `;
+    } else {
+      // 3. 이번 달 데이터 조회 (이번 달 1일 ~ 현재)
+      queryText = `
+        SELECT r.name, r.score, d.level_name 
+        FROM quiz_ranking r
+        JOIN Difficulty d ON r.difficulty_id = d.id
+        WHERE r.created_at >= DATE_TRUNC('month', CURRENT_DATE)
+        ORDER BY r.score DESC, r.created_at DESC LIMIT 10
+      `;
+    }
+
+    const result = await pool.query(queryText);
+    return response.status(200).json(result.rows);
+  } catch (error) {
+    return response.status(500).json({ error: error.message });
+  }
+}
