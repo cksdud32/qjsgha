@@ -45,16 +45,44 @@
                 <a href="#none" class="close3">닫기</a>
             </div>
         </div>
-        <header>
-            <h1>류현준 미니게임 센터</h1>
-            <p>이곳에서는 류현준관련 미니게임을 즐길 수 있습니다. <br>
-                단, 규칙을 꼭 지켜주시기 바랍니다.</p>
-        </header>
-        
-    </div>
-    <div id="footer"></div>
+        <div>
+
+            <header>
+                <h1>류현준 미니게임 센터</h1>
+                <p>이곳에서는 류현준관련 미니게임을 즐길 수 있습니다. <br>
+                    단, 규칙을 꼭 지켜주시기 바랍니다.</p>
+            </header>
+            <div class="spq">
+                <div class="sla">
+                    <img src="../../image/mp.jpg" alt="미니게임 시작 배경 이미지">
+                    <div class="da">
+                        <b style="font-size: 13px;">본 게임은 순수 재미를 위해 제작되었습니다.</b>
+                        <h2>현준님 관련 퀴즈을 풀 수 있는 공간입니다!</h2>
+                        <div class="sdiff">
+                            <div id="difficultyMenu" class="Difficulty">
+                                <button onclick="selectLevel('easy', '쉬움')">쉬움</button>
+                                <button onclick="selectLevel('medium', '보통')">보통</button>
+                                <button onclick="selectLevel('hard', '어려움')">어려움</button>
+                            </div>
+                            <div id="selectedText" class="Select_Difficulty" onclick="toggleDifficulty()">
+                                [난이도 선택]
+                            </div>
+                            <button class="Start_Btn" onclick="runGame()">게임 시작</button>
+                        </div>
+                    </div>
+                </div>
+                <nav>
+
+                </nav>
+
+
+
+            </div>
+        </div>
+        <div id="footer"></div>
 </body>
 <script src="../../Common/Common.js"></script>
 <script src="../../js/ina.js"></script>
 <script src="../../loadHeaderFooter.js"></script>
+
 </html>

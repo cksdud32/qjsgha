@@ -75,3 +75,95 @@ body{
     text-decoration: none;
     transform: translateY(-2px);
 }
+
+header{
+    width: 100%; height: 200px;
+    padding: 20px;
+    margin: 0 10px;
+    text-align: center;
+    background-color: aqua;
+    border-radius: 40px;
+    margin-bottom: 10px;
+}
+
+.spq{
+    width: 100%;
+    display: flex;
+}
+
+nav{
+    width: 20%; height: 500px;
+    border: 1px solid black;
+    margin: 0 10px;
+}
+
+.sla{
+    width: 100%; height: 500px;
+    border: 1px solid black;
+    overflow: hidden;
+    position: relative;
+}
+
+.sla img{
+    position: absolute; /* 이미지를 배경처럼 깔기 위해 absolute 사용 */
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    object-fit: cover;
+    display: block;
+    object-position: 50% -50px;
+    filter: blur(3px) brightness(0.8);
+}
+
+.da{
+    z-index: 10;
+    width: 100%; height: 100%;
+}
+
+.da h2{
+    text-align: center;
+}
+
+.Select_Difficulty{
+    width: 100px; height: 40px;
+    background-color: blanchedalmond;
+    border: 1px solid black;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 39px;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.Difficulty{
+    display: none;
+}
+
+.Difficulty button{
+    width: 70px; height: 30px;
+    background-color: aliceblue;
+    border: 1px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.Start_Btn{
+    width: 120px; height: 50px;
+    font-size: 20px;
+    background-color: aquamarine;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.sdiff {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    /* [핵심] 요소를 자신의 너비 절반만큼 왼쪽으로 밀어서 정확히 중앙에 배치 */
+    transform: translateX(-50%); 
+    
+    /* 자식 요소(버튼들)를 세로로 나열하고 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
