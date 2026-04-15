@@ -56,27 +56,55 @@
                 <div class="sla">
                     <img src="../../image/mp.jpg" alt="미니게임 시작 배경 이미지">
                     <div class="da">
-                        <b style="font-size: 13px;">본 게임은 순수 재미를 위해 제작되었습니다.</b>
-                        <h2>현준님 관련 퀴즈을 풀 수 있는 공간입니다!</h2>
-                        <div class="sdiff">
-                            <div id="difficultyMenu" class="Difficulty">
-                                <button onclick="selectLevel('easy', '쉬움')">쉬움</button>
-                                <button onclick="selectLevel('medium', '보통')">보통</button>
-                                <button onclick="selectLevel('hard', '어려움')">어려움</button>
+                        <div id="introArea">
+                            <b style="font-size: 13px;">본 게임은 순수 재미를 위해 제작되었습니다.</b>
+                            <h2>현준님 관련 퀴즈을 풀 수 있는 공간입니다!</h2>
+                            <p
+                                style="text-align: center; color: rgb(200, 255, 172); font-size: 16px; padding: 100px 0;">
+                                모든 문제의 답은 띄어쓰기 없이 적어주세요. <br>
+                                띄어쓰기가 있을시 오답처리 될수 있습니다. <br>
+                                단, 띄어쓰기가 필요한 문제일시 (띄어쓰기 O)로 <br>
+                                표시되니 그때만 띄어쓰기 해주시면 됩니다.
+                            </p>
+                            <div class="sdiff">
+                                <div id="difficultyMenu" class="Difficulty" style="display: none;">
+                                    <button onclick="selectLevel('easy', '쉬움')">쉬움</button>
+                                    <button onclick="selectLevel('medium', '보통')">보통</button>
+                                    <button onclick="selectLevel('hard', '어려움')">어려움</button>
+                                </div>
+                                <div id="selectedText" class="Select_Difficulty" onclick="toggleDifficulty()">
+                                    [난이도 선택]
+                                </div>
+                                <button class="Start_Btn" onclick="runGame()">게임 시작</button>
                             </div>
-                            <div id="selectedText" class="Select_Difficulty" onclick="toggleDifficulty()">
-                                [난이도 선택]
+                        </div>
+
+                        <div id="quizContainer" style="display: none; text-align: center;">
+                            <div id="timerDisplay"
+                                style="font-size: 24px; color: #ff6b6b; margin-bottom: 20px; font-weight: bold;">
+                                남은 시간: 00
                             </div>
-                            <button class="Start_Btn" onclick="runGame()">게임 시작</button>
+                            <div id="questionDisplay"
+                                style="font-size: 20px; color: white; margin-bottom: 30px; min-height: 60px; line-height: 1.4;">
+                            </div>
+                            <input type="text" id="answerInput" placeholder="정답을 입력하세요"
+                                style="padding: 10px; font-size: 18px; border-radius: 5px; border: none; width: 80%; max-width: 300px;">
+
+                            <div id="resultMessage"
+                                style="margin: 20px 0; font-size: 18px; font-weight: bold; min-height: 27px;"></div>
+
+                            <div id="buttonArea" style="margin-top: 20px;">
+                                <button id="checkBtn" class="Start_Btn" onclick="checkAnswer()"
+                                    style="background-color: #4cd137;">정답 확인</button>
+                                <button id="nextBtn" class="Start_Btn" onclick="showNextQuestion()"
+                                    style="display: none; background-color: #00a8ff;">다음 문제 ▶</button>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <nav>
-
+                    랭킹보드
                 </nav>
-
-
-
             </div>
         </div>
         <div id="footer"></div>

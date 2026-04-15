@@ -112,7 +112,7 @@ nav{
     object-fit: cover;
     display: block;
     object-position: 50% -50px;
-    filter: blur(3px) brightness(0.8);
+    filter: blur(4px) brightness(0.7);
 }
 
 .da{
@@ -153,6 +153,7 @@ nav{
     background-color: aquamarine;
     border: 1px solid black;
     border-radius: 10px;
+    cursor: pointer;
 }
 
 .sdiff {
