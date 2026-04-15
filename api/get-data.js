@@ -1,34 +1,36 @@
 import pg from 'pg';
 const { Pool } = pg;
 
+// 찬영님의 DB 연결 설정 방식 유지
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 export default async function handler(request, response) {
-  // 1. GET 요청만 허용 (보안 및 규격 확인)
-  if (request.method !== 'GET') {
-    return response.status(405).json({ error: 'Method Not Allowed' });
-  }
+  // GET 요청만 허용
+  if (request.method !== 'GET') return response.status(405).send('Method Not Allowed');
 
-  // 2. 파라미터 확인
   const { difficulty } = request.query;
+
   if (!difficulty) {
-    return response.status(400).json({ error: '난이도 파라미터가 누락되었습니다.' });
+    return response.status(400).json({ error: '난이도 파라미터가 필요합니다.' });
   }
 
   try {
     /**
-     * [주요 수정 사항]
-     * - 테이블 이름을 프로젝트에서 사용 중인 'QuizQuestions'로 맞춤 (혹은 Questions 중 선택)
-     * - ORDER BY RANDOM()을 사용하여 매번 다른 10문제를 추출
-     * - 만약 Difficulty 테이블에 없는 값이 들어올 경우를 대비한 안전 장치
+     * [쿼리 설명]
+     * 1. Questions(q) 테이블과 Difficulty(d) 테이블을 조인합니다.
+     * 2. 사용자가 선택한 난이도(db_value)와 일치하는 행을 찾습니다.
+     * 3. ORDER BY RANDOM()으로 무작위 섞기 후 10개만 가져옵니다.
+     * ※ 에러 방지를 위해 테이블 이름에 큰따옴표를 추가했습니다.
      */
     const queryText = `
       SELECT q.id, q.question_text, q.answer, d.time_limit
-      FROM QuizQuestions q
-      JOIN Difficulty d ON q.difficulty_id = d.id
+      FROM "Questions" q
+      JOIN "Difficulty" d ON q.difficulty_id = d.id
       WHERE d.db_value = $1
       ORDER BY RANDOM()
       LIMIT 10
@@ -36,21 +38,19 @@ export default async function handler(request, response) {
 
     const result = await pool.query(queryText, [difficulty]);
 
-    // 3. 문제 데이터가 없는 경우 처리
+    // 문제 데이터가 없는 경우 예외 처리
     if (result.rows.length === 0) {
-      return response.status(404).json({ 
-        error: '해당 난이도의 문제를 찾을 수 없습니다. DB를 확인해주세요.' 
-      });
+      return response.status(404).json({ error: '해당 난이도의 문제가 존재하지 않습니다.' });
     }
 
-    // 4. 문제 리스트 반환
+    // 결과 반환
     return response.status(200).json(result.rows);
 
   } catch (error) {
-    // 서버 로그에 에러 기록
-    console.error('데이터 조회 중 서버 에러 발생:', error);
+    console.error('DB 에러:', error);
+    // 에러 발생 시 상세 원인을 JSON으로 반환하여 디버깅을 돕습니다.
     return response.status(500).json({ 
-      error: '데이터베이스 연결 오류가 발생했습니다.',
+      error: '데이터를 가져오는 중 오류가 발생했습니다.', 
       details: error.message 
     });
   }
