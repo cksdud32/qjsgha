@@ -94,6 +94,7 @@ function selectLevel(dbValue, displayLabel) {
 
 /**
  * 3. 게임 시작 (랜덤 10문제 추출)
+ * 백엔드의 pg 보안 설정(rejectUnauthorized: false)을 통과한 데이터를 가져옵니다.
  */
 async function runGame() {
     if (!currentDifficulty) {
@@ -102,50 +103,73 @@ async function runGame() {
     }
 
     try {
+        // 백엔드 API 호출
         const response = await fetch(`/api/get-data?difficulty=${currentDifficulty}`);
-        if (!response.ok) throw new Error("데이터 로드 실패");
+        
+        // pg 라이브러리 연결 실패 또는 테이블 부재 시 에러 처리
+        if (!response.ok) {
+            const errorData = await response.json();
+            // 백엔드에서 보낸 상세 에러 메시지(details)를 출력하여 디버깅을 돕습니다.
+            throw new Error(errorData.details || "데이터를 불러오는 중 오류가 발생했습니다.");
+        }
+        
         const data = await response.json();
         
-        if (data.length === 0) {
-            alert("문제가 없습니다.");
+        if (!data || data.length === 0) {
+            alert("해당 난이도에 등록된 문제가 없습니다.");
             return;
         }
 
-        // 받아온 문제들 중 랜덤 10개는 이미 백엔드(api/get-data.js)에서 처리되어 옵니다.
+        // 백엔드(api/get-data.js)에서 ORDER BY RANDOM() LIMIT 10으로 가져온 데이터 저장
         quizList = data;
         currentIndex = 0;
         score = 0;
 
+        // 화면 전환
         document.getElementById('introArea').style.display = 'none';
         document.getElementById('quizContainer').style.display = 'block';
 
         displayQuestion();
     } catch (error) {
-        console.error(error);
-        alert("DB 연결 실패!");
+        console.error("게임 시작 에러:", error);
+        // 사용자에게 DB 연결 실패 원인을 구체적으로 알림
+        alert(`❌ DB 연결 실패: ${error.message} 본 오류를 관리자에게 보내주세요.`);
     }
 }
 
 /**
- * 4. 문제 표시 및 타이머 로직
+ * 4. 문제 표시
  */
 function displayQuestion() {
+    // 퀴즈 목록이 비어있지 않은지 확인
+    if (!quizList || quizList.length === 0) return;
+
     const q = quizList[currentIndex];
-    document.getElementById('questionDisplay').innerText = q.question_text;
-    
+    const questionDisplay = document.getElementById('questionDisplay');
     const input = document.getElementById('answerInput');
+    
+    // 문제 텍스트 출력
+    questionDisplay.innerText = q.question_text;
+    
+    // 입력창 및 버튼 초기화
     input.value = "";
     input.disabled = false;
     document.getElementById('resultMessage').innerText = "";
     document.getElementById('checkBtn').style.display = "inline-block";
     document.getElementById('nextBtn').style.display = "none";
     
+    // Difficulty 테이블에서 가져온 time_limit 적용 (기본값 30초)
     startTimer(q.time_limit || 30);
     input.focus();
 }
 
+/**
+ * 5. 타이머 로직
+ */
 function startTimer(seconds) {
+    // 기존 타이머가 작동 중이면 중지
     if (timerInterval) clearInterval(timerInterval);
+    
     timeLeft = seconds;
     const timerDisplay = document.getElementById('timerDisplay');
     timerDisplay.innerText = `남은 시간: ${timeLeft}`;
@@ -153,9 +177,13 @@ function startTimer(seconds) {
     timerInterval = setInterval(() => {
         timeLeft--;
         timerDisplay.innerText = `남은 시간: ${timeLeft}`;
+        
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            processAnswer(false, `⏰ 시간 초과! (정답: ${quizList[currentIndex].answer})`);
+            // 시간 초과 시 오답 처리 (processAnswer 함수 호출)
+            if (typeof processAnswer === "function") {
+                processAnswer(false, `⏰ 시간 초과! (정답: ${quizList[currentIndex].answer})`);
+            }
         }
     }, 1000);
 }
