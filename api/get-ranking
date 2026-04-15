@@ -1,83 +1,41 @@
 import pg from 'pg';
 const { Pool } = pg;
 
-// DB 연결 설정
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: { rejectUnauthorized: false }
 });
 
 export default async function handler(request, response) {
-  // POST 요청만 허용
-  if (request.method !== 'POST') {
-    return response.status(405).json({ error: 'Method Not Allowed' });
-  }
-
-  const { name, score, difficulty } = request.body;
-
-  // 데이터 유효성 검사
-  if (!name || score === undefined || !difficulty) {
-    return response.status(400).json({ error: '데이터가 누락되었습니다.' });
-  }
+  const { type, diff } = request.query; 
 
   try {
-    // 1. 난이도(db_value)를 통해 Difficulty ID 조회
-    const diffResult = await pool.query(
-      'SELECT id FROM Difficulty WHERE db_value = $1', 
-      [difficulty]
-    );
+    // 1. 전전달 기록 삭제 (조회 시 자동 관리)
+    await pool.query(`
+      DELETE FROM quiz_ranking 
+      WHERE created_at < DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+    `);
 
-    if (diffResult.rows.length === 0) {
-      return response.status(400).json({ error: '유효하지 않은 난이도입니다.' });
-    }
-    const difficulty_id = diffResult.rows[0].id;
+    // 2. 난이도 및 기간별 조회 쿼리
+    let queryText = `
+      SELECT r.name, r.score 
+      FROM quiz_ranking r
+      JOIN Difficulty d ON r.difficulty_id = d.id
+      WHERE d.db_value = $1
+    `;
 
-    // 2. 이번 달에 해당 닉네임으로 등록된 기록이 있는지 확인
-    // (매달 초기화 정책에 맞춰 이번 달 기록 중 최고 점수만 비교)
-    const checkUser = await pool.query(`
-      SELECT id, score 
-      FROM quiz_ranking 
-      WHERE name = $1 
-        AND created_at >= DATE_TRUNC('month', CURRENT_DATE)
-    `, [name]);
-
-    if (checkUser.rows.length > 0) {
-      const prevScore = checkUser.rows[0].score;
-
-      // 3-1. 기존 점수보다 높을 때만 업데이트 (신기록 경신)
-      if (score > prevScore) {
-        await pool.query(`
-          UPDATE quiz_ranking 
-          SET score = $1, difficulty_id = $2, created_at = NOW() 
-          WHERE id = $3
-        `, [score, difficulty_id, checkUser.rows[0].id]);
-        
-        return response.status(200).json({ 
-          success: true, 
-          message: '🏆 최고 기록 경신! 점수가 업데이트되었습니다.' 
-        });
-      } else {
-        // 기존 점수가 더 높거나 같으면 유지
-        return response.status(200).json({ 
-          success: true, 
-          message: '이미 더 높은 기록을 보유하고 있습니다.' 
-        });
-      }
+    if (type === 'last') {
+      queryText += ` AND r.created_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+                     AND r.created_at < DATE_TRUNC('month', CURRENT_DATE)`;
     } else {
-      // 3-2. 이번 달 첫 기록이라면 새로 삽입
-      await pool.query(`
-        INSERT INTO quiz_ranking (name, score, difficulty_id, created_at) 
-        VALUES ($1, $2, $3, NOW())
-      `, [name, score, difficulty_id]);
-
-      return response.status(200).json({ 
-        success: true, 
-        message: '새로운 랭킹 기록이 등록되었습니다!' 
-      });
+      queryText += ` AND r.created_at >= DATE_TRUNC('month', CURRENT_DATE)`;
     }
 
+    queryText += ` ORDER BY r.score DESC, r.created_at DESC LIMIT 10`;
+
+    const result = await pool.query(queryText, [diff]);
+    return response.status(200).json(result.rows);
   } catch (error) {
-    console.error('DB 작업 에러:', error);
-    return response.status(500).json({ error: '서버 DB 에러: ' + error.message });
+    return response.status(500).json({ error: error.message });
   }
 }

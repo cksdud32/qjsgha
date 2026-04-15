@@ -104,49 +104,16 @@ header{
     overflow: hidden;
 }
 
-/* 2. [변경] 헤더 탭 컨테이너 (두 번째 이미지처럼 일자로 배치) */
-.rank-header-tabs {
-    display: flex;
-    justify-content: space-around; /* 탭 사이 간격 균등 배치 */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* 하단 가로선 */
-    background-color: transparent; /* 배경색 제거 */
-}
+/* 상단 기간 탭 (보라색 밑줄) */
+.rank-header-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.rank-tab { flex: 1; text-align: center; padding: 12px 0; cursor: pointer; color: #888; position: relative; font-size: 13px; }
+.rank-tab.active { color: white; font-weight: bold; }
+.rank-tab.active::after { content: ''; position: absolute; bottom: 0; left: 10%; width: 80%; height: 2px; background: #a29bfe; }
 
-/* 3. 개별 탭 기본 스타일 (두 번째 이미지 스타일) */
-.rank-tab {
-    flex: 1; /* 동일한 너비 차지 */
-    text-align: center;
-    padding: 15px 0;
-    color: #aaaaaa; /* 비활성화 상태 글자색 (연한 회색) */
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative; /* 밑줄 배치를 위한 기준 */
-}
-
-/* 4. [핵심] 활성화된 탭 스타일 (두 번째 이미지처럼 보라색 밑줄) */
-.rank-tab.active {
-    color: white; /* 활성화 상태 글자색 (하얀색) */
-    font-weight: bold;
-}
-
-/* 활성화 상태일 때 아래에 보라색 밑줄 그리기 */
-.rank-tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0; /* 탭 맨 아래 배치 */
-    left: 10%; /* 밑줄 양끝 여백 */
-    width: 80%; /* 밑줄 너비 */
-    height: 2px; /* 밑줄 두께 */
-    background-color: #a29bfe; /* 보라색 밑줄 색상 (두 번째 이미지와 유사) */
-    border-radius: 2px;
-}
-
-/* 마우스 올렸을 때 효과 */
-.rank-tab:not(.active):hover {
-    color: white;
-}
-
+/* 하단 난이도 탭 */
+.rank-diff-tabs { display: flex; justify-content: center; gap: 15px; padding: 8px 0; background: rgba(0,0,0,0.2); }
+.diff-tab { font-size: 11px; color: #666; cursor: pointer; }
+.diff-tab.active { color: #c8ffac; font-weight: bold; }
 /* 랭킹 리스트 스크롤 영역 */
 .rank-list-container {
     flex: 1;                /* 헤더 제외 나머지 공간 차지 */
