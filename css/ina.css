@@ -272,3 +272,15 @@ header{
     word-break: keep-all; 
     overflow-wrap: break-word;
 }
+
+.Logina{
+    width: 170px; height: 60px;
+    bottom: 120px;
+    background-color: aquamarine;
+    border: 1px solid black;
+    border-radius: 100px;
+    text-align: center;
+    line-height: 60px;
+    position: absolute;
+    right: 30px;
+}
