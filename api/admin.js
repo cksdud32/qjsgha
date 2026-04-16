@@ -90,13 +90,14 @@ export async function approveSuggestion(request, response) {
     const suggestion = suggestionRes.rows[0];
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficlty_id) VALUES ($1, $2, $3)',
+      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
       [suggestion.question_text, suggestion.answer, suggestion.difficulty_id]
     );
 
+    // 승인 처리 시 테이블에서 삭제
     await pool.query(
-      'UPDATE "SuggestedQuestions" SET status = $1 WHERE id = $2',
-      ['approved', suggestionId]
+      'DELETE FROM "SuggestedQuestions" WHERE id = $1',
+      [suggestionId]
     );
 
     return response.status(200).json({ message: '건의사항이 승인되었습니다.' });
@@ -166,7 +167,7 @@ export async function addProblem(request, response) {
     }
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficlty_id) VALUES ($1, $2, $3)',
+      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
       [question_text, answer, difficulty_id]
     );
 
@@ -226,13 +227,14 @@ export async function addProblemFromEdit(request, response) {
     const diffId = suggestionRes.rows[0].difficulty_id;
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficlty_id) VALUES ($1, $2, $3)',
+      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
       [question_text, answer, diffId]
     );
 
+    // 승인 처리 시 테이블에서 삭제
     await pool.query(
-      'UPDATE "SuggestedQuestions" SET status = $1 WHERE id = $2',
-      ['approved', suggestionId]
+      'DELETE FROM "SuggestedQuestions" WHERE id = $1',
+      [suggestionId]
     );
 
     return response.status(200).json({ message: '문제가 추가되었습니다.' });
@@ -273,19 +275,19 @@ export async function getAllProblems(request, response) {
       }
 
       queryText = `
-        SELECT q.id, q.question_text, q.answer, q.difficlty_id, d.level_name as difficulty
+        SELECT q.id, q.question_text, q.answer, q.difficulty_id, d.level_name as difficulty
         FROM "questions" q
-        JOIN "difficulty" d ON q.difficlty_id = d.id
-        WHERE q.difficlty_id = $1
+        JOIN "difficulty" d ON q.difficulty_id = d.id
+        WHERE q.difficulty_id = $1
         ORDER BY q.id DESC
       `;
       queryParams = [difficulty_id];
     } else {
       // 난이도 파라미터가 없으면 모든 문제 반환
       queryText = `
-        SELECT q.id, q.question_text, q.answer, q.difficlty_id, d.level_name as difficulty
+        SELECT q.id, q.question_text, q.answer, q.difficulty_id, d.level_name as difficulty
         FROM "questions" q
-        JOIN "difficulty" d ON q.difficlty_id = d.id
+        JOIN "difficulty" d ON q.difficulty_id = d.id
         ORDER BY q.id DESC
       `;
       queryParams = [];
