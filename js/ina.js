@@ -60,7 +60,7 @@ async function updateRankUI() {
 
         if (!rankings || rankings.length === 0) {
             const periodMsg = (currentRankPeriod === 'current') ? '이번 달' : '지난 달';
-            rankList.innerHTML = `<p style="text-align:center; padding-top:30px; font-size:12px; color:#888;">${periodMsg} 기록이 없습니다.</p>`;
+            rankList.innerHTML = `<p style="text-align:center; padding-top:30px; font-size:12px; color:#fff;">${periodMsg} 기록이 없습니다.</p>`;
             return;
         }
 
