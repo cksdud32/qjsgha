@@ -133,7 +133,7 @@ async function runGame() {
     } catch (error) {
         console.error("게임 시작 에러:", error);
         // 사용자에게 DB 연결 실패 원인을 구체적으로 알림
-        alert(`❌ DB 연결 실패: ${error.message} 본 오류를 관리자에게 보내주세요.`);
+        alert(`❌ DB 연결 실패: ${error.message}\n본 오류를 관리자에게 보내주세요.`);
     }
 }
 
@@ -226,17 +226,18 @@ function showNextQuestion() {
 }
 
 /**
- * 6. 게임 종료 및 랭킹 저장 (POST)
+ * 8. 종료 및 랭킹 저장 화면 표시
  */
 function finishGame() {
     const container = document.getElementById('quizContainer');
+    // 결과 화면 렌더링
     container.innerHTML = `
         <div style="padding:40px 0;">
             <h2 style="color:white;">🎮 게임 종료!</h2>
             <p style="color:#c8ffac; font-size:18px;">총 ${quizList.length}문제 중 <b>${score}</b>문제를 맞췄습니다.</p>
             <div id="nicknameArea" style="margin: 30px 0;">
                 <input type="text" id="rankNickname" placeholder="닉네임(10자 이내)" maxlength="10" 
-                       style="padding:12px; border-radius:5px; border:none; width:180px;">
+                       style="padding:12px; border-radius:5px; border:none; width:180px; color:#333;">
                 <button class="Start_Btn" onclick="saveRanking()" style="background-color:#4cd137; padding:12px 20px;">등록</button>
             </div>
             <button class="Start_Btn" onclick="location.reload()" style="background-color:#fbc531;">처음으로</button>
@@ -244,30 +245,53 @@ function finishGame() {
     `;
 }
 
+/**
+ * 9. 랭킹 데이터 서버 전송 (POST)
+ */
 async function saveRanking() {
-    const nickname = document.getElementById('rankNickname').value.trim();
-    if (!nickname) return alert("닉네임을 입력하세요!");
+    const nicknameInput = document.getElementById('rankNickname');
+    const nickname = nicknameInput.value.trim();
+
+    if (!nickname) {
+        alert("닉네임을 입력하세요!");
+        return;
+    }
 
     try {
+        // 전송 데이터 객체 생성
+        const rankingData = { 
+            name: nickname, 
+            score: score, 
+            difficulty: currentDifficulty 
+        };
+
+        // API 호출
         const response = await fetch('/api/post-ranking', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: nickname, score: score, difficulty: currentDifficulty })
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json' 
+            },
+            body: JSON.stringify(rankingData)
         });
 
-        const result = await response.json();
-        if (response.ok) {
-            alert(result.message || "등록 완료! 🏆");
-            location.reload(); 
-        } else {
-            alert("저장 실패: " + result.error);
+        // 응답 상태 확인 (404, 500 등 방어)
+        if (!response.ok) {
+            const errorBody = await response.text(); // JSON이 아닐 경우를 대비해 텍스트로 읽음
+            console.error("서버 응답 에러:", errorBody);
+            throw new Error(`서버 상태 오류 (${response.status})`);
         }
+
+        const result = await response.json();
+        alert(result.message || "등록 완료! 🏆");
+        location.reload(); 
+
     } catch (e) {
-        console.error(e);
-        alert("서버 통신 오류가 발생했습니다.");
+        console.error("통신 실패 상세 원인:", e);
+        // 사용자에게 구체적인 실패 원인 안내
+        alert(`서버 통신 오류: ${e.message}\n(api/post-ranking.js 파일 위치를 확인해주세요)`);
     }
 }
-
 /**
  * 7. 엔터 키 지원
  */
