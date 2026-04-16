@@ -20,7 +20,7 @@ export default async function handler(request, response) {
     // 이름의 두 번째 글자부터 1글자를 '*'로 대체 (예: 홍길동 -> 홍*동)
     let queryText = `
       SELECT 
-        rank() OVER (ORDER BY r.score DESC, r.created_at DESC) AS rank,
+        rank() OVER (ORDER BY r.score DESC) AS rank,
         CASE 
           WHEN LENGTH(r.name) > 2 THEN 
             OVERLAY(r.name PLACING '*' FROM 2 FOR 1)
