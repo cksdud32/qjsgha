@@ -9,13 +9,14 @@
 
 /* 탭 선택 시 보라색 강조 */
 #tab1:checked ~ div label[for="tab1"],
-#tab2:checked ~ div label[for="tab2"] {
+#tab2:checked ~ div label[for="tab2"],
+#tab3:checked ~ div label[for="tab3"] {
     color: #CCA6E8;
     border-bottom: 2px solid #CCA6E8;
 }
 
 /* 내용 전환 로직 */
-.tab-content1, .tab-content2 {
+.tab-content1, .tab-content2, .tab-content3 {
     display: none; /* 기본은 숨김 */
     animation: fadeIn 0.3s ease-in-out;
 }
@@ -26,6 +27,10 @@
 }
 
 #tab2:checked ~ .tab-content2 {
+    display: block;
+}
+
+#tab3:checked ~ .tab-content3 {
     display: block;
 }
 

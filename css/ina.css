@@ -225,3 +225,40 @@ header{
     flex-direction: column;
     align-items: center; 
 }
+
+.tab-content3 input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    box-sizing: border-box; /* 패딩이 너비를 넘지 않게 함 */
+}
+
+.diff-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 15px auto;
+}
+
+.diff-btn {
+    padding: 10px 20px;
+    border: 2px solid #4cd137;
+    background: transparent;
+    color: rgb(0, 0, 0);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* 마우스를 올렸을 때 */
+.diff-btn:hover {
+    background: rgba(76, 209, 55, 0.2);
+}
+
+/* 클릭해서 선택되었을 때 (Active) */
+.diff-btn.active {
+    background: #4cd137;
+    color: #000;
+    font-weight: bold;
+}

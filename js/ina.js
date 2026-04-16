@@ -307,3 +307,52 @@ document.addEventListener('keypress', (e) => {
         }
     }
 });
+
+const diffBtns = document.querySelectorAll('.diff-btn');
+const diffInput = document.getElementById('selectedDifficulty');
+
+diffBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // 1. 모든 버튼에서 active 클래스 제거
+        diffBtns.forEach(b => b.classList.remove('active'));
+        
+        // 2. 클릭한 버튼에만 active 클래스 추가
+        btn.classList.add('active');
+        
+        // 3. 숨겨진 input에 난이도 값 저장
+        diffInput.value = btn.getAttribute('data-value');
+        
+        console.log("선택된 난이도:", diffInput.value);
+    });
+});
+
+async function submitSuggestion() {
+    const name = document.querySelector('input[name="name"]').value;
+    const question_text = document.querySelector('input[name="question_text"]').value;
+    const answer = document.querySelector('input[name="answer"]').value;
+    const difficulty = document.getElementById('selectedDifficulty').value;
+
+    if (!name || !question_text || !answer || !difficulty) {
+        alert("모든 항목을 입력하고 난이도를 선택해주세요!");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/post-suggestion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, question_text, answer, difficulty })
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(result.message);
+            location.reload(); // 성공 시 페이지 새로고침
+        } else {
+            alert("오류 발생: " + result.error);
+        }
+    } catch (e) {
+        console.error(e);
+        alert("서버와 통신 중 오류가 발생했습니다.");
+    }
+}
