@@ -64,11 +64,11 @@ async function updateRankUI() {
             return;
         }
 
-        rankings.forEach((rank, index) => {
+        rankings.forEach((rank) => {
             const div = document.createElement('div');
             div.className = 'rank-item';
             div.innerHTML = `
-                <span class="rank-name">${index + 1}. ${rank.name}</span>
+                <span class="rank-name">${rank.rank}. ${rank.name}</span>
                 <span class="rank-score">${rank.score}점</span>
             `;
             rankList.appendChild(div);
