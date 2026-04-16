@@ -2,9 +2,110 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 패널</title>
+    <link rel="stylesheet" href="ML/manager.css">
 </head>
 <body>
-    
+    <div class="admin-panel">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>📊 관리자 패널</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="suggestions">건의사항 검토</button>
+                <button class="nav-btn" data-tab="add-problem">문제 추가</button>
+                <button class="nav-btn" data-tab="edit-problem">문제 수정</button>
+                <button class="nav-btn" data-tab="ranking">랭킹 관리</button>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="ina.html" class="logout-btn">← 돌아가기</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- 건의사항 검토 탭 -->
+            <section id="suggestions" class="tab-content active">
+                <h1>건의사항 검토</h1>
+                <div id="suggestionsList" class="list-container">
+                    <p class="loading">로딩 중...</p>
+                </div>
+            </section>
+
+            <!-- 문제 추가 탭 -->
+            <section id="add-problem" class="tab-content">
+                <h1>새로운 문제 추가</h1>
+                <form id="addProblemForm" class="problem-form">
+                    <div class="form-group">
+                        <label for="newQuestionText">문제</label>
+                        <textarea id="newQuestionText" placeholder="문제를 입력하세요" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="newAnswer">정답</label>
+                        <input id="newAnswer" type="text" placeholder="정답을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newDifficulty">난이도</label>
+                        <select id="newDifficulty" required>
+                            <option value="">선택하세요</option>
+                            <option value="easy">쉬움</option>
+                            <option value="medium">보통</option>
+                            <option value="hard">어려움</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">문제 추가</button>
+                </form>
+                <div id="addProblemStatus" class="status-msg"></div>
+            </section>
+
+            <!-- 문제 수정 탭 -->
+            <section id="edit-problem" class="tab-content">
+                <h1>문제 관리 및 수정</h1>
+                <div class="edit-tabs">
+                    <button class="edit-tab-btn active" data-section="existing">기존 문제 수정</button>
+                    <button class="edit-tab-btn" data-section="suggested">건의 문제 수정</button>
+                </div>
+                
+                <!-- 기존 문제 수정 -->
+                <div id="existing-problems" class="edit-section active">
+                    <div class="filter-group">
+                        <label for="existingDifficulty">난이도:</label>
+                        <select id="existingDifficulty">
+                            <option value="easy">쉬움</option>
+                            <option value="medium">보통</option>
+                            <option value="hard">어려움</option>
+                        </select>
+                    </div>
+                    <div id="existingProblemList" class="list-container">
+                        <p class="loading">로딩 중...</p>
+                    </div>
+                </div>
+
+                <!-- 건의 문제 수정 -->
+                <div id="suggested-problems" class="edit-section">
+                    <div id="editProblemList" class="list-container">
+                        <p class="loading">로딩 중...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 랭킹 관리 탭 -->
+            <section id="ranking" class="tab-content">
+                <h1>랭킹 관리</h1>
+                <div class="ranking-filters">
+                    <select id="rankingDifficulty">
+                        <option value="easy">쉬움</option>
+                        <option value="medium">보통</option>
+                        <option value="hard">어려움</option>
+                    </select>
+                </div>
+                <div id="rankingList" class="list-container">
+                    <p class="loading">로딩 중...</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="ML/manager.js"></script>
 </body>
 </html>

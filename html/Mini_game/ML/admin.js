@@ -40,7 +40,7 @@ if (loginForm) {
 
       // 1초 후 관리자 패널로 이동
       setTimeout(() => {
-        location.href = '../Manager.html';
+        location.href = 'Manager.html';
       }, 1000);
     } catch (error) {
       loginStatus.textContent = '서버에 연결할 수 없습니다. 다시 시도해주세요.';
