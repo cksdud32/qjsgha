@@ -17,10 +17,19 @@ export default async function handler(request, response) {
     `);
 
     // 2. 난이도 및 기간별 조회 쿼리
+    // 이름의 두 번째 글자부터 1글자를 '*'로 대체 (예: 홍길동 -> 홍*동)
     let queryText = `
-      SELECT r.name, r.score 
-      FROM quiz_ranking r
-      JOIN difficulty d ON r.difficulty_id = d.id
+      SELECT 
+        CASE 
+          WHEN LENGTH(r.name) > 2 THEN 
+            OVERLAY(r.name PLACING '*' FROM 2 FOR 1)
+          WHEN LENGTH(r.name) = 2 THEN 
+            OVERLAY(r.name PLACING '*' FROM 2 FOR 1)
+          ELSE r.name 
+        END AS name, 
+        r.score 
+      FROM "quiz_ranking" r
+      JOIN "Difficulty" d ON r.difficulty_id = d.id
       WHERE d.db_value = $1
     `;
 
