@@ -43,7 +43,7 @@ async function loadSuggestions() {
   container.innerHTML = '<p class="loading">로딩 중...</p>';
 
   try {
-    const response = await fetch('/api/get-suggestions');
+    const response = await fetch('/api/admin?action=get-suggestions');
     if (!response.ok) throw new Error('건의사항을 불러올 수 없습니다.');
 
     const suggestions = await response.json();
@@ -82,7 +82,7 @@ async function loadSuggestions() {
 
 async function approveSuggestion(suggestionId) {
   try {
-    const response = await fetch('/api/approve-suggestion', {
+    const response = await fetch('/api/admin?action=approve-suggestion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ suggestionId })
@@ -101,7 +101,7 @@ async function rejectSuggestion(suggestionId) {
   if (!confirm('정말로 기각하시겠습니까?')) return;
 
   try {
-    const response = await fetch('/api/reject-suggestion', {
+    const response = await fetch('/api/admin?action=reject-suggestion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ suggestionId })
@@ -130,7 +130,7 @@ document.getElementById('addProblemForm')?.addEventListener('submit', async (e) 
   }
 
   try {
-    const response = await fetch('/api/add-problem', {
+    const response = await fetch('/api/admin?action=add-problem', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -183,7 +183,7 @@ async function loadExistingProblems() {
   container.innerHTML = '<p class="loading">로딩 중...</p>';
 
   try {
-    const response = await fetch(`/api/get-all-problems?difficulty=${difficulty}`);
+    const response = await fetch(`/api/admin?action=get-all-problems&difficulty=${difficulty}`);
     if (!response.ok) throw new Error('문제를 불러올 수 없습니다.');
 
     const problems = await response.json();
@@ -241,7 +241,7 @@ async function updateProblem(problemId) {
   }
 
   try {
-    const response = await fetch('/api/update-problem', {
+    const response = await fetch('/api/admin?action=update-problem', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -266,7 +266,7 @@ async function deleteProblem(problemId) {
   if (!confirm('정말로 이 문제를 삭제하시겠습니까?')) return;
 
   try {
-    const response = await fetch('/api/delete-problem', {
+    const response = await fetch('/api/admin?action=delete-problem', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ problemId })
@@ -288,7 +288,7 @@ async function loadSuggestedEditProblems() {
   container.innerHTML = '<p class="loading">로딩 중...</p>';
 
   try {
-    const response = await fetch('/api/get-suggested-problems');
+    const response = await fetch('/api/admin?action=get-suggested-problems');
     if (!response.ok) throw new Error('문제를 불러올 수 없습니다.');
 
     const problems = await response.json();
@@ -336,7 +336,7 @@ async function saveSuggestedProblemEdit(problemId, questionText) {
   }
 
   try {
-    const response = await fetch('/api/add-problem-from-edit', {
+    const response = await fetch('/api/admin?action=add-problem-from-edit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -367,7 +367,7 @@ async function loadRanking() {
   container.innerHTML = '<p class="loading">로딩 중...</p>';
 
   try {
-    const response = await fetch(`/api/admin-ranking?difficulty=${difficulty}`);
+    const response = await fetch(`/api/admin?action=get-admin-ranking&difficulty=${difficulty}`);
     if (!response.ok) throw new Error('랭킹을 불러올 수 없습니다.');
 
     const rankings = await response.json();
@@ -404,7 +404,7 @@ async function deleteRanking(rankingId) {
   if (!confirm('정말로 이 랭킹을 삭제하시겠습니까?')) return;
 
   try {
-    const response = await fetch('/api/delete-ranking', {
+    const response = await fetch('/api/admin?action=delete-ranking', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ rankingId })
