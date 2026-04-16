@@ -62,7 +62,7 @@ async function loadSuggestions() {
         <div class="list-item-header">
           <div>
             <div class="list-item-title">${escapeHtml(suggestion.question_text || '제목 없음')}</div>
-            <div class="list-item-meta">건의자: ${escapeHtml(suggestion.name || '익명')} | 난이도: ${suggestion.db_value || '-'}</div>
+            <div class="list-item-meta">건의자: ${escapeHtml(suggestion.name || '익명')} | 난이도: ${suggestion.level_name || '-'}</div>
           </div>
         </div>
         <div class="list-item-content">

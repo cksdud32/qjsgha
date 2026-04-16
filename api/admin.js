@@ -49,7 +49,7 @@ export async function getSuggestions(request, response) {
 
   try {
     const result = await pool.query(
-      `SELECT s.id, s.name, s.question_text, s.answer, d.db_value
+      `SELECT s.id, s.name, s.question_text, s.answer, d.level_name
        FROM "SuggestedQuestions" s
        JOIN "difficulty" d ON s.difficulty_id = d.id
        WHERE s.status = 'pending'
@@ -185,7 +185,7 @@ export async function getSuggestedProblems(request, response) {
 
   try {
     const result = await pool.query(
-      `SELECT s.id, s.name, s.question_text, s.answer, d.db_value
+      `SELECT s.id, s.name, s.question_text, s.answer, d.level_name
        FROM "SuggestedQuestions" s
        JOIN "difficulty" d ON s.difficulty_id = d.id
        WHERE s.status = 'pending'
@@ -273,28 +273,20 @@ export async function getAllProblems(request, response) {
       }
 
       queryText = `
-        SELECT id, question_text, answer, difficlty_id,
-               CASE difficlty_id
-                 WHEN 1 THEN '쉬움'
-                 WHEN 2 THEN '보통'
-                 WHEN 3 THEN '어려움'
-               END as difficulty
-        FROM "questions"
-        WHERE difficlty_id = $1
-        ORDER BY id DESC
+        SELECT q.id, q.question_text, q.answer, q.difficlty_id, d.level_name as difficulty
+        FROM "questions" q
+        JOIN "difficulty" d ON q.difficlty_id = d.id
+        WHERE q.difficlty_id = $1
+        ORDER BY q.id DESC
       `;
       queryParams = [difficulty_id];
     } else {
       // 난이도 파라미터가 없으면 모든 문제 반환
       queryText = `
-        SELECT id, question_text, answer, difficlty_id,
-               CASE difficlty_id
-                 WHEN 1 THEN '쉬움'
-                 WHEN 2 THEN '보통'
-                 WHEN 3 THEN '어려움'
-               END as difficulty
-        FROM "questions"
-        ORDER BY id DESC
+        SELECT q.id, q.question_text, q.answer, q.difficlty_id, d.level_name as difficulty
+        FROM "questions" q
+        JOIN "difficulty" d ON q.difficlty_id = d.id
+        ORDER BY q.id DESC
       `;
       queryParams = [];
     }
