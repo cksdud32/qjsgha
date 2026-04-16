@@ -244,20 +244,34 @@ export async function getAllProblems(request, response) {
 
   try {
     const { difficulty } = request.query;
+    console.log('getAllProblems called with difficulty:', difficulty);
 
-    if (!difficulty) {
-      return response.status(400).json({ error: '난이도 파라미터가 필요합니다.' });
+    let queryText;
+    let queryParams;
+
+    if (difficulty) {
+      queryText = `
+        SELECT q.id, q.question_text, q.answer, q.created_at, d.db_value as difficulty
+        FROM "questions" q
+        JOIN "difficulty" d ON q.difficulty_id = d.id
+        WHERE d.db_value = $1
+        ORDER BY q.created_at DESC
+      `;
+      queryParams = [difficulty];
+    } else {
+      // 난이도 파라미터가 없으면 모든 문제 반환
+      queryText = `
+        SELECT q.id, q.question_text, q.answer, q.created_at, d.db_value as difficulty
+        FROM "questions" q
+        JOIN "difficulty" d ON q.difficulty_id = d.id
+        ORDER BY q.created_at DESC
+      `;
+      queryParams = [];
     }
 
-    const result = await pool.query(
-      `SELECT q.id, q.question_text, q.answer, q.created_at
-       FROM "questions" q
-       JOIN "difficulty" d ON q.difficulty_id = d.id
-       WHERE d.db_value = $1
-       ORDER BY q.created_at DESC`,
-      [difficulty]
-    );
+    const result = await pool.query(queryText, queryParams);
 
+    console.log('Query result rows:', result.rows.length);
     return response.status(200).json(result.rows);
   } catch (error) {
     console.error('Get all problems error:', error);

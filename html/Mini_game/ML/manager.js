@@ -17,6 +17,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
       if (tabName === 'suggestions') {
         loadSuggestions();
       } else if (tabName === 'edit-problem') {
+        console.log('Switching to edit-problem tab');
         loadEditProblems();
       } else if (tabName === 'ranking') {
         loadRanking();
@@ -153,40 +154,61 @@ document.getElementById('addProblemForm')?.addEventListener('submit', async (e) 
 
 // ==================== 문제 수정 ====================
 async function loadEditProblems() {
-  // 섹션 탭 초기화
-  document.querySelectorAll('.edit-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const section = btn.getAttribute('data-section');
-      
-      document.querySelectorAll('.edit-tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.edit-section').forEach(s => s.classList.remove('active'));
-      
-      btn.classList.add('active');
-      const targetSection = document.getElementById(`${section}-problems`);
-      if (targetSection) targetSection.classList.add('active');
-      
-      if (section === 'existing') {
-        loadExistingProblems();
-      } else {
-        loadSuggestedEditProblems();
-      }
+  console.log('loadEditProblems called');
+
+  // 섹션 탭 초기화 (중복 방지)
+  if (!document.querySelector('.edit-tab-btn').hasAttribute('data-listener-added')) {
+    document.querySelectorAll('.edit-tab-btn').forEach(btn => {
+      btn.setAttribute('data-listener-added', 'true');
+      btn.addEventListener('click', () => {
+        const section = btn.getAttribute('data-section');
+        console.log('Tab clicked:', section);
+
+        document.querySelectorAll('.edit-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.edit-section').forEach(s => s.classList.remove('active'));
+
+        btn.classList.add('active');
+        const targetSection = document.getElementById(`${section}-problems`);
+        if (targetSection) targetSection.classList.add('active');
+
+        if (section === 'existing') {
+          loadExistingProblems();
+        } else {
+          loadSuggestedEditProblems();
+        }
+      });
     });
-  });
+  }
 
   // 기본으로 기존 문제 로드
   loadExistingProblems();
 }
 
 async function loadExistingProblems() {
-  const difficulty = document.getElementById('existingDifficulty')?.value || 'easy';
+  const difficultySelect = document.getElementById('existingDifficulty');
+  const difficulty = difficultySelect?.value || '';
   const container = document.getElementById('existingProblemList');
   container.innerHTML = '<p class="loading">로딩 중...</p>';
 
+  console.log('Loading existing problems for difficulty:', difficulty);
+
   try {
-    const response = await fetch(`/api/admin?action=get-all-problems&difficulty=${difficulty}`);
-    if (!response.ok) throw new Error('문제를 불러올 수 없습니다.');
+    const url = difficulty
+      ? `/api/admin?action=get-all-problems&difficulty=${difficulty}`
+      : `/api/admin?action=get-all-problems`;
+
+    const response = await fetch(url);
+    console.log('API response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('API error response:', errorText);
+      throw new Error('문제를 불러올 수 없습니다.');
+    }
 
     const problems = await response.json();
+    console.log('Received problems:', problems);
+
     container.innerHTML = '';
 
     if (!problems || problems.length === 0) {
@@ -201,7 +223,7 @@ async function loadExistingProblems() {
         <div class="list-item-header">
           <div>
             <div class="list-item-title">ID: ${problem.id}</div>
-            <div class="list-item-meta">생성일: ${new Date(problem.created_at || new Date()).toLocaleDateString('ko-KR')}</div>
+            <div class="list-item-meta">난이도: ${problem.difficulty || '-'} | 생성일: ${new Date(problem.created_at || new Date()).toLocaleDateString('ko-KR')}</div>
           </div>
         </div>
         <div class="list-item-content">
@@ -358,7 +380,10 @@ async function saveSuggestedProblemEdit(problemId, questionText) {
 }
 
 // 기존 난이도 필터
-document.getElementById('existingDifficulty')?.addEventListener('change', loadExistingProblems);
+document.getElementById('existingDifficulty')?.addEventListener('change', (e) => {
+  console.log('Difficulty changed to:', e.target.value);
+  loadExistingProblems();
+});
 
 // ==================== 랭킹 관리 ====================
 async function loadRanking() {
