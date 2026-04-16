@@ -29,7 +29,7 @@ export default async function handler(request, response) {
         END AS name, 
         r.score 
       FROM "quiz_ranking" r
-      JOIN "Difficulty" d ON r.difficulty_id = d.id
+      JOIN "difficulty" d ON r.difficulty_id = d.id
       WHERE d.db_value = $1
     `;
 
