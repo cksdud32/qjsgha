@@ -58,6 +58,10 @@ async function loadSuggestions() {
     suggestions.forEach(suggestion => {
       const div = document.createElement('div');
       div.className = 'list-item';
+      const suggestedAnswers = [suggestion.answer, suggestion.question_text2, suggestion.question_text3]
+        .filter(ans => ans && ans.trim())
+        .map(ans => escapeHtml(ans.trim()))
+        .join(' // ');
       div.innerHTML = `
         <div class="list-item-header">
           <div>
@@ -66,7 +70,7 @@ async function loadSuggestions() {
           </div>
         </div>
         <div class="list-item-content">
-          <strong>정답:</strong> ${escapeHtml(suggestion.answer || '-')}
+          <strong>정답:</strong> ${suggestedAnswers || '-'}
         </div>
         <div class="list-item-actions">
           <button class="btn btn-success" onclick="approveSuggestion(${suggestion.id})">✓ 승인</button>
@@ -123,10 +127,12 @@ document.getElementById('addProblemForm')?.addEventListener('submit', async (e) 
 
   const questionText = document.getElementById('newQuestionText').value.trim();
   const answer = document.getElementById('newAnswer').value.trim();
+  const answer2 = document.getElementById('newAnswer2').value.trim();
+  const answer3 = document.getElementById('newAnswer3').value.trim();
   const difficulty = document.getElementById('newDifficulty').value;
 
   if (!questionText || !answer || !difficulty) {
-    showStatus('addProblemStatus', '모든 필드를 입력해주세요.', 'error');
+    showStatus('addProblemStatus', '문제, 첫 번째 정답, 난이도는 필수입니다.', 'error');
     return;
   }
 
@@ -137,6 +143,8 @@ document.getElementById('addProblemForm')?.addEventListener('submit', async (e) 
       body: JSON.stringify({
         question_text: questionText,
         answer: answer,
+        question_text2: answer2 || null,
+        question_text3: answer3 || null,
         difficulty: difficulty
       })
     });
@@ -221,8 +229,8 @@ async function loadExistingProblems(page = 1) {
 
     problems.forEach(problem => {
       const div = document.createElement('div');
-      const extraAnswer2 = problem.question_text2 ? `<br><strong>추가 정답 2:</strong><br><input type="text" value="${escapeHtml(problem.question_text2)}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.6);color:#e2e8f0;margin-top:8px;">` : '';
-      const extraAnswer3 = problem.question_text3 ? `<br><strong>추가 정답 3:</strong><br><input type="text" value="${escapeHtml(problem.question_text3)}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.6);color:#e2e8f0;margin-top:8px;">` : '';
+      const extraAnswer2 = `<br><strong>추가 정답 2:</strong><br><input id="edit-a2-${problem.id}" type="text" value="${escapeHtml(problem.question_text2 || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;">`;
+      const extraAnswer3 = `<br><strong>추가 정답 3:</strong><br><input id="edit-a3-${problem.id}" type="text" value="${escapeHtml(problem.question_text3 || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;">`;
       div.className = 'list-item';
       div.innerHTML = `
         <div class="list-item-header">
@@ -286,6 +294,8 @@ async function loadExistingProblems(page = 1) {
 async function updateProblem(problemId) {
   const questionEl = document.getElementById(`edit-q-${problemId}`);
   const answerEl = document.getElementById(`edit-a-${problemId}`);
+  const answer2El = document.getElementById(`edit-a2-${problemId}`);
+  const answer3El = document.getElementById(`edit-a3-${problemId}`);
   const difficultyEl = document.getElementById(`edit-d-${problemId}`);
 
   if (!questionEl || !answerEl || !difficultyEl) {
@@ -295,10 +305,12 @@ async function updateProblem(problemId) {
 
   const question = questionEl.value.trim();
   const answer = answerEl.value.trim();
+  const answer2 = answer2El?.value.trim() || null;
+  const answer3 = answer3El?.value.trim() || null;
   const difficulty = difficultyEl.value;
 
   if (!question || !answer || !difficulty) {
-    alert('문제, 정답, 난이도를 모두 입력해주세요.');
+    alert('문제, 첫 번째 정답, 난이도를 모두 입력해주세요.');
     return;
   }
 
@@ -310,6 +322,8 @@ async function updateProblem(problemId) {
         problemId,
         question_text: question,
         answer: answer,
+        question_text2: answer2,
+        question_text3: answer3,
         difficulty_id: parseInt(difficulty)
       })
     });

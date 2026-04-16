@@ -49,7 +49,7 @@ export async function getSuggestions(request, response) {
 
   try {
     const result = await pool.query(
-      `SELECT s.id, s.name, s.question_text, s.answer, s.difficulty_id, d.level_name
+      `SELECT s.id, s.name, s.question_text, s.answer, s.question_text2, s.question_text3, s.difficulty_id, d.level_name
        FROM "SuggestedQuestions" s
        JOIN "difficulty" d ON s.difficulty_id = d.id
        WHERE s.status = 'pending'
@@ -79,7 +79,7 @@ export async function approveSuggestion(request, response) {
     }
 
     const suggestionRes = await pool.query(
-      'SELECT question_text, answer, difficulty_id FROM "SuggestedQuestions" WHERE id = $1',
+      'SELECT question_text, answer, question_text2, question_text3, difficulty_id FROM "SuggestedQuestions" WHERE id = $1',
       [suggestionId]
     );
 
@@ -90,8 +90,8 @@ export async function approveSuggestion(request, response) {
     const suggestion = suggestionRes.rows[0];
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
-      [suggestion.question_text, suggestion.answer, suggestion.difficulty_id]
+      'INSERT INTO "questions" (question_text, answer, question_text2, question_text3, difficulty_id) VALUES ($1, $2, $3, $4, $5)',
+      [suggestion.question_text, suggestion.answer, suggestion.question_text2 || null, suggestion.question_text3 || null, suggestion.difficulty_id]
     );
 
     // 승인 처리 시 테이블에서 삭제
@@ -142,7 +142,7 @@ export async function addProblem(request, response) {
   }
 
   try {
-    const { question_text, answer, difficulty } = typeof request.body === 'string'
+    const { question_text, answer, question_text2, question_text3, difficulty } = typeof request.body === 'string'
       ? JSON.parse(request.body)
       : request.body;
 
@@ -167,8 +167,8 @@ export async function addProblem(request, response) {
     }
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
-      [question_text, answer, difficulty_id]
+      'INSERT INTO "questions" (question_text, answer, question_text2, question_text3, difficulty_id) VALUES ($1, $2, $3, $4, $5)',
+      [question_text, answer, question_text2 || null, question_text3 || null, difficulty_id]
     );
 
     return response.status(200).json({ message: '문제가 추가되었습니다.' });
@@ -186,7 +186,7 @@ export async function getSuggestedProblems(request, response) {
 
   try {
     const result = await pool.query(
-      `SELECT s.id, s.name, s.question_text, s.answer, s.difficulty_id, d.level_name
+      `SELECT s.id, s.name, s.question_text, s.answer, s.question_text2, s.question_text3, s.difficulty_id, d.level_name
        FROM "SuggestedQuestions" s
        JOIN "difficulty" d ON s.difficulty_id = d.id
        WHERE s.status = 'pending'
@@ -207,7 +207,7 @@ export async function addProblemFromEdit(request, response) {
   }
 
   try {
-    const { question_text, answer, difficulty_id, suggestionId } = typeof request.body === 'string'
+    const { question_text, answer, question_text2, question_text3, difficulty_id, suggestionId } = typeof request.body === 'string'
       ? JSON.parse(request.body)
       : request.body;
 
@@ -216,8 +216,8 @@ export async function addProblemFromEdit(request, response) {
     }
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
-      [question_text, answer, difficulty_id]
+      'INSERT INTO "questions" (question_text, answer, question_text2, question_text3, difficulty_id) VALUES ($1, $2, $3, $4, $5)',
+      [question_text, answer, question_text2 || null, question_text3 || null, difficulty_id]
     );
 
     // 승인 처리 시 테이블에서 삭제
@@ -306,7 +306,7 @@ export async function updateProblem(request, response) {
   }
 
   try {
-    const { problemId, question_text, answer, difficulty_id } = typeof request.body === 'string'
+    const { problemId, question_text, answer, question_text2, question_text3, difficulty_id } = typeof request.body === 'string'
       ? JSON.parse(request.body)
       : request.body;
 
@@ -315,8 +315,8 @@ export async function updateProblem(request, response) {
     }
 
     await pool.query(
-      'UPDATE "questions" SET question_text = $1, answer = $2, difficulty_id = $3 WHERE id = $4',
-      [question_text, answer, difficulty_id, problemId]
+      'UPDATE "questions" SET question_text = $1, answer = $2, question_text2 = $3, question_text3 = $4, difficulty_id = $5 WHERE id = $6',
+      [question_text, answer, question_text2 || null, question_text3 || null, difficulty_id, problemId]
     );
 
     return response.status(200).json({ message: '문제가 수정되었습니다.' });

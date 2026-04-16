@@ -344,10 +344,12 @@ async function submitSuggestion() {
     const name = document.querySelector('input[name="name"]').value;
     const question_text = document.querySelector('input[name="question_text"]').value;
     const answer = document.querySelector('input[name="answer"]').value;
+    const answer2 = document.querySelector('input[name="answer2"]').value;
+    const answer3 = document.querySelector('input[name="answer3"]').value;
     const difficulty = document.getElementById('selectedDifficulty').value;
 
     if (!name || !question_text || !answer || !difficulty) {
-        alert("모든 항목을 입력하고 난이도를 선택해주세요!");
+        alert("이름/문제/첫 번째 정답/난이도는 필수입니다!");
         return;
     }
 
@@ -355,7 +357,7 @@ async function submitSuggestion() {
         const response = await fetch('/api/post-suggestion', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, question_text, answer, difficulty })
+            body: JSON.stringify({ name, question_text, answer, answer2, answer3, difficulty })
         });
 
         const result = await response.json();
