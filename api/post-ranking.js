@@ -13,9 +13,16 @@ export default async function handler(request, response) {
   // POST 요청만 허용
   if (request.method !== 'POST') return response.status(405).send('Method Not Allowed');
 
+
   try {
     // 요청 바디 파싱
     const { name, score, difficulty } = typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
+
+    const diffRes = await pool.query('SELECT id FROM "difficulty" WHERE db_value = $1', [difficulty]);
+    if (diffRes.rows.length === 0) {
+      return response.status(400).json({ error: "올바르지 않은 난이도입니다." });
+    }
+    const diffId = diffRes.rows[0].id;
 
     // 1. 난이도(db_value)를 이용해 difficulty 테이블에서 해당 ID를 가져옵니다.
     const checkUser = await pool.query(
