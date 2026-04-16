@@ -262,3 +262,13 @@ header{
     color: #000;
     font-weight: bold;
 }
+
+#questionDisplay{
+    font-size: 20px;
+    color: white;
+    margin-bottom: 30px;
+    min-height: 60px;
+    line-height: 1.4;
+    word-break: keep-all; 
+    overflow-wrap: break-word;
+}
