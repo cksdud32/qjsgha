@@ -49,7 +49,7 @@ export async function getSuggestions(request, response) {
 
   try {
     const result = await pool.query(
-      `SELECT s.id, s.name, s.question_text, s.answer, d.level_name
+      `SELECT s.id, s.name, s.question_text, s.answer, s.difficulty_id, d.level_name
        FROM "SuggestedQuestions" s
        JOIN "difficulty" d ON s.difficulty_id = d.id
        WHERE s.status = 'pending'
@@ -186,7 +186,7 @@ export async function getSuggestedProblems(request, response) {
 
   try {
     const result = await pool.query(
-      `SELECT s.id, s.name, s.question_text, s.answer, d.level_name
+      `SELECT s.id, s.name, s.question_text, s.answer, s.difficulty_id, d.level_name
        FROM "SuggestedQuestions" s
        JOIN "difficulty" d ON s.difficulty_id = d.id
        WHERE s.status = 'pending'
@@ -207,28 +207,17 @@ export async function addProblemFromEdit(request, response) {
   }
 
   try {
-    const { question_text, answer, suggestionId } = typeof request.body === 'string'
+    const { question_text, answer, difficulty_id, suggestionId } = typeof request.body === 'string'
       ? JSON.parse(request.body)
       : request.body;
 
-    if (!question_text || !answer || !suggestionId) {
+    if (!question_text || !answer || difficulty_id === undefined || !suggestionId) {
       return response.status(400).json({ error: '필수 입력값이 없습니다.' });
     }
 
-    const suggestionRes = await pool.query(
-      'SELECT difficulty_id FROM "SuggestedQuestions" WHERE id = $1',
-      [suggestionId]
-    );
-
-    if (suggestionRes.rows.length === 0) {
-      return response.status(404).json({ error: '건의사항을 찾을 수 없습니다.' });
-    }
-
-    const diffId = suggestionRes.rows[0].difficulty_id;
-
     await pool.query(
       'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
-      [question_text, answer, diffId]
+      [question_text, answer, difficulty_id]
     );
 
     // 승인 처리 시 테이블에서 삭제
@@ -251,8 +240,10 @@ export async function getAllProblems(request, response) {
   }
 
   try {
-    const { difficulty } = request.query;
-    console.log('getAllProblems called with difficulty:', difficulty);
+    const { difficulty, page = 1 } = request.query;
+    const limit = 10;
+    const offset = (parseInt(page) - 1) * limit;
+    console.log('getAllProblems called with difficulty:', difficulty, 'page:', page);
 
     let queryText;
     let queryParams;
@@ -280,8 +271,9 @@ export async function getAllProblems(request, response) {
         JOIN "difficulty" d ON q.difficulty_id = d.id
         WHERE q.difficulty_id = $1
         ORDER BY q.id DESC
+        LIMIT $2 OFFSET $3
       `;
-      queryParams = [difficulty_id];
+      queryParams = [difficulty_id, limit, offset];
     } else {
       // 난이도 파라미터가 없으면 모든 문제 반환
       queryText = `
@@ -289,14 +281,18 @@ export async function getAllProblems(request, response) {
         FROM "questions" q
         JOIN "difficulty" d ON q.difficulty_id = d.id
         ORDER BY q.id DESC
+        LIMIT $1 OFFSET $2
       `;
-      queryParams = [];
+      queryParams = [limit, offset];
     }
 
     const result = await pool.query(queryText, queryParams);
 
     console.log('Query result rows:', result.rows.length);
-    return response.status(200).json(result.rows);
+    return response.status(200).json({
+      problems: result.rows,
+      hasMore: result.rows.length === limit
+    });
   } catch (error) {
     console.error('Get all problems error:', error);
     return response.status(500).json({ error: error.message });
@@ -310,17 +306,17 @@ export async function updateProblem(request, response) {
   }
 
   try {
-    const { problemId, question_text, answer } = typeof request.body === 'string'
+    const { problemId, question_text, answer, difficulty_id } = typeof request.body === 'string'
       ? JSON.parse(request.body)
       : request.body;
 
-    if (!problemId || !question_text || !answer) {
+    if (!problemId || !question_text || !answer || difficulty_id === undefined) {
       return response.status(400).json({ error: '필수 입력값이 없습니다.' });
     }
 
     await pool.query(
-      'UPDATE "questions" SET question_text = $1, answer = $2 WHERE id = $3',
-      [question_text, answer, problemId]
+      'UPDATE "questions" SET question_text = $1, answer = $2, difficulty_id = $3 WHERE id = $4',
+      [question_text, answer, difficulty_id, problemId]
     );
 
     return response.status(200).json({ message: '문제가 수정되었습니다.' });
@@ -364,7 +360,9 @@ export async function getAdminRanking(request, response) {
   }
 
   try {
-    const { difficulty } = request.query;
+    const { difficulty, page = 1 } = request.query;
+    const limit = 10;
+    const offset = (parseInt(page) - 1) * limit;
 
     if (!difficulty) {
       return response.status(400).json({ error: '난이도 파라미터가 필요합니다.' });
@@ -375,11 +373,15 @@ export async function getAdminRanking(request, response) {
        FROM "quiz_ranking" r
        JOIN "difficulty" d ON r.difficulty_id = d.id
        WHERE d.db_value = $1
-       ORDER BY r.score DESC, r.created_at DESC`,
-      [difficulty]
+       ORDER BY r.score DESC, r.created_at DESC
+       LIMIT $2 OFFSET $3`,
+      [difficulty, limit, offset]
     );
 
-    return response.status(200).json(result.rows);
+    return response.status(200).json({
+      rankings: result.rows,
+      hasMore: result.rows.length === limit
+    });
   } catch (error) {
     console.error('Get admin ranking error:', error);
     return response.status(500).json({ error: error.message });
@@ -413,6 +415,46 @@ export async function deleteRanking(request, response) {
   }
 }
 
+// 한 달 전체 랭킹 삭제
+export async function deleteAllRankingForCurrentMonth(request, response) {
+  if (request.method !== 'DELETE') {
+    return response.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  try {
+    const { difficulty } = typeof request.body === 'string'
+      ? JSON.parse(request.body)
+      : request.body;
+
+    if (!difficulty) {
+      return response.status(400).json({ error: '난이도 파라미터가 필요합니다.' });
+    }
+
+    // 현재 달의 시작과 끝 계산
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+    const result = await pool.query(
+      `DELETE FROM "quiz_ranking" r
+       USING "difficulty" d
+       WHERE r.difficulty_id = d.id
+         AND d.db_value = $1
+         AND r.created_at >= $2
+         AND r.created_at <= $3`,
+      [difficulty, startOfMonth, endOfMonth]
+    );
+
+    return response.status(200).json({ 
+      message: `${result.rowCount}개의 랭킹이 삭제되었습니다.`,
+      deletedCount: result.rowCount
+    });
+  } catch (error) {
+    console.error('Delete all ranking for current month error:', error);
+    return response.status(500).json({ error: error.message });
+  }
+}
+
 // 메인 핸들러
 export default async function handler(request, response) {
   const { action } = request.query;
@@ -442,6 +484,8 @@ export default async function handler(request, response) {
       return getAdminRanking(request, response);
     case 'delete-ranking':
       return deleteRanking(request, response);
+    case 'delete-all-ranking-current-month':
+      return deleteAllRankingForCurrentMonth(request, response);
     default:
       return response.status(400).json({ error: 'Invalid action' });
   }

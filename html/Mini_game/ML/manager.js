@@ -184,18 +184,18 @@ async function loadEditProblems() {
   loadExistingProblems();
 }
 
-async function loadExistingProblems() {
+async function loadExistingProblems(page = 1) {
   const difficultySelect = document.getElementById('existingDifficulty');
   const difficulty = difficultySelect?.value || '';
   const container = document.getElementById('existingProblemList');
   container.innerHTML = '<p class="loading">로딩 중...</p>';
 
-  console.log('Loading existing problems for difficulty:', difficulty);
+  console.log('Loading existing problems for difficulty:', difficulty, 'page:', page);
 
   try {
     const url = difficulty
-      ? `/api/admin?action=get-all-problems&difficulty=${difficulty}`
-      : `/api/admin?action=get-all-problems`;
+      ? `/api/admin?action=get-all-problems&difficulty=${difficulty}&page=${page}`
+      : `/api/admin?action=get-all-problems&page=${page}`;
 
     const response = await fetch(url);
     console.log('API response status:', response.status);
@@ -206,8 +206,11 @@ async function loadExistingProblems() {
       throw new Error('문제를 불러올 수 없습니다.');
     }
 
-    const problems = await response.json();
-    console.log('Received problems:', problems);
+    const data = await response.json();
+    const problems = data.problems;
+    const hasMore = data.hasMore;
+
+    console.log('Received problems:', problems.length, 'hasMore:', hasMore);
 
     container.innerHTML = '';
 
@@ -230,7 +233,13 @@ async function loadExistingProblems() {
           <strong>문제:</strong><br>
           <textarea id="edit-q-${problem.id}" style="width:100%;min-height:80px;margin-top:8px;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;">${escapeHtml(problem.question_text || '')}</textarea><br><br>
           <strong>정답:</strong><br>
-          <input id="edit-a-${problem.id}" type="text" value="${escapeHtml(problem.answer || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;">
+          <input id="edit-a-${problem.id}" type="text" value="${escapeHtml(problem.answer || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
+          <strong>난이도:</strong><br>
+          <select id="edit-d-${problem.id}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;">
+            <option value="1" ${problem.difficulty_id == 1 ? 'selected' : ''}>쉬움</option>
+            <option value="2" ${problem.difficulty_id == 2 ? 'selected' : ''}>보통</option>
+            <option value="3" ${problem.difficulty_id == 3 ? 'selected' : ''}>어려움</option>
+          </select>
         </div>
         <div class="list-item-actions">
           <button class="btn btn-primary" onclick="updateProblem(${problem.id})">저장</button>
@@ -239,6 +248,31 @@ async function loadExistingProblems() {
       `;
       container.appendChild(div);
     });
+
+    // 페이지네이션 버튼 추가
+    if (hasMore || page > 1) {
+      const paginationDiv = document.createElement('div');
+      paginationDiv.style.cssText = 'text-align: center; margin-top: 20px; padding: 10px;';
+      
+      if (page > 1) {
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'btn btn-secondary';
+        prevBtn.textContent = '이전';
+        prevBtn.onclick = () => loadExistingProblems(page - 1);
+        prevBtn.style.marginRight = '10px';
+        paginationDiv.appendChild(prevBtn);
+      }
+      
+      if (hasMore) {
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn btn-secondary';
+        nextBtn.textContent = '다음';
+        nextBtn.onclick = () => loadExistingProblems(page + 1);
+        paginationDiv.appendChild(nextBtn);
+      }
+      
+      container.appendChild(paginationDiv);
+    }
   } catch (error) {
     console.error('기존 문제 로드 오류:', error);
     container.innerHTML = '<p class="loading">오류 발생: ' + error.message + '</p>';
@@ -248,17 +282,19 @@ async function loadExistingProblems() {
 async function updateProblem(problemId) {
   const questionEl = document.getElementById(`edit-q-${problemId}`);
   const answerEl = document.getElementById(`edit-a-${problemId}`);
+  const difficultyEl = document.getElementById(`edit-d-${problemId}`);
 
-  if (!questionEl || !answerEl) {
+  if (!questionEl || !answerEl || !difficultyEl) {
     alert('입력 필드를 찾을 수 없습니다.');
     return;
   }
 
   const question = questionEl.value.trim();
   const answer = answerEl.value.trim();
+  const difficulty = difficultyEl.value;
 
-  if (!question || !answer) {
-    alert('문제와 정답을 모두 입력해주세요.');
+  if (!question || !answer || !difficulty) {
+    alert('문제, 정답, 난이도를 모두 입력해주세요.');
     return;
   }
 
@@ -269,7 +305,8 @@ async function updateProblem(problemId) {
       body: JSON.stringify({
         problemId,
         question_text: question,
-        answer: answer
+        answer: answer,
+        difficulty_id: parseInt(difficulty)
       })
     });
 
@@ -328,12 +365,18 @@ async function loadSuggestedEditProblems() {
         <div class="list-item-header">
           <div>
             <div class="list-item-title">${escapeHtml(problem.question_text || '제목 없음')}</div>
-            <div class="list-item-meta">건의자: ${escapeHtml(problem.name || '익명')} | 난이도: ${problem.db_value || '-'}</div>
+            <div class="list-item-meta">건의자: ${escapeHtml(problem.name || '익명')}</div>
           </div>
         </div>
         <div class="list-item-content">
           <strong>원래 정답:</strong> ${escapeHtml(problem.answer || '-')}<br>
-          <textarea id="edit-sugg-answer-${problem.id}" style="width:100%;min-height:60px;margin-top:8px;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;" placeholder="수정된 정답을 입력하세요">${escapeHtml(problem.answer || '')}</textarea>
+          <textarea id="edit-sugg-answer-${problem.id}" style="width:100%;min-height:60px;margin-top:8px;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;" placeholder="수정된 정답을 입력하세요">${escapeHtml(problem.answer || '')}</textarea><br><br>
+          <strong>난이도:</strong><br>
+          <select id="edit-sugg-diff-${problem.id}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;">
+            <option value="1" ${problem.difficulty_id == 1 ? 'selected' : ''}>쉬움</option>
+            <option value="2" ${problem.difficulty_id == 2 ? 'selected' : ''}>보통</option>
+            <option value="3" ${problem.difficulty_id == 3 ? 'selected' : ''}>어려움</option>
+          </select>
         </div>
         <div class="list-item-actions">
           <button class="btn btn-primary" onclick="saveSuggestedProblemEdit(${problem.id}, '${escapeHtml(problem.question_text)}')">수정후 추가</button>
@@ -350,10 +393,12 @@ async function loadSuggestedEditProblems() {
 
 async function saveSuggestedProblemEdit(problemId, questionText) {
   const editAnswerEl = document.getElementById(`edit-sugg-answer-${problemId}`);
+  const editDiffEl = document.getElementById(`edit-sugg-diff-${problemId}`);
   const editedAnswer = editAnswerEl?.value.trim();
+  const editedDifficulty = editDiffEl?.value;
 
-  if (!editedAnswer) {
-    alert('정답을 입력해주세요.');
+  if (!editedAnswer || !editedDifficulty) {
+    alert('정답과 난이도를 모두 입력해주세요.');
     return;
   }
 
@@ -364,6 +409,7 @@ async function saveSuggestedProblemEdit(problemId, questionText) {
       body: JSON.stringify({
         question_text: questionText,
         answer: editedAnswer,
+        difficulty_id: parseInt(editedDifficulty),
         suggestionId: problemId
       })
     });
@@ -382,20 +428,23 @@ async function saveSuggestedProblemEdit(problemId, questionText) {
 // 기존 난이도 필터
 document.getElementById('existingDifficulty')?.addEventListener('change', (e) => {
   console.log('Difficulty changed to:', e.target.value);
-  loadExistingProblems();
+  loadExistingProblems(1); // 첫 페이지부터 로드
 });
 
 // ==================== 랭킹 관리 ====================
-async function loadRanking() {
+async function loadRanking(page = 1) {
   const difficulty = document.getElementById('rankingDifficulty').value;
   const container = document.getElementById('rankingList');
   container.innerHTML = '<p class="loading">로딩 중...</p>';
 
   try {
-    const response = await fetch(`/api/admin?action=get-admin-ranking&difficulty=${difficulty}`);
+    const response = await fetch(`/api/admin?action=get-admin-ranking&difficulty=${difficulty}&page=${page}`);
     if (!response.ok) throw new Error('랭킹을 불러올 수 없습니다.');
 
-    const rankings = await response.json();
+    const data = await response.json();
+    const rankings = data.rankings;
+    const hasMore = data.hasMore;
+
     container.innerHTML = '';
 
     if (!rankings || rankings.length === 0) {
@@ -409,7 +458,7 @@ async function loadRanking() {
       div.innerHTML = `
         <div class="list-item-header">
           <div>
-            <div class="list-item-title">${index + 1}. ${escapeHtml(ranking.name)}</div>
+            <div class="list-item-title">${(page - 1) * 10 + index + 1}. ${escapeHtml(ranking.name)}</div>
             <div class="list-item-meta">점수: ${ranking.score}점 | 등록: ${new Date(ranking.created_at).toLocaleDateString('ko-KR')}</div>
           </div>
         </div>
@@ -419,6 +468,43 @@ async function loadRanking() {
       `;
       container.appendChild(div);
     });
+
+    // 페이지네이션 버튼 추가
+    if (hasMore || page > 1) {
+      const paginationDiv = document.createElement('div');
+      paginationDiv.style.cssText = 'text-align: center; margin-top: 20px; padding: 10px;';
+      
+      if (page > 1) {
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'btn btn-secondary';
+        prevBtn.textContent = '이전';
+        prevBtn.onclick = () => loadRanking(page - 1);
+        prevBtn.style.marginRight = '10px';
+        paginationDiv.appendChild(prevBtn);
+      }
+      
+      if (hasMore) {
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn btn-secondary';
+        nextBtn.textContent = '다음';
+        nextBtn.onclick = () => loadRanking(page + 1);
+        paginationDiv.appendChild(nextBtn);
+      }
+      
+      container.appendChild(paginationDiv);
+    }
+
+    // 이번 달 전체 삭제 버튼 추가 (첫 페이지에만)
+    if (page === 1) {
+      const bulkDeleteDiv = document.createElement('div');
+      bulkDeleteDiv.style.cssText = 'text-align: center; margin-top: 20px; padding: 10px;';
+      bulkDeleteDiv.innerHTML = `
+        <button class="btn btn-danger" onclick="deleteAllRankingForCurrentMonth()" style="background: #dc2626; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">
+          이번 달 랭킹 전체 삭제
+        </button>
+      `;
+      container.appendChild(bulkDeleteDiv);
+    }
   } catch (error) {
     console.error('랭킹 로드 오류:', error);
     container.innerHTML = '<p class="loading">오류 발생: ' + error.message + '</p>';
@@ -446,8 +532,30 @@ async function deleteRanking(rankingId) {
   }
 }
 
+async function deleteAllRankingForCurrentMonth() {
+  const difficulty = document.getElementById('rankingDifficulty').value;
+  if (!confirm('정말로 이번 달의 모든 랭킹을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+
+  try {
+    const response = await fetch('/api/admin?action=delete-all-ranking-current-month', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ difficulty })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) throw new Error(result.error || '삭제에 실패했습니다.');
+
+    alert(`이번 달 랭킹 ${result.deletedCount}개가 삭제되었습니다.`);
+    loadRanking(1);
+  } catch (error) {
+    alert('오류: ' + error.message);
+  }
+}
+
 // 랭킹 필터 변경 시 재로드
-document.getElementById('rankingDifficulty')?.addEventListener('change', loadRanking);
+document.getElementById('rankingDifficulty')?.addEventListener('change', () => loadRanking(1)); // 첫 페이지부터 로드
 
 // 유틸: XSS 방지
 function escapeHtml(text) {
