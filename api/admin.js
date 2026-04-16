@@ -90,7 +90,7 @@ export async function approveSuggestion(request, response) {
     const suggestion = suggestionRes.rows[0];
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
+      'INSERT INTO "questions" (question_text, answer, difficlty_id) VALUES ($1, $2, $3)',
       [suggestion.question_text, suggestion.answer, suggestion.difficulty_id]
     );
 
@@ -121,9 +121,10 @@ export async function rejectSuggestion(request, response) {
       return response.status(400).json({ error: '건의사항 ID가 필요합니다.' });
     }
 
+    // 기각 처리 시 테이블에서 삭제
     await pool.query(
-      'UPDATE "SuggestedQuestions" SET status = $1 WHERE id = $2',
-      ['rejected', suggestionId]
+      'DELETE FROM "SuggestedQuestions" WHERE id = $1',
+      [suggestionId]
     );
 
     return response.status(200).json({ message: '건의사항이 기각되었습니다.' });
@@ -148,20 +149,25 @@ export async function addProblem(request, response) {
       return response.status(400).json({ error: '필수 입력값이 없습니다.' });
     }
 
-    const diffRes = await pool.query(
-      'SELECT id FROM "difficulty" WHERE db_value = $1',
-      [difficulty]
-    );
-
-    if (diffRes.rows.length === 0) {
-      return response.status(400).json({ error: '올바르지 않은 난이도입니다.' });
+    // 난이도를 숫자로 변환 (1=쉬움, 2=보통, 3=어려움)
+    let difficulty_id;
+    switch (difficulty) {
+      case 'easy':
+        difficulty_id = 1;
+        break;
+      case 'medium':
+        difficulty_id = 2;
+        break;
+      case 'hard':
+        difficulty_id = 3;
+        break;
+      default:
+        return response.status(400).json({ error: '올바르지 않은 난이도입니다.' });
     }
 
-    const diffId = diffRes.rows[0].id;
-
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
-      [question_text, answer, diffId]
+      'INSERT INTO "questions" (question_text, answer, difficlty_id) VALUES ($1, $2, $3)',
+      [question_text, answer, difficulty_id]
     );
 
     return response.status(200).json({ message: '문제가 추가되었습니다.' });
@@ -220,7 +226,7 @@ export async function addProblemFromEdit(request, response) {
     const diffId = suggestionRes.rows[0].difficulty_id;
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
+      'INSERT INTO "questions" (question_text, answer, difficlty_id) VALUES ($1, $2, $3)',
       [question_text, answer, diffId]
     );
 
@@ -250,21 +256,45 @@ export async function getAllProblems(request, response) {
     let queryParams;
 
     if (difficulty) {
+      // 난이도를 숫자로 변환
+      let difficulty_id;
+      switch (difficulty) {
+        case 'easy':
+          difficulty_id = 1;
+          break;
+        case 'medium':
+          difficulty_id = 2;
+          break;
+        case 'hard':
+          difficulty_id = 3;
+          break;
+        default:
+          return response.status(400).json({ error: '올바르지 않은 난이도입니다.' });
+      }
+
       queryText = `
-        SELECT q.id, q.question_text, q.answer, q.created_at, d.db_value as difficulty
-        FROM "questions" q
-        JOIN "difficulty" d ON q.difficulty_id = d.id
-        WHERE d.db_value = $1
-        ORDER BY q.created_at DESC
+        SELECT id, question_text, answer, created_at, difficlty_id,
+               CASE difficlty_id
+                 WHEN 1 THEN '쉬움'
+                 WHEN 2 THEN '보통'
+                 WHEN 3 THEN '어려움'
+               END as difficulty
+        FROM "questions"
+        WHERE difficlty_id = $1
+        ORDER BY created_at DESC
       `;
-      queryParams = [difficulty];
+      queryParams = [difficulty_id];
     } else {
       // 난이도 파라미터가 없으면 모든 문제 반환
       queryText = `
-        SELECT q.id, q.question_text, q.answer, q.created_at, d.db_value as difficulty
-        FROM "questions" q
-        JOIN "difficulty" d ON q.difficulty_id = d.id
-        ORDER BY q.created_at DESC
+        SELECT id, question_text, answer, created_at, difficlty_id,
+               CASE difficlty_id
+                 WHEN 1 THEN '쉬움'
+                 WHEN 2 THEN '보통'
+                 WHEN 3 THEN '어려움'
+               END as difficulty
+        FROM "questions"
+        ORDER BY created_at DESC
       `;
       queryParams = [];
     }
