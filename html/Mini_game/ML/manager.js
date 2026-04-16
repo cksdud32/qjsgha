@@ -223,7 +223,7 @@ async function loadExistingProblems() {
         <div class="list-item-header">
           <div>
             <div class="list-item-title">ID: ${problem.id}</div>
-            <div class="list-item-meta">난이도: ${problem.difficulty || '-'} | 생성일: ${new Date(problem.created_at || new Date()).toLocaleDateString('ko-KR')}</div>
+            <div class="list-item-meta">난이도: ${problem.difficulty || '-'}</div>
           </div>
         </div>
         <div class="list-item-content">

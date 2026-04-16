@@ -90,7 +90,7 @@ export async function approveSuggestion(request, response) {
     const suggestion = suggestionRes.rows[0];
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
+      'INSERT INTO "questions" (question_text, answer, difficlty_id) VALUES ($1, $2, $3)',
       [suggestion.question_text, suggestion.answer, suggestion.difficulty_id]
     );
 
@@ -166,7 +166,7 @@ export async function addProblem(request, response) {
     }
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
+      'INSERT INTO "questions" (question_text, answer, difficlty_id) VALUES ($1, $2, $3)',
       [question_text, answer, difficulty_id]
     );
 
@@ -226,7 +226,7 @@ export async function addProblemFromEdit(request, response) {
     const diffId = suggestionRes.rows[0].difficulty_id;
 
     await pool.query(
-      'INSERT INTO "questions" (question_text, answer, difficulty_id) VALUES ($1, $2, $3)',
+      'INSERT INTO "questions" (question_text, answer, difficlty_id) VALUES ($1, $2, $3)',
       [question_text, answer, diffId]
     );
 
@@ -273,28 +273,28 @@ export async function getAllProblems(request, response) {
       }
 
       queryText = `
-        SELECT id, question_text, answer, created_at, difficulty_id,
-               CASE difficulty_id
+        SELECT id, question_text, answer, difficlty_id,
+               CASE difficlty_id
                  WHEN 1 THEN '쉬움'
                  WHEN 2 THEN '보통'
                  WHEN 3 THEN '어려움'
                END as difficulty
         FROM "questions"
-        WHERE difficulty_id = $1
-        ORDER BY created_at DESC
+        WHERE difficlty_id = $1
+        ORDER BY id DESC
       `;
       queryParams = [difficulty_id];
     } else {
       // 난이도 파라미터가 없으면 모든 문제 반환
       queryText = `
-        SELECT id, question_text, answer, created_at, difficulty_id,
-               CASE difficulty_id
+        SELECT id, question_text, answer, difficlty_id,
+               CASE difficlty_id
                  WHEN 1 THEN '쉬움'
                  WHEN 2 THEN '보통'
                  WHEN 3 THEN '어려움'
                END as difficulty
         FROM "questions"
-        ORDER BY created_at DESC
+        ORDER BY id DESC
       `;
       queryParams = [];
     }
