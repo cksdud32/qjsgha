@@ -1,0 +1,164 @@
+/* 관리자 로그인 페이지 스타일 */
+:root {
+    color-scheme: dark;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #0f172a;
+    color: #eef2ff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: radial-gradient(circle at top left, rgba(96, 165, 250, 0.18), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.18), transparent 30%),
+                linear-gradient(180deg, #020617 0%, #0b122e 100%);
+}
+
+.admin-login-page {
+    width: 100%;
+    max-width: 420px;
+}
+
+.login-card {
+    width: 100%;
+    padding: 36px 32px;
+    border-radius: 24px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    box-shadow: 0 32px 80px rgba(15, 23, 42, 0.35);
+}
+
+.login-header h1 {
+    margin: 0 0 10px;
+    font-size: 28px;
+    letter-spacing: -0.04em;
+}
+
+.login-header p {
+    margin: 0;
+    color: #94a3b8;
+    line-height: 1.7;
+}
+
+.login-form {
+    margin-top: 28px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #cbd5e1;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: rgba(15, 23, 42, 0.85);
+    color: #f8fafc;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
+}
+
+.login-button {
+    width: 100%;
+    padding: 14px 0;
+    margin-top: 4px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #60a5fa, #c084fc);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.login-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 30px rgba(96, 165, 250, 0.22);
+}
+
+.login-status {
+    margin-top: 14px;
+    min-height: 20px;
+    font-size: 14px;
+    color: #cbd5e1;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.login-status.success {
+    color: #86efac;
+}
+
+.login-status.error {
+    color: #fda4af;
+}
+
+.login-footer {
+    margin-top: 18px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.login-footer .back-button {
+    display: inline-block;
+    padding: 10px 18px;
+    margin-top: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(15, 23, 42, 0.72);
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.login-footer .back-button:hover {
+    background: rgba(96, 165, 250, 0.12);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 28px 20px;
+        border-radius: 20px;
+    }
+
+    .login-header h1 {
+        font-size: 24px;
+    }
+
+    .form-group input {
+        font-size: 14px;
+    }
+
+    .login-button {
+        font-size: 15px;
+    }
+}
