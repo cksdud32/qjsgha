@@ -16,7 +16,7 @@ export default async function handler(request, response) {
     const { name, question_text, answer, difficulty } = typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
 
     // 1. 난이도 db_value를 이용해 ID 찾아오기
-    const diffRes = await pool.query('SELECT id FROM "Difficulty" WHERE db_value = $1', [difficulty]);
+    const diffRes = await pool.query('SELECT id FROM "difficulty" WHERE db_value = $1', [difficulty]);
     if (diffRes.rows.length === 0) {
       return response.status(400).json({ error: "올바른 난이도를 선택해주세요." });
     }
