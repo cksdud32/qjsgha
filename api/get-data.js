@@ -28,7 +28,7 @@ export default async function handler(request, response) {
      * ※ 에러 방지를 위해 테이블 이름에 큰따옴표를 추가했습니다.
      */
     const queryText = `
-      SELECT q.id, q.question_text, q.answer, d.time_limit
+      SELECT q.id, q.question_text, q.answer, q.question_text2, q.question_text3, d.time_limit
       FROM "questions" q
       JOIN "difficulty" d ON q.difficulty_id = d.id
       WHERE d.db_value = $1

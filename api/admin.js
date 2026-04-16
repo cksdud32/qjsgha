@@ -266,7 +266,7 @@ export async function getAllProblems(request, response) {
       }
 
       queryText = `
-        SELECT q.id, q.question_text, q.answer, q.difficulty_id, d.level_name as difficulty
+        SELECT q.id, q.question_text, q.answer, q.question_text2, q.question_text3, q.difficulty_id, d.level_name as difficulty
         FROM "questions" q
         JOIN "difficulty" d ON q.difficulty_id = d.id
         WHERE q.difficulty_id = $1
@@ -277,7 +277,7 @@ export async function getAllProblems(request, response) {
     } else {
       // 난이도 파라미터가 없으면 모든 문제 반환
       queryText = `
-        SELECT q.id, q.question_text, q.answer, q.difficulty_id, d.level_name as difficulty
+        SELECT q.id, q.question_text, q.answer, q.question_text2, q.question_text3, q.difficulty_id, d.level_name as difficulty
         FROM "questions" q
         JOIN "difficulty" d ON q.difficulty_id = d.id
         ORDER BY q.id DESC

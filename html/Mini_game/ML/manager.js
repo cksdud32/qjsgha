@@ -221,6 +221,8 @@ async function loadExistingProblems(page = 1) {
 
     problems.forEach(problem => {
       const div = document.createElement('div');
+      const extraAnswer2 = problem.question_text2 ? `<br><strong>추가 정답 2:</strong><br><input type="text" value="${escapeHtml(problem.question_text2)}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.6);color:#e2e8f0;margin-top:8px;">` : '';
+      const extraAnswer3 = problem.question_text3 ? `<br><strong>추가 정답 3:</strong><br><input type="text" value="${escapeHtml(problem.question_text3)}" readonly style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.6);color:#e2e8f0;margin-top:8px;">` : '';
       div.className = 'list-item';
       div.innerHTML = `
         <div class="list-item-header">
@@ -234,6 +236,8 @@ async function loadExistingProblems(page = 1) {
           <textarea id="edit-q-${problem.id}" style="width:100%;min-height:80px;margin-top:8px;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;">${escapeHtml(problem.question_text || '')}</textarea><br><br>
           <strong>정답:</strong><br>
           <input id="edit-a-${problem.id}" type="text" value="${escapeHtml(problem.answer || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
+          ${extraAnswer2}
+          ${extraAnswer3}
           <strong>난이도:</strong><br>
           <select id="edit-d-${problem.id}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;">
             <option value="1" ${problem.difficulty_id == 1 ? 'selected' : ''}>쉬움</option>

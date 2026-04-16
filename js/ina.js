@@ -182,7 +182,12 @@ function startTimer(seconds) {
             clearInterval(timerInterval);
             // 시간 초과 시 오답 처리 (processAnswer 함수 호출)
             if (typeof processAnswer === "function") {
-                processAnswer(false, `⏰ 시간 초과! (정답: ${quizList[currentIndex].answer})`);
+                const question = quizList[currentIndex];
+                const answers = [question.answer, question.question_text2, question.question_text3]
+                    .map(normalizeAnswer)
+                    .filter(Boolean);
+                const displayAnswer = answers.length > 0 ? answers.join(' // ') : '정답이 등록되지 않았습니다.';
+                processAnswer(false, `⏰ 시간 초과! (정답: ${displayAnswer})`);
             }
         }
     }, 1000);
@@ -191,18 +196,27 @@ function startTimer(seconds) {
 /**
  * 5. 정답 확인 및 결과 처리
  */
-function checkAnswer() {
-    const userInput = document.getElementById('answerInput').value.trim();
-    const correctAnswer = quizList[currentIndex].answer;
+function normalizeAnswer(value) {
+    return typeof value === 'string' ? value.trim().toLowerCase() : null;
+}
 
+function checkAnswer() {
+    const userInput = document.getElementById('answerInput').value.trim().toLowerCase();
     if (!userInput) return;
     clearInterval(timerInterval);
 
-    if (userInput === correctAnswer) {
+    const question = quizList[currentIndex];
+    const answers = [question.answer, question.question_text2, question.question_text3]
+        .map(normalizeAnswer)
+        .filter(Boolean);
+    const isCorrect = answers.some(ans => ans === userInput);
+    const displayAnswer = answers.length > 0 ? answers.join(' // ') : '정답이 등록되지 않았습니다.';
+
+    if (isCorrect) {
         score++;
         processAnswer(true, "⭕ 정답입니다!");
     } else {
-        processAnswer(false, `❌ 틀렸습니다. (정답: ${correctAnswer})`);
+        processAnswer(false, `❌ 틀렸습니다. (정답: ${displayAnswer})`);
     }
 }
 
