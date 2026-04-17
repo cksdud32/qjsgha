@@ -41,7 +41,7 @@ export default async function handler(request, response) {
       queryText += ` AND r.created_at >= DATE_TRUNC('month', CURRENT_DATE)`;
     }
 
-    queryText += ` ORDER BY r.score DESC, r.created_at DESC LIMIT 10`;
+    queryText += ` ORDER BY r.score DESC, r.created_at DESC LIMIT 5`;
 
     const result = await pool.query(queryText, [diff]);
     return response.status(200).json(result.rows);
