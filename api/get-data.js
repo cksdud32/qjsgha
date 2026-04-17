@@ -33,7 +33,7 @@ export default async function handler(request, response) {
       JOIN "difficulty" d ON q.difficulty_id = d.id
       WHERE d.db_value = $1
       ORDER BY RANDOM()
-      LIMIT 10
+      LIMIT 15
     `;
 
     const result = await pool.query(queryText, [difficulty]);
