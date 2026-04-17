@@ -74,6 +74,7 @@ async function loadSuggestions() {
         </div>
         <div class="list-item-actions">
           <button class="btn btn-success" onclick="approveSuggestion(${suggestion.id})">✓ 승인</button>
+          <button class="btn btn-warning" onclick="editSuggestedProblem(${suggestion.id}, '${escapeHtml(suggestion.question_text)}', '${escapeHtml(suggestion.answer || '')}', '${escapeHtml(suggestion.question_text2 || '')}', '${escapeHtml(suggestion.question_text3 || '')}', ${suggestion.difficulty_id})">✎ 수정</button>
           <button class="btn btn-danger" onclick="rejectSuggestion(${suggestion.id})">✕ 기각</button>
         </div>
       `;
@@ -118,6 +119,77 @@ async function rejectSuggestion(suggestionId) {
     loadSuggestions();
   } catch (error) {
     showStatus('suggestionsList', error.message, 'error');
+  }
+}
+
+async function editSuggestedProblem(suggestionId, questionText, answer, answer2, answer3, difficultyId) {
+  const itemDiv = event.target.closest('.list-item');
+  if (!itemDiv) return;
+
+  itemDiv.innerHTML = `
+    <div class="list-item-header">
+      <div>
+        <div class="list-item-title">${escapeHtml(questionText || '제목 없음')}</div>
+      </div>
+    </div>
+    <div class="list-item-content">
+      <strong>수정된 정답 1:</strong><br>
+      <input id="edit-sugg-inline-a-${suggestionId}" type="text" value="${answer}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
+      <strong>수정된 추가 정답 2:</strong><br>
+      <input id="edit-sugg-inline-a2-${suggestionId}" type="text" value="${answer2}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
+      <strong>수정된 추가 정답 3:</strong><br>
+      <input id="edit-sugg-inline-a3-${suggestionId}" type="text" value="${answer3}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
+      <strong>난이도:</strong><br>
+      <select id="edit-sugg-inline-diff-${suggestionId}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;">
+        <option value="1" ${difficultyId == 1 ? 'selected' : ''}>쉬움</option>
+        <option value="2" ${difficultyId == 2 ? 'selected' : ''}>보통</option>
+        <option value="3" ${difficultyId == 3 ? 'selected' : ''}>어려움</option>
+      </select>
+    </div>
+    <div class="list-item-actions">
+      <button class="btn btn-primary" onclick="saveSuggestedProblemEditInline(${suggestionId}, '${escapeHtml(questionText)}')">✓ 수정후 추가</button>
+      <button class="btn btn-secondary" onclick="loadSuggestions()">✕ 취소</button>
+    </div>
+  `;
+}
+
+async function saveSuggestedProblemEditInline(suggestionId, questionText) {
+  const answerEl = document.getElementById(`edit-sugg-inline-a-${suggestionId}`);
+  const answer2El = document.getElementById(`edit-sugg-inline-a2-${suggestionId}`);
+  const answer3El = document.getElementById(`edit-sugg-inline-a3-${suggestionId}`);
+  const diffEl = document.getElementById(`edit-sugg-inline-diff-${suggestionId}`);
+
+  const answer = answerEl?.value.trim();
+  const answer2 = answer2El?.value.trim() || null;
+  const answer3 = answer3El?.value.trim() || null;
+  const difficulty = diffEl?.value;
+
+  if (!answer || !difficulty) {
+    alert('첫 번째 정답과 난이도를 반드시 입력해주세요.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/admin?action=add-problem-from-edit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question_text: questionText,
+        answer: answer,
+        question_text2: answer2,
+        question_text3: answer3,
+        difficulty_id: parseInt(difficulty),
+        suggestionId: suggestionId
+      })
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || '저장에 실패했습니다.');
+
+    alert('문제가 추가되었습니다.');
+    loadSuggestions();
+  } catch (error) {
+    alert('오류: ' + error.message);
   }
 }
 
