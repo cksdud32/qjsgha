@@ -129,10 +129,12 @@ async function editSuggestedProblem(suggestionId, questionText, answer, answer2,
   itemDiv.innerHTML = `
     <div class="list-item-header">
       <div>
-        <div class="list-item-title">${escapeHtml(questionText || '제목 없음')}</div>
+        <div class="list-item-title">제안 문제 수정</div>
       </div>
     </div>
     <div class="list-item-content">
+      <strong>문제:</strong><br>
+      <textarea id="edit-sugg-inline-q-${suggestionId}" style="width:100%;min-height:80px;margin-top:8px;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;">${escapeHtml(questionText || '')}</textarea><br><br>
       <strong>수정된 정답 1:</strong><br>
       <input id="edit-sugg-inline-a-${suggestionId}" type="text" value="${answer}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
       <strong>수정된 추가 정답 2:</strong><br>
@@ -147,25 +149,27 @@ async function editSuggestedProblem(suggestionId, questionText, answer, answer2,
       </select>
     </div>
     <div class="list-item-actions">
-      <button class="btn btn-primary" onclick="saveSuggestedProblemEditInline(${suggestionId}, '${escapeHtml(questionText)}')">✓ 수정후 추가</button>
+      <button class="btn btn-primary" onclick="saveSuggestedProblemEditInline(${suggestionId})">✓ 수정후 추가</button>
       <button class="btn btn-secondary" onclick="loadSuggestions()">✕ 취소</button>
     </div>
   `;
 }
 
-async function saveSuggestedProblemEditInline(suggestionId, questionText) {
+async function saveSuggestedProblemEditInline(suggestionId) {
+  const questionEl = document.getElementById(`edit-sugg-inline-q-${suggestionId}`);
   const answerEl = document.getElementById(`edit-sugg-inline-a-${suggestionId}`);
   const answer2El = document.getElementById(`edit-sugg-inline-a2-${suggestionId}`);
   const answer3El = document.getElementById(`edit-sugg-inline-a3-${suggestionId}`);
   const diffEl = document.getElementById(`edit-sugg-inline-diff-${suggestionId}`);
 
+  const questionText = questionEl?.value.trim();
   const answer = answerEl?.value.trim();
   const answer2 = answer2El?.value.trim() || null;
   const answer3 = answer3El?.value.trim() || null;
   const difficulty = diffEl?.value;
 
-  if (!answer || !difficulty) {
-    alert('첫 번째 정답과 난이도를 반드시 입력해주세요.');
+  if (!questionText || !answer || !difficulty) {
+    alert('문제, 첫 번째 정답, 난이도를 모두 입력해주세요.');
     return;
   }
 
@@ -235,30 +239,6 @@ document.getElementById('addProblemForm')?.addEventListener('submit', async (e) 
 // ==================== 문제 수정 ====================
 async function loadEditProblems() {
   console.log('loadEditProblems called');
-
-  // 섹션 탭 초기화 (중복 방지)
-  if (!document.querySelector('.edit-tab-btn').hasAttribute('data-listener-added')) {
-    document.querySelectorAll('.edit-tab-btn').forEach(btn => {
-      btn.setAttribute('data-listener-added', 'true');
-      btn.addEventListener('click', () => {
-        const section = btn.getAttribute('data-section');
-        console.log('Tab clicked:', section);
-
-        document.querySelectorAll('.edit-tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.edit-section').forEach(s => s.classList.remove('active'));
-
-        btn.classList.add('active');
-        const targetSection = document.getElementById(`${section}-problems`);
-        if (targetSection) targetSection.classList.add('active');
-
-        if (section === 'existing') {
-          loadExistingProblems();
-        } else {
-          loadSuggestedEditProblems();
-        }
-      });
-    });
-  }
 
   // 기본으로 기존 문제 로드
   loadExistingProblems();
@@ -427,100 +407,6 @@ async function deleteProblem(problemId) {
 
     alert('문제가 삭제되었습니다.');
     loadExistingProblems();
-  } catch (error) {
-    alert('오류: ' + error.message);
-  }
-}
-
-async function loadSuggestedEditProblems() {
-  const container = document.getElementById('editProblemList');
-  container.innerHTML = '<p class="loading">로딩 중...</p>';
-
-  try {
-    const response = await fetch('/api/admin?action=get-suggested-problems');
-    if (!response.ok) throw new Error('문제를 불러올 수 없습니다.');
-
-    const problems = await response.json();
-    container.innerHTML = '';
-
-    if (!problems || problems.length === 0) {
-      container.innerHTML = '<p class="loading">건의된 문제가 없습니다.</p>';
-      return;
-    }
-
-    problems.forEach(problem => {
-      const div = document.createElement('div');
-      div.className = 'list-item';
-      div.innerHTML = `
-        <div class="list-item-header">
-          <div>
-            <div class="list-item-title">${escapeHtml(problem.question_text || '제목 없음')}</div>
-            <div class="list-item-meta">건의자: ${escapeHtml(problem.name || '익명')}</div>
-          </div>
-        </div>
-        <div class="list-item-content">
-          <strong>원래 정답:</strong> ${escapeHtml(problem.answer || '-')}${problem.question_text2 ? ' // ' + escapeHtml(problem.question_text2) : ''}${problem.question_text3 ? ' // ' + escapeHtml(problem.question_text3) : ''}<br>
-          <strong>수정된 정답 1:</strong><br>
-          <input id="edit-sugg-answer-${problem.id}" type="text" value="${escapeHtml(problem.answer || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
-          <strong>수정된 추가 정답 2:</strong><br>
-          <input id="edit-sugg-answer2-${problem.id}" type="text" value="${escapeHtml(problem.question_text2 || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
-          <strong>수정된 추가 정답 3:</strong><br>
-          <input id="edit-sugg-answer3-${problem.id}" type="text" value="${escapeHtml(problem.question_text3 || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
-          <strong>난이도:</strong><br>
-          <select id="edit-sugg-diff-${problem.id}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;">
-            <option value="1" ${problem.difficulty_id == 1 ? 'selected' : ''}>쉬움</option>
-            <option value="2" ${problem.difficulty_id == 2 ? 'selected' : ''}>보통</option>
-            <option value="3" ${problem.difficulty_id == 3 ? 'selected' : ''}>어려움</option>
-          </select>
-        </div>
-        <div class="list-item-actions">
-          <button class="btn btn-primary" onclick="saveSuggestedProblemEdit(${problem.id}, '${escapeHtml(problem.question_text)}')">수정후 추가</button>
-          <button class="btn btn-secondary" onclick="loadSuggestedEditProblems()">취소</button>
-        </div>
-      `;
-      container.appendChild(div);
-    });
-  } catch (error) {
-    console.error('건의 문제 로드 오류:', error);
-    container.innerHTML = '<p class="loading">오류 발생: ' + error.message + '</p>';
-  }
-}
-
-async function saveSuggestedProblemEdit(problemId, questionText) {
-  const editAnswerEl = document.getElementById(`edit-sugg-answer-${problemId}`);
-  const editAnswer2El = document.getElementById(`edit-sugg-answer2-${problemId}`);
-  const editAnswer3El = document.getElementById(`edit-sugg-answer3-${problemId}`);
-  const editDiffEl = document.getElementById(`edit-sugg-diff-${problemId}`);
-  const editedAnswer = editAnswerEl?.value.trim();
-  const editedAnswer2 = editAnswer2El?.value.trim() || null;
-  const editedAnswer3 = editAnswer3El?.value.trim() || null;
-  const editedDifficulty = editDiffEl?.value;
-
-  if (!editedAnswer || !editedDifficulty) {
-    alert('첫 번째 정답과 난이도를 반드시 입력해주세요.');
-    return;
-  }
-
-  try {
-    const response = await fetch('/api/admin?action=add-problem-from-edit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        question_text: questionText,
-        answer: editedAnswer,
-        question_text2: editedAnswer2,
-        question_text3: editedAnswer3,
-        difficulty_id: parseInt(editedDifficulty),
-        suggestionId: problemId
-      })
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) throw new Error(result.error || '저장에 실패했습니다.');
-
-    alert('문제가 추가되었습니다.');
-    loadSuggestedEditProblems();
   } catch (error) {
     alert('오류: ' + error.message);
   }
