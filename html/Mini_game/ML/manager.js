@@ -387,8 +387,13 @@ async function loadSuggestedEditProblems() {
           </div>
         </div>
         <div class="list-item-content">
-          <strong>원래 정답:</strong> ${escapeHtml(problem.answer || '-')}<br>
-          <textarea id="edit-sugg-answer-${problem.id}" style="width:100%;min-height:60px;margin-top:8px;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;" placeholder="수정된 정답을 입력하세요">${escapeHtml(problem.answer || '')}</textarea><br><br>
+          <strong>원래 정답:</strong> ${escapeHtml(problem.answer || '-')}${problem.question_text2 ? ' // ' + escapeHtml(problem.question_text2) : ''}${problem.question_text3 ? ' // ' + escapeHtml(problem.question_text3) : ''}<br>
+          <strong>수정된 정답 1:</strong><br>
+          <input id="edit-sugg-answer-${problem.id}" type="text" value="${escapeHtml(problem.answer || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
+          <strong>수정된 추가 정답 2:</strong><br>
+          <input id="edit-sugg-answer2-${problem.id}" type="text" value="${escapeHtml(problem.question_text2 || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
+          <strong>수정된 추가 정답 3:</strong><br>
+          <input id="edit-sugg-answer3-${problem.id}" type="text" value="${escapeHtml(problem.question_text3 || '')}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;"><br><br>
           <strong>난이도:</strong><br>
           <select id="edit-sugg-diff-${problem.id}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #60a5fa;background:rgba(15,23,42,0.8);color:#f8fafc;margin-top:8px;">
             <option value="1" ${problem.difficulty_id == 1 ? 'selected' : ''}>쉬움</option>
@@ -411,12 +416,16 @@ async function loadSuggestedEditProblems() {
 
 async function saveSuggestedProblemEdit(problemId, questionText) {
   const editAnswerEl = document.getElementById(`edit-sugg-answer-${problemId}`);
+  const editAnswer2El = document.getElementById(`edit-sugg-answer2-${problemId}`);
+  const editAnswer3El = document.getElementById(`edit-sugg-answer3-${problemId}`);
   const editDiffEl = document.getElementById(`edit-sugg-diff-${problemId}`);
   const editedAnswer = editAnswerEl?.value.trim();
+  const editedAnswer2 = editAnswer2El?.value.trim() || null;
+  const editedAnswer3 = editAnswer3El?.value.trim() || null;
   const editedDifficulty = editDiffEl?.value;
 
   if (!editedAnswer || !editedDifficulty) {
-    alert('정답과 난이도를 모두 입력해주세요.');
+    alert('첫 번째 정답과 난이도를 반드시 입력해주세요.');
     return;
   }
 
@@ -427,6 +436,8 @@ async function saveSuggestedProblemEdit(problemId, questionText) {
       body: JSON.stringify({
         question_text: questionText,
         answer: editedAnswer,
+        question_text2: editedAnswer2,
+        question_text3: editedAnswer3,
         difficulty_id: parseInt(editedDifficulty),
         suggestionId: problemId
       })
