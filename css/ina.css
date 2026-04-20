@@ -293,3 +293,11 @@ header{
     position: absolute;
     right: 30px;
 }
+
+#nicknameArea{
+    padding:12px;
+    border-radius:5px;
+    border:none;
+    width:180px;
+    color:#333;
+}

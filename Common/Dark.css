@@ -732,8 +732,12 @@ body.dark-mode .Difficulty button{
     color: #fff;
 }
 
-body.dark-mode #answerInput {
+body.dark-mode #answerInput, #nicknameArea {
     background-color: #2b2b2b !important;
     color: #fff !important;
     border: 1px solid #444 !important;
+}
+
+body.dark-mode .Start_Btn{
+    background-color: #90af7c;
 }
