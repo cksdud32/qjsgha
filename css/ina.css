@@ -241,6 +241,15 @@ header{
     margin: 15px auto;
 }
 
+#answerInput {
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: none;
+    width: 80%;
+    max-width: 300px;
+}
+
 .diff-btn {
     padding: 10px 20px;
     border: 2px solid #4cd137;
