@@ -249,8 +249,8 @@ function finishGame() {
         <div style="padding:40px 0;">
             <h2 style="color:white;">🎮 게임 종료!</h2>
             <p style="color:#c8ffac; font-size:18px;">총 ${quizList.length}문제 중 <b>${score}</b>문제를 맞췄습니다.</p>
-            <div id="nicknameArea" style="margin: 30px auto; padding: 15px;">
-                <input type="text" id="rankNickname" placeholder="닉네임(10자 이내)" maxlength="10">
+            <div id="nicknameArea" style="margin: 30px auto;">
+                <input type="text" id="rankNickname" placeholder="닉네임(10자 이내)" maxlength="10" style="padding:15px 30px">
                 <button class="Start_Btn" onclick="saveRanking()" style="background-color:#4cd137; padding:12px 20px;">등록</button>
             </div>
             <button class="Start_Btn" onclick="location.reload()" style="background-color:#fbc531;">처음으로</button>
