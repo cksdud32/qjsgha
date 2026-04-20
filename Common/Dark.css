@@ -681,3 +681,48 @@ body.dark-mode .song-filter button.active {
     box-shadow: 0 0 12px rgba(204, 166, 232, 0.4); /* 살짝 빛나는 효과 */
     transform: translateY(-2px);          /* 살짝 위로 들림 */
 }
+
+body.dark-mode .Logina{
+    background-color: #60a5fa;
+}
+
+body.dark-mode .diff-btn{
+    color: #fff;
+}
+
+body.dark-mode .Start_Btn{
+    color: #fff;
+    background-color:  #2D1B1E;
+}
+
+body.dark-mode .sla img {
+    position: absolute; /* 이미지를 배경처럼 깔기 위해 absolute 사용 */
+    inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0 !important;
+    object-fit: cover;
+    display: block;
+    object-position: 50% -50px !important;
+    filter: blur(2px) brightness(0.5) !important;
+    opacity: 1 !important;
+}
+
+.body.dark-mode .da{
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 2 !important;
+    background: rgba(0, 0, 0, 0.6) !important; /* 배경 더 불투명하게 */
+    color: #FFFFFF !important; /* 텍스트 흰색 */
+}
+
+body.dark-mode .da h2 {
+    color: #FFFFFF !important; /* 제목 색상 더 밝게 */
+}
+
+body.dark-mode .da p {
+    color: #FFFFFF !important; /* 설명 텍스트 색상 더 밝게 */
+}
+
+body.dark-mode .da b {
+    color: #FFFFFF !important; /* 강조 텍스트 색상 */
+}
