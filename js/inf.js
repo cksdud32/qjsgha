@@ -166,8 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 // 디데이
 function updateDDay() {
-  const targetDay = new Date("2026, 7, 25"); //형식 ex: 2026, 1, 7 (2026년 2월 7일)
-  const targetTime = new Date("2026-04-18T15:00:00"); //형식 ex: 2026-02-15T15:00:00
+  const targetDay = new Date(""); //형식 ex: 2026, 1, 7 (2026년 2월 7일)
+  const targetTime = new Date(""); //형식 ex: 2026-02-15T15:00:00
 
   const ddayElement = document.getElementById("dday");
   const timeLeftElement = document.getElementById("timeLeft");
