@@ -181,7 +181,7 @@ header{
     text-align: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .spq {
     flex-direction: column;
     padding: 10px;
