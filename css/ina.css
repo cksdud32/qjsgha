@@ -181,6 +181,37 @@ header{
     text-align: center;
 }
 
+@media (max-width: 768px) {
+  .spq {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .ranking-board {
+    width: 100%;
+    margin-top: 20px;
+  }
+}
+
+.login-wrap {
+    width: 170px;
+    height: 60px;
+    position: fixed;
+    bottom: 120px;
+    right: 30px;
+    background-color: aquamarine;
+    border: 1px solid black;
+    border-radius: 100px;
+    text-align: center;
+    line-height: 60px;
+    z-index: 1000;
+}
+
+.Logina {
+    width: 100%; height: 100%;
+    display: block;
+}
+
 .Select_Difficulty{
     width: 100px; height: 40px;
     background-color: blanchedalmond;
@@ -282,17 +313,6 @@ header{
     overflow-wrap: break-word;
 }
 
-.Logina{
-    width: 170px; height: 60px;
-    bottom: 120px;
-    background-color: aquamarine;
-    border: 1px solid black;
-    border-radius: 100px;
-    text-align: center;
-    line-height: 60px;
-    position: absolute;
-    right: 30px;
-}
 
 #nicknameArea{
     padding:12px;
