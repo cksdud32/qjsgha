@@ -86,6 +86,7 @@
                             <button type="button" class="diff-btn" data-value="easy">쉬움</button>
                             <button type="button" class="diff-btn" data-value="medium">보통</button>
                             <button type="button" class="diff-btn" data-value="hard">어려움</button>
+                            <button type="button" class="diff-btn" data-value="Hardcore">하드코어</button>
                         </div>
                         <input type="hidden" id="selectedDifficulty" name="difficulty_id" value="">
                     </div>
@@ -125,6 +126,7 @@
                                     <button onclick="selectLevel('easy', '쉬움')">쉬움</button>
                                     <button onclick="selectLevel('medium', '보통')">보통</button>
                                     <button onclick="selectLevel('hard', '어려움')">어려움</button>
+                                    <button onclick="selectLevel('Hardcore', '하드코어')">하드코어</button>
                                 </div>
                                 <div id="selectedText" class="Select_Difficulty" onclick="toggleDifficulty()">
                                     [난이도 선택]
@@ -175,6 +177,9 @@
                         </span>
                         <span id="diff-hard" class="diff-tab" onclick="changeDiff('hard')">
                             어려움
+                        </span>
+                        <span id="diff-Hardcore" class="diff-tab" onclick="changeDiff('Hardcore')">
+                            하드코어
                         </span>
                     </div>
 

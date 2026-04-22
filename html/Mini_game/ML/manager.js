@@ -146,6 +146,7 @@ async function editSuggestedProblem(suggestionId, questionText, answer, answer2,
         <option value="1" ${difficultyId == 1 ? 'selected' : ''}>쉬움</option>
         <option value="2" ${difficultyId == 2 ? 'selected' : ''}>보통</option>
         <option value="3" ${difficultyId == 3 ? 'selected' : ''}>어려움</option>
+        <option value="4" ${difficultyId == 4 ? 'selected' : ''}>하드코어</option>
       </select>
     </div>
     <div class="list-item-actions">
@@ -303,6 +304,7 @@ async function loadExistingProblems(page = 1) {
             <option value="1" ${problem.difficulty_id == 1 ? 'selected' : ''}>쉬움</option>
             <option value="2" ${problem.difficulty_id == 2 ? 'selected' : ''}>보통</option>
             <option value="3" ${problem.difficulty_id == 3 ? 'selected' : ''}>어려움</option>
+            <option value="4" ${problem.difficulty_id == 4 ? 'selected' : ''}>하드코어</option>
           </select>
         </div>
         <div class="list-item-actions">

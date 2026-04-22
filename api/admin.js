@@ -162,6 +162,9 @@ export async function addProblem(request, response) {
       case 'hard':
         difficulty_id = 3;
         break;
+      case 'Hardcore':
+        difficulty_id = 3;
+        break;
       default:
         return response.status(400).json({ error: '올바르지 않은 난이도입니다.' });
     }
@@ -260,6 +263,9 @@ export async function getAllProblems(request, response) {
           break;
         case 'hard':
           difficulty_id = 3;
+          break;
+        case 'Hardcore':
+          difficulty_id = 4;
           break;
         default:
           return response.status(400).json({ error: '올바르지 않은 난이도입니다.' });
