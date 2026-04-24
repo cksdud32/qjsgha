@@ -118,5 +118,13 @@
     "content": "정보 표에서 위치 영역에 지도 추가 및 입장 시간 반으로 수정",
     "important": false,
     "useModal": true
+  },
+  {
+    "id": 15,
+    "title": "노래방 곡 추가",
+    "date": "2026-04-24",
+    "content": "노래방 사이트에 곡과 가사가 추가되었습니다.",
+    "important": false,
+    "useModal": false
   }
 ]
