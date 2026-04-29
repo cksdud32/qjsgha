@@ -39,6 +39,8 @@ if (loginForm) {
       loginStatus.textContent = result.message || '로그인 성공!';
       loginStatus.className = 'login-status success';
 
+      sessionStorage.setItem('adminAuth', 'authorized');
+
       // 1초 후 관리자 패널로 이동
       setTimeout(() => {
         location.href = 'Manager.html';
