@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 패널</title>
     <link rel="stylesheet" href="ML/manager.css">
+    <script>
+  (function() {
+    // 세션 스토리지에서 열쇠가 있는지 확인
+    const auth = sessionStorage.getItem('adminAuth');
+
+    if (auth !== 'authorized') {
+      // 열쇠가 없으면 경고창을 띄우고 로그인 페이지로 강제 이동
+      alert('접근 권한이 없습니다. 게임센터로 돌아갑니다.');
+      location.replace('ina.html'); // .href 대신 .replace를 쓰면 뒤로가기가 방지됩니다.
+    }
+  })();
+</script>
 </head>
 <body>
     <div class="admin-panel">
