@@ -30,20 +30,10 @@
                 </div>
 
                 <div class="tab-content1">
-                    <h2>미니게임 센터 규칙</h2>
-                    1. 소통 수단 미제공:<br>
-                    이용자 간 채팅이나 댓글 등 소통 기능을 지원하지 않는<br>
-                    순수 팬 메이드 사이트입니다.<br>
-                    <br>
-                    2. 닉네임 마스킹:<br>
-                    개인 식별 방지를 위해 랭킹보드 닉네임은 일부 마스킹 처리되며,<br>
-                    클릭 시 정보를 제공하지 않습니다.<br>
-                    <br>
-                    3. 외부 공유 자제:<br>
-                    스레드 등에 점수 인증은 가급적 자제해 주시기를 부탁드려요.<br>
-                    올려주시면 저도 정말 뿌듯하고 기쁘지만,<br>
-                    점수 차이가 많이 나거나 사이트를 모르셔서 소외감을 느끼는 체리분들이 계실까 봐 걱정되는 마음입니다..<br>
-                    ​혹시라도 게시하실 경우에는 다른 분들도 함께 즐기실 수 있도록 사이트 링크를 꼭 같이 첨부해 주세요.<br>
+                    <h2>현준님 퀴즈 규칙</h2>
+                    1. 게임 센터 규칙:<br>
+                    이전 페이지인 게임센터의 규칙을 지키지 않을시, <br>
+                    특정 기능이 예고 없이 비활성화될 수 있습니다. <br>
                     <br>
                     <h2>안내 사항</h2>
                     1. 랭킹보드 초기화:<br>
@@ -51,12 +41,22 @@
                     매달 1일 0시에 진행될 예정이며,<br>
                     전 달 기록은 볼 수 있지만, 전전달(2개월)의 기록은 못봅니다.<br>
                     <br>
-                    2. 규칙 관련:<br>
-                    위 규칙을 어길시 사이트의 특정 기능이 비활성화 또는 삭제 될 수 있습니다.<br>
+                    2. 퀴즈 정답란:<br>
+                    모든 문제는 주관식이며, 기본적으로 띄어쓰기가 없습니다. <br>
+                    문제에 띄어쓰기가 필요할시 문제에 (띄어쓰기 O)로 표기됩니다.<br>
                     <br>
                     3. 문의 관련:<br>
                     문의 사항은 인스타 또는 스레드 고정 게시물로 부탁드립니다.<br>
                     단, 문제 추가등은 "문제 추가 건의함"섹션에서 부탁드립니다.<br>
+                    <br>
+                    4. 문제 관련: <br>
+                    문제는 15문제가 랜덤으로 출제됩니다. <br>
+                    해당 난이도 전체 문제가 15개가 안될시, 해당 난이도의 전체 문제가 출제됩니다. <br>
+                    <br>
+                    5. 추 후 업데이트 관련: <br>
+                    문제는 추후 20문제, 30문제로 늘어날 수 있으며,<br>
+                    필요시 문제의 개수 선택도 가능하게 될 수 있습니다.<br>
+                    또한, 문제는 계속 추가 될 예정입니다.
                 </div>
 
                 <div class="tab-content2 popup-31">
@@ -66,7 +66,6 @@
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <span>화면 모드</span>
                         <button onclick="toggleDarkMode()" class="theme-toggle-btn">다크모드 전환</button>
-                        <!-- <p>다크 모드 미지원(추 후 지원 예정)</p>-->
                     </div>
                 </div>
 
@@ -76,8 +75,8 @@
                     닉네임:<input type="text" name="name" placeholder="본인의 닉네임을 입력해주세요."><br>
                     문제 내용:<input type="text" name="question_text" placeholder="문제의 내용을 입력해주세요."><br>
                     정답:<input type="text" name="answer" placeholder="정답을 입력해주세요."><br>
-                    추가 정답 2:<input type="text" name="answer2" placeholder="추가 정답을 입력해주세요."><br>
-                    추가 정답 3:<input type="text" name="answer3" placeholder="추가 정답을 입력해주세요.">
+                    추가 정답 2:<input type="text" name="answer2" placeholder="복수 정답을 입력해주세요."><br>
+                    추가 정답 3:<input type="text" name="answer3" placeholder="복수 정답을 입력해주세요.">
                     <div class="difficulty-selection">
                         <div class="diff-buttons">
                             난이도 선택:
@@ -89,7 +88,7 @@
                         </div>
                         <input type="hidden" id="selectedDifficulty" name="difficulty_id" value="">
                     </div>
-                    <p style="font-size: 14px;">건의하기 버튼은 한번만 눌러주세요. 누르고 기다리시면 새로고침 될거에요.</p>
+                    <p style="font-size: 14px;">문제 건의하기 버튼은 한번만 누른 후 기다려주시기 바랍니다.</p>
                     <button type="button" class="Start_Btn" onclick="submitSuggestion()" style="margin-top:20px;">문제
                         건의하기</button>
                 </div>
@@ -103,26 +102,19 @@
             <header>
                 <h1>류현준 퀴즈 풀기</h1>
                 <p>이곳에서는 류현준 관련 퀴즈를 풀 수 있는 공간입니다. <br>
-                    단, 규칙을 꼭 지켜주시기 바랍니다.</p>
+                    꼭 오른쪽 하단의 규칙 및 안내 사항 확인 후 플레이 해주시기 바랍니다.</p>
 
             </header>
             <div class="spq">
                 <div class="sla">
                     <picture>
                         <source srcset="../../image/mp.jpg" media="(min-width: 1000px)">
-                    <img src="../../image/mop.png" alt="미니게임 배경 이미지">
+                        <img src="../../image/mop.png" alt="미니게임 배경 이미지">
                     </picture>
                     <div class="da">
                         <div id="introArea">
                             <b style="font-size: 13px;">본 게임은 순수 재미를 위해 제작되었습니다.</b>
                             <h2>현준님 관련 퀴즈을 풀 수 있는 공간입니다!</h2>
-                            <p
-                                style="text-align: center; color: rgb(200, 255, 172); font-size: 16px; padding: 100px 0;">
-                                모든 문제의 답은 띄어쓰기 없이 적어주세요. <br>
-                                띄어쓰기가 있을시 오답처리 될수 있습니다. <br>
-                                단, 띄어쓰기가 필요한 문제일시 (띄어쓰기 O)로 <br>
-                                표시되니 그때만 띄어쓰기 해주시면 됩니다.
-                            </p>
                             <div class="sdiff">
                                 <div id="difficultyMenu" class="Difficulty" style="display: none;">
                                     <button onclick="selectLevel('easy', '쉬움')">쉬움</button>

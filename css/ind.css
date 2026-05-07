@@ -369,13 +369,16 @@ main {
     transform: translate(-50%, -45%);
     background: var(--card-bg);
     width: 90%;
-    max-width: 500px;
+    max-width: 600px;
     padding: 35px;
     display: none;
     z-index: 1000;
     border-radius: var(--radius);
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
     opacity: 0;
+    max-height: 90%;
+    overflow-y: auto;
+    word-break: keep-all;
 }
 
 .popup-3.active {

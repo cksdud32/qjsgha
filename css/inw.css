@@ -216,13 +216,14 @@ h3::before {
     transform: translate(-50%, -45%);
     background: var(--card-bg);
     width: 90%;
-    max-width: 550px;
+    max-width: 600px;
     padding: 40px;
     display: none;
     z-index: 10000;
     border-radius: var(--radius);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     opacity: 0;
+    word-break: keep-all;
 }
 
 .popup-3.active {
