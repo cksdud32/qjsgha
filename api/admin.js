@@ -163,7 +163,7 @@ export async function addProblem(request, response) {
         difficulty_id = 3;
         break;
       case 'Hardcore':
-        difficulty_id = 3;
+        difficulty_id = 4;
         break;
       default:
         return response.status(400).json({ error: '올바르지 않은 난이도입니다.' });
