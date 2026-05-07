@@ -201,16 +201,16 @@ function normalizeAnswer(value) {
 }
 
 function checkAnswer() {
-    const userInput = document.getElementById('answerInput').value.trim().toLowerCase();
+    const userInput = document.getElementById('answerInput').value.trim(); // toLowerCase() 제거
     if (!userInput) return;
     clearInterval(timerInterval);
 
     const question = quizList[currentIndex];
     const answers = [question.answer, question.question_text2, question.question_text3]
-        .map(normalizeAnswer)
-        .filter(Boolean);
-    const isCorrect = answers.some(ans => ans === userInput);
+        .filter(Boolean); // normalizeAnswer 제거, 원본 그대로 유지
     const displayAnswer = answers.length > 0 ? answers.join(' // ') : '정답이 등록되지 않았습니다.';
+
+    const isCorrect = answers.some(ans => ans === userInput); // 대소문자 구분 정확히 비교
 
     if (isCorrect) {
         score++;
