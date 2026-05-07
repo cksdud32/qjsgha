@@ -682,8 +682,23 @@ body.dark-mode .song-filter button.active {
     transform: translateY(-2px);          /* 살짝 위로 들림 */
 }
 
+body.dark-mode .login-wrap {
+    width: 170px;
+    height: 60px;
+    position: fixed;
+    bottom: 120px !important;
+    right: 30px;
+    background-color: aquamarine;
+    border: 1px solid black;
+    
+    text-align: center;
+    line-height: 60px;
+    z-index: 1000;
+}
+
 body.dark-mode .Logina{
     background-color: #60a5fa;
+    border-radius: 100px !important;
 }
 
 body.dark-mode .diff-btn{
@@ -740,4 +755,15 @@ body.dark-mode #answerInput{
 
 body.dark-mode .Start_Btn{
     background-color: #90af7c;
+}
+
+body.dark-mode nav{
+    background-color: #2D3748 !important;
+}
+
+body.dark-mode nav ul li{
+    line-height: 30px !important;
+}
+body.dark-mode .Common_Rules{
+    background-color: #1e293b !important;
 }

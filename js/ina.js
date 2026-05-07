@@ -223,7 +223,7 @@ function checkAnswer() {
 function processAnswer(isCorrect, message) {
     const resultMsg = document.getElementById('resultMessage');
     resultMsg.innerText = message;
-    resultMsg.style.color = isCorrect ? "#4cd137" : "#ff6b6b";
+    resultMsg.style.color = isCorrect ? "#4cd137" : "#da1d1d";
 
     document.getElementById('answerInput').disabled = true;
     document.getElementById('checkBtn').style.display = "none";
