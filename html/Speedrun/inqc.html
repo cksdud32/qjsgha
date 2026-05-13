@@ -5,21 +5,6 @@
     <title>결제하기 - 체리상회</title>
     <link rel="stylesheet" href="../../css/inqb.css">
     <style>
-        body { padding: 0; }
-        .site-header { border-bottom: 1px solid #e0e0e0; }
-        .header-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1060px; margin: 0 auto; padding: 18px 20px; }
-        .header-cs { line-height: 1.5; min-width: 160px; }
-        .cs-label { font-size: 11px; color: #999; letter-spacing: 0.06em; }
-        .cs-phone { font-size: 20px; font-weight: bold; color: #111; }
-        .header-logo { display: flex; flex-direction: column; align-items: center; text-decoration: none; gap: 2px; cursor: pointer; }
-        .logo-icon { font-size: 40px; line-height: 1; }
-        .logo-text { font-size: 16px; font-weight: bold; color: #e04060; }
-        .header-search { display: flex; align-items: center; gap: 6px; min-width: 160px; justify-content: flex-end; }
-        .search-inp { width: 160px; height: 28px; border: none; border-bottom: 1px solid #999; font-size: 13px; outline: none; padding: 0 4px; font-family: inherit; }
-        .search-btn { background: none; border: none; font-size: 18px; cursor: pointer; }
-        .site-nav { display: flex; justify-content: center; border-top: 1px solid #e8e8e8; border-bottom: 2px solid #111; }
-        .nav-item { display: inline-block; padding: 13px 28px; font-size: 13px; font-weight: bold; color: #222; cursor: pointer; text-decoration: none; }
-        .nav-item:hover { color: #e04060; }
         .order-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 30px; }
         .conf-val { font-size: 13px; color: #111; }
         .conf-account { font-size: 13px; color: #555; }
@@ -28,31 +13,16 @@
 </head>
 <body>
 
-<header class="site-header">
-    <div class="header-inner">
-        <div class="header-cs">
-            <div class="cs-label">CS CENTER</div>
-            <div class="cs-phone">010.9167.2890</div>
-        </div>
-        <a class="header-logo">
-            <div class="logo-icon">🍒</div>
-            <div class="logo-text">체리상회</div>
-        </a>
-        <div class="header-search">
-            <input type="text" class="search-inp" placeholder="">
-            <button class="search-btn">🔍</button>
-        </div>
+<section class="top-head">
+    <div class="top-head__logo">
+        <div class="logo-mark">🍒</div>
+        <div><strong>티켓팅 연습 사이트</strong></div>
     </div>
-    <nav class="site-nav">
-        <a class="nav-item">현준</a>
-        <a class="nav-item">연</a>
-        <a class="nav-item">로고</a>
-        <a class="nav-item">EVENT</a>
-        <a class="nav-item">REVIEW</a>
-        <a class="nav-item">CUSTOMER</a>
-        <a class="nav-item">LOOKBOOK</a>
-    </nav>
-</header>
+    <div class="top-head__content">
+        <p>본 사이트는 티켓팅 연습 공간으로 실제 티켓팅 환경과는 차이가 있을 수 있습니다. <br>
+        아울러 체리 숲 규칙에 따라 운영상 예고 없이 접속이 제한될 수 있으니 이용에 참고해 주시기 바랍니다.</p>
+    </div>
+</section>
 
 <div class="order-wrap">
 
