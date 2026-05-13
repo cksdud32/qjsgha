@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>티켓팅 연습 정보</title>
+    <link rel="stylesheet" href="../../css/inqa.css">
+    <link rel="stylesheet" href="../../Common/Common.css">
+</head>
+<body>
+    <div id="clsa">
+        <section class="top-head">
+            <div class="top-head__logo">
+                <div class="logo-mark">🍒</div>
+                <div>
+                    <strong>티켓팅 연습 사이트</strong>
+                </div>
+            </div>
+            <div class="top-head__content">
+                <h1>티켓팅 연습 사이트</h1>
+                <p>본 사이트는 티켓팅 연습 공간으로 실제 티켓팅 환경과는 차이가 있을 수 있습니다. <br>
+                아울러 체리 숲 규칙에 따라 운영상 예고 없이 접속이 제한될 수 있으니 이용에 참고해 주시기 바랍니다.</p>
+            </div>
+        </section>
+        <section class="detail-header">
+            <div>
+                <p class="detail-path">HOME &gt; 현준 &gt; Daily</p>
+                <h1>티켓팅 연습</h1>
+            </div>
+        </section>
+        <section class="detail-view">
+            <div class="detail-image-card">
+                <div class="detail-image-main">이미지</div>
+                <div class="detail-image-thumbs">
+                    <div class="thumb-item">thumb</div>
+                    <div class="thumb-item">thumb</div>
+                    <div class="thumb-item">thumb</div>
+                </div>
+            </div>
+            <div class="detail-info-card">
+                <div class="detail-title-bar">
+                    <h2>티켓팅 연습</h2>
+                    <div class="detail-tags">
+                        <span class="badge new">NEW</span>
+                        <span class="badge best">BEST</span>
+                    </div>
+                </div>
+                <div class="detail-price">
+                    <strong>10,000원</strong>
+                    <span class="detail-price-old">15,000원</span>
+                </div>
+                <div class="detail-description">
+                    <p>티켓팅 연습 상품은 연습용 티켓팅 시나리오를 제공합니다. 닉네임을 입력한 뒤 시작 버튼을 눌러 연습을 진행하세요.</p>
+                </div>
+                <div class="detail-select-box">
+                    <label for="nicknameInput">닉네임 입력</label>
+                    <input id="nicknameInput" type="text" placeholder="닉네임을 입력해주세요">
+                    <div class="detail-actions">
+                        <button id="startButton" class="start-button" onclick="startGame()" disabled>게임 시작</button>
+                        <button class="back-button" onclick="goBackToList()">목록으로</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="detail-info">
+            <h3>상품 정보</h3>
+            <div class="info-content">
+                <!-- 사용자가 내용을 작성할 영역 -->
+            </div>
+        </section>
+    </div>
+    <div id="Shor"></div>
+    <div id="link"></div>
+    <div id="footer"></div>
+    <script src="../../js/inq-api.js"></script>
+    <script src="../../js/inq.js"></script>
+    <script src="../../loadHeaderFooter.js"></script>
+    <script src="../../Common/Common.js"></script>
+</body>
+</html>

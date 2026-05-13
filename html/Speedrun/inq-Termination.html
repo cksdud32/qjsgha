@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 완료 - 체리상회</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "Malgun Gothic", AppleSDGothicNeo, sans-serif;
+            background: #eef0ff;
+            color: #111827;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .result-card {
+            background: #fff;
+            border-radius: 28px;
+            box-shadow: 0 18px 48px rgba(15, 23, 42, 0.1);
+            padding: 56px 48px;
+            text-align: center;
+            max-width: 520px;
+            width: 100%;
+        }
+
+        .result-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+
+        .result-title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .result-name {
+            font-size: 18px;
+            color: #e04060;
+            font-weight: bold;
+            margin-bottom: 36px;
+        }
+
+        .result-divider {
+            border: none;
+            border-top: 1px solid #e8e8e8;
+            margin-bottom: 28px;
+        }
+
+        .result-time-label {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 10px;
+            letter-spacing: 0.04em;
+        }
+
+        .result-time {
+            font-size: 52px;
+            font-weight: bold;
+            font-family: monospace;
+            color: #111827;
+            letter-spacing: 0.02em;
+            margin-bottom: 36px;
+        }
+
+        .result-sub {
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 32px;
+            line-height: 1.7;
+        }
+
+        .btn-home {
+            display: inline-block;
+            padding: 12px 32px;
+            background: #111;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: inherit;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-home:hover { background: #333; }
+
+        .saving-msg {
+            font-size: 12px;
+            color: #bbb;
+            margin-top: 14px;
+        }
+
+        .saving-error {
+            display: none;
+            margin-top: 16px;
+            padding: 14px 18px;
+            background: #fff5f5;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #b91c1c;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        /* Step bar (완료 표시) */
+        .step-bar {
+            display: flex;
+            width: 100%;
+            max-width: 520px;
+            border: 1px solid #ccc;
+            margin-bottom: 28px;
+            background: #f2f2f2;
+        }
+
+        .step-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 10px;
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .step-item + .step-item { border-left: 1px solid #ccc; }
+
+        .step-item.active {
+            background: #fff;
+            outline: 2px solid #666;
+            outline-offset: -2px;
+            color: #333;
+            z-index: 1;
+        }
+
+        .step-icon { font-size: 24px; margin-bottom: 6px; line-height: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="step-bar">
+        <div class="step-item">
+            <div class="step-icon">🛒</div>
+            장바구니
+        </div>
+        <div class="step-item">
+            <div class="step-icon">✏️</div>
+            주문서 작성/결제
+        </div>
+        <div class="step-item active">
+            <div class="step-icon">📦</div>
+            주문완료
+        </div>
+    </div>
+
+    <div class="result-card">
+        <div class="result-icon">🎉</div>
+        <h1 class="result-title">티켓팅 완료!</h1>
+        <p class="result-name" id="resultName">닉네임님의 기록</p>
+        <hr class="result-divider">
+        <p class="result-time-label">기록</p>
+        <div class="result-time" id="resultTime">--:--.---</div>
+        <p class="result-sub">주문이 정상적으로 처리되었습니다.<br>빠른 티켓팅 실력이네요!</p>
+        <button class="btn-home" onclick="window.location.href='inq.html'">목록으로 돌아가기</button>
+        <p class="saving-msg" id="savingMsg">기록 저장 중...</p>
+        <div class="saving-error" id="savingError">
+            ⚠️ 기록을 데이터베이스에 저장하지 못했습니다.<br>
+            <span id="savingErrorDetail"></span>
+        </div>
+    </div>
+
+    <script src="../../js/inq-api.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', async function () {
+            try {
+                var sess = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');
+                var name = sess.name || '익명';
+                var stopwatch = sess.stopwatch || 0;
+                var id = sess.id;
+
+                document.getElementById('resultName').textContent = name + '님의 기록';
+
+                var ms = stopwatch;
+                var min = Math.floor(ms / 60000);
+                var sec = Math.floor((ms % 60000) / 1000);
+                var msec = ms % 1000;
+                document.getElementById('resultTime').textContent =
+                    String(min).padStart(2, '0') + ':' +
+                    String(sec).padStart(2, '0') + '.' +
+                    String(msec).padStart(3, '0');
+
+                if (id) {
+                    try {
+                        var result = await updateTicketingPracticeResult(id, stopwatch);
+                        if (result && !result.error) {
+                            document.getElementById('savingMsg').textContent = '기록이 저장되었습니다.';
+                        } else {
+                            document.getElementById('savingMsg').style.display = 'none';
+                            var errBox = document.getElementById('savingError');
+                            document.getElementById('savingErrorDetail').textContent = result?.error || '알 수 없는 오류';
+                            errBox.style.display = 'block';
+                        }
+                    } catch (dbErr) {
+                        document.getElementById('savingMsg').style.display = 'none';
+                        var errBox = document.getElementById('savingError');
+                        document.getElementById('savingErrorDetail').textContent = '서버에 연결할 수 없습니다.';
+                        errBox.style.display = 'block';
+                    }
+                } else {
+                    document.getElementById('savingMsg').textContent = '';
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('savingMsg').style.display = 'none';
+                document.getElementById('savingError').style.display = 'block';
+                document.getElementById('savingErrorDetail').textContent = e.message || '알 수 없는 오류';
+            }
+        });
+    </script>
+</body>
+</html>

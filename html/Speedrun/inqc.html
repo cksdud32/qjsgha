@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>결제하기 - 체리상회</title>
+    <link rel="stylesheet" href="../../css/inqb.css">
+    <style>
+        body { padding: 0; }
+        .site-header { border-bottom: 1px solid #e0e0e0; }
+        .header-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1060px; margin: 0 auto; padding: 18px 20px; }
+        .header-cs { line-height: 1.5; min-width: 160px; }
+        .cs-label { font-size: 11px; color: #999; letter-spacing: 0.06em; }
+        .cs-phone { font-size: 20px; font-weight: bold; color: #111; }
+        .header-logo { display: flex; flex-direction: column; align-items: center; text-decoration: none; gap: 2px; cursor: pointer; }
+        .logo-icon { font-size: 40px; line-height: 1; }
+        .logo-text { font-size: 16px; font-weight: bold; color: #e04060; }
+        .header-search { display: flex; align-items: center; gap: 6px; min-width: 160px; justify-content: flex-end; }
+        .search-inp { width: 160px; height: 28px; border: none; border-bottom: 1px solid #999; font-size: 13px; outline: none; padding: 0 4px; font-family: inherit; }
+        .search-btn { background: none; border: none; font-size: 18px; cursor: pointer; }
+        .site-nav { display: flex; justify-content: center; border-top: 1px solid #e8e8e8; border-bottom: 2px solid #111; }
+        .nav-item { display: inline-block; padding: 13px 28px; font-size: 13px; font-weight: bold; color: #222; cursor: pointer; text-decoration: none; }
+        .nav-item:hover { color: #e04060; }
+        .order-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 30px; }
+        .conf-val { font-size: 13px; color: #111; }
+        .conf-account { font-size: 13px; color: #555; }
+        .form-table td { padding: 12px 0; }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <div class="header-cs">
+            <div class="cs-label">CS CENTER</div>
+            <div class="cs-phone">010.9167.2890</div>
+        </div>
+        <a class="header-logo">
+            <div class="logo-icon">🍒</div>
+            <div class="logo-text">체리상회</div>
+        </a>
+        <div class="header-search">
+            <input type="text" class="search-inp" placeholder="">
+            <button class="search-btn">🔍</button>
+        </div>
+    </div>
+    <nav class="site-nav">
+        <a class="nav-item">현준</a>
+        <a class="nav-item">연</a>
+        <a class="nav-item">로고</a>
+        <a class="nav-item">EVENT</a>
+        <a class="nav-item">REVIEW</a>
+        <a class="nav-item">CUSTOMER</a>
+        <a class="nav-item">LOOKBOOK</a>
+    </nav>
+</header>
+
+<div class="order-wrap">
+
+    <h1 class="page-order-title">결제하기</h1>
+
+    <div class="step-bar">
+        <div class="step-item">
+            <div class="step-icon">🛒</div>
+            <div class="step-label">장바구니</div>
+        </div>
+        <div class="step-item active">
+            <div class="step-icon">✏️</div>
+            <div class="step-label">주문서 작성/결제</div>
+        </div>
+        <div class="step-item">
+            <div class="step-icon">📦</div>
+            <div class="step-label">주문완료</div>
+        </div>
+    </div>
+
+    <table class="product-table">
+        <thead>
+            <tr>
+                <th style="width:55%">상품명</th>
+                <th style="width:15%">수량</th>
+                <th style="width:15%">판매가</th>
+                <th style="width:15%">합계금액</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="td-name">
+                    <div class="product-info-wrap">
+                        <div class="product-thumb" id="productThumb">이미지</div>
+                        <div class="product-name-text" id="productTitle">티켓팅 연습</div>
+                    </div>
+                </td>
+                <td id="productQty">1개</td>
+                <td id="productPrice">10,000원</td>
+                <td id="productTotal">10,000원</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="price-summary">
+        <div class="price-summary-item">
+            <span class="price-summary-label">상품금액</span>
+            <span class="price-summary-value" id="summaryProductAmt">10,000원</span>
+        </div>
+        <div class="price-sep">+</div>
+        <div class="price-summary-item">
+            <span class="price-summary-label">배송비</span>
+            <span class="price-summary-value">1,107원</span>
+        </div>
+        <div class="price-sep">+</div>
+        <div class="price-summary-item">
+            <span class="price-summary-label">추가옵션금액</span>
+            <span class="price-summary-value">0원</span>
+        </div>
+        <div class="price-sep">=</div>
+        <div class="price-summary-item">
+            <span class="price-summary-label">총 결제금액</span>
+            <span class="price-summary-value total" id="summaryTotal">11,107원</span>
+        </div>
+    </div>
+
+    <!-- 주문자 정보 -->
+    <section class="form-section">
+        <h2 class="form-section__title">주문자 정보</h2>
+        <table class="form-table">
+            <colgroup><col class="col-label"><col></colgroup>
+            <tbody>
+                <tr>
+                    <th>이름</th>
+                    <td><span class="conf-val" id="confName"></span></td>
+                </tr>
+                <tr>
+                    <th>이메일 주소</th>
+                    <td><span class="conf-val">cherry@cherry.com</span></td>
+                </tr>
+                <tr>
+                    <th>휴대폰번호</th>
+                    <td><span class="conf-val">601-1997-0814</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 배송지 정보 -->
+    <section class="form-section">
+        <h2 class="form-section__title">배송지 정보입력</h2>
+        <table class="form-table">
+            <colgroup><col class="col-label"><col></colgroup>
+            <tbody>
+                <tr>
+                    <th>받는사람</th>
+                    <td><span class="conf-val" id="confShipName"></span></td>
+                </tr>
+                <tr>
+                    <th>배송지</th>
+                    <td>
+                        <div class="inp-group--block">
+                            <span class="conf-val">[04066] 서울특별시 마포구 와우산로25길 6</span>
+                            <span class="conf-val">라이브 홀</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>휴대폰번호</th>
+                    <td><span class="conf-val">601-1997-0814</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 결제 정보 -->
+    <section class="form-section">
+        <h2 class="form-section__title">결제 정보입력</h2>
+        <table class="form-table">
+            <colgroup><col class="col-label"><col></colgroup>
+            <tbody>
+                <tr>
+                    <th>결제수단</th>
+                    <td><span class="conf-val">무통장입금</span></td>
+                </tr>
+                <tr>
+                    <th>계좌정보</th>
+                    <td>
+                        <select id="bankAccount" class="sel w300">
+                            <option value="">선택:</option>
+                            <option value="woori">체리은행 1997-601-814601 (예금주: 행복하세요 :>)</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>입금자명</th>
+                    <td><span class="conf-val" id="confDepositor"></span></td>
+                </tr>
+                <tr>
+                    <th>입금예정일</th>
+                    <td><span class="conf-val" id="confDate"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div id="stopwatchHud" style="display:none; position:fixed; top:20px; right:20px; background:rgba(0,0,0,0.78); color:#fff; font-size:20px; font-weight:bold; padding:10px 20px; border-radius:8px; z-index:9999; font-family:monospace; letter-spacing:0.04em; pointer-events:none;">⏱ <span id="swTime">00:00.000</span></div>
+
+    <div class="btn-wrap">
+        <button type="button" class="btn-prev" onclick="window.location.href='inqb.html'">주문취소</button>
+        <button type="button" class="btn-submit" onclick="confirmPayment()">결제하기</button>
+    </div>
+</div>
+
+<script>
+    function confirmPayment() {
+        if (!document.getElementById('bankAccount').value) {
+            alert('계좌를 선택해주세요.');
+            document.getElementById('bankAccount').focus();
+            return;
+        }
+        try {
+            var sess = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');
+            if (sess.stopwatchStart) {
+                sess.stopwatch = Date.now() - sess.stopwatchStart;
+                sessionStorage.setItem('ticketingPracticeSession', JSON.stringify(sess));
+            }
+        } catch (e) {}
+        window.location.href = 'inq-Termination.html';
+    }
+
+    window.addEventListener('DOMContentLoaded', function () {
+        var SHIPPING = 1107;
+        try {
+            var sess = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');
+            var name = sess.name || '';
+
+            document.getElementById('confName').textContent = name;
+            document.getElementById('confShipName').textContent = name;
+            document.getElementById('confDepositor').textContent = name;
+
+            var now = new Date();
+            var dateStr = now.getFullYear() + '.' +
+                String(now.getMonth() + 1).padStart(2, '0') + '.' +
+                String(now.getDate()).padStart(2, '0');
+            document.getElementById('confDate').textContent = dateStr;
+
+            var product = sess.product;
+            if (product) {
+                var price = product.price || 0;
+                var qty = product.qty || 1;
+                var total = price * qty;
+                document.getElementById('productTitle').textContent = product.title || '티켓팅 연습';
+                document.getElementById('productQty').textContent = qty + '개';
+                document.getElementById('productPrice').textContent = price.toLocaleString() + '원';
+                document.getElementById('productTotal').textContent = total.toLocaleString() + '원';
+                document.getElementById('summaryProductAmt').textContent = total.toLocaleString() + '원';
+                document.getElementById('summaryTotal').textContent = (total + SHIPPING).toLocaleString() + '원';
+                if (product.imageUrl) {
+                    document.getElementById('productThumb').innerHTML =
+                        '<img src="' + product.imageUrl + '" style="width:100%;height:100%;object-fit:cover;">';
+                }
+            }
+
+            if (sess.stopwatchStart) {
+                var startTime = sess.stopwatchStart;
+                document.getElementById('stopwatchHud').style.display = 'block';
+                var swTime = document.getElementById('swTime');
+                setInterval(function () {
+                    var ms = Date.now() - startTime;
+                    var min = Math.floor(ms / 60000);
+                    var sec = Math.floor((ms % 60000) / 1000);
+                    var msec = ms % 1000;
+                    swTime.textContent =
+                        String(min).padStart(2, '0') + ':' +
+                        String(sec).padStart(2, '0') + '.' +
+                        String(msec).padStart(3, '0');
+                }, 50);
+            }
+        } catch (e) {}
+    });
+</script>
+</body>
+</html>

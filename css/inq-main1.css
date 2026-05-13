@@ -1,0 +1,253 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    background: #eef0ff;
+    color: #111827;
+    padding: 24px 20px;
+}
+
+/* ===== Top Head Banner ===== */
+.top-head {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto 24px;
+    padding: 24px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+    background: linear-gradient(135deg, #fef2f2 0%, #fef9f3 100%);
+    border-radius: 24px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.top-head__logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #b91c1c;
+    flex-shrink: 0;
+}
+
+.logo-mark {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+.top-head__content {
+    flex: 1;
+}
+
+.top-head__content h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.top-head__content p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #4b5563;
+}
+
+/* ===== Main ===== */
+.main-wrap {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+}
+
+.breadcrumb {
+    font-size: 12px;
+    color: #999;
+    padding: 14px 0 2px;
+}
+
+.bc-link {
+    color: #e04060;
+}
+
+.page-cat-title {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    padding: 18px 0 14px;
+    letter-spacing: -0.02em;
+}
+
+.filter-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 16px;
+}
+
+.filter-tab {
+    font-size: 13px;
+    color: #888;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.filter-tab.active {
+    color: #111;
+    font-weight: bold;
+}
+
+.filter-sep {
+    color: #ccc;
+}
+
+.list-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.list-count {
+    font-size: 13px;
+    color: #666;
+}
+
+.list-count strong {
+    color: #111;
+}
+
+.sort-wrap {
+    display: flex;
+}
+
+.sort-btn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: #aaa;
+    cursor: pointer;
+    padding: 0 10px;
+    font-family: inherit;
+}
+
+.sort-btn + .sort-btn {
+    border-left: 1px solid #ddd;
+}
+
+.sort-btn.active {
+    color: #333;
+}
+
+/* ===== Product Grid ===== */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 36px 20px;
+}
+
+.product-card {
+    cursor: pointer;
+}
+
+.product-card:hover .card-img-wrap {
+    opacity: 0.85;
+}
+
+.card-img-wrap {
+    position: relative;
+    background: #f0f0f0;
+    background-image: radial-gradient(circle, #d0d0d0 1px, transparent 1px);
+    background-size: 14px 14px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    margin-bottom: 10px;
+    transition: opacity 0.15s;
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-img-placeholder {
+    font-size: 12px;
+    color: #bbb;
+}
+
+.badge {
+    position: absolute;
+    top: 8px;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 8px;
+    z-index: 1;
+    border-radius: 2px;
+}
+
+.badge-new {
+    left: 8px;
+    background: #f5a623;
+    color: #fff;
+}
+
+.badge-best {
+    left: 54px;
+    background: #4a9eff;
+    color: #fff;
+}
+
+.card-name {
+    font-size: 13px;
+    color: #222;
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.price-now {
+    font-size: 15px;
+    font-weight: bold;
+    color: #111;
+    margin-right: 6px;
+}
+
+.price-old {
+    font-size: 13px;
+    color: #bbb;
+    text-decoration: line-through;
+}
+
+/* ===== Stopwatch HUD ===== */
+.stopwatch-hud {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.78);
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px;
+    z-index: 9999;
+    font-family: monospace;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+}
+
+.stopwatch-hud.hidden {
+    display: none;
+}

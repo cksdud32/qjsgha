@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>주문서 작성 - 티켓팅 연습</title>
+    <link rel="stylesheet" href="../../css/inqb.css">
+</head>
+<body>
+    <div class="order-wrap">
+
+        <h1 class="page-order-title">주문서 작성/결제</h1>
+
+        <div class="step-bar">
+            <div class="step-item">
+                <div class="step-icon">🛒</div>
+                <div class="step-label">장바구니</div>
+            </div>
+            <div class="step-item active">
+                <div class="step-icon">✏️</div>
+                <div class="step-label">주문서 작성/결제</div>
+            </div>
+            <div class="step-item">
+                <div class="step-icon">📦</div>
+                <div class="step-label">주문완료</div>
+            </div>
+        </div>
+
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th style="width:55%">상품명</th>
+                    <th style="width:15%">수량</th>
+                    <th style="width:15%">판매가</th>
+                    <th style="width:15%">합계금액</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="td-name">
+                        <div class="product-info-wrap">
+                            <div class="product-thumb" id="productThumb">이미지</div>
+                            <div class="product-name-text" id="productTitle">티켓팅 연습</div>
+                        </div>
+                    </td>
+                    <td id="productQty">1개</td>
+                    <td id="productPrice">10,000원</td>
+                    <td id="productTotal">10,000원</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="price-summary">
+            <div class="price-summary-item">
+                <span class="price-summary-label">상품금액</span>
+                <span class="price-summary-value" id="summaryProductAmt">10,000원</span>
+            </div>
+            <div class="price-sep">+</div>
+            <div class="price-summary-item">
+                <span class="price-summary-label">배송비</span>
+                <span class="price-summary-value">1,107원</span>
+            </div>
+            <div class="price-sep">+</div>
+            <div class="price-summary-item">
+                <span class="price-summary-label">추가옵션금액</span>
+                <span class="price-summary-value">0원</span>
+            </div>
+            <div class="price-sep">=</div>
+            <div class="price-summary-item">
+                <span class="price-summary-label">총 결제금액</span>
+                <span class="price-summary-value total" id="summaryTotal">11,107원</span>
+            </div>
+        </div>
+
+        <!-- 주문자 정보 -->
+        <section class="form-section">
+            <h2 class="form-section__title">주문자 정보</h2>
+            <table class="form-table">
+                <colgroup>
+                    <col class="col-label">
+                    <col>
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th>이름</th>
+                        <td>
+                            <input type="text" class="inp w230" id="ordererName">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>이메일 주소</th>
+                        <td>
+                            <span class="inp-group">
+                                <input type="text" class="inp w140" id="emailLocal">
+                                <span class="sep">@</span>
+                                <input type="text" class="inp w180" id="emailDomain">
+                                <select class="sel w150" id="emailSelect" onchange="applyEmailDomain(this)">
+                                    <option value="">선택</option>
+                                    <option value="naver.com">naver.com</option>
+                                    <option value="gmail.com">gmail.com</option>
+                                    <option value="daum.net">daum.net</option>
+                                    <option value="kakao.com">kakao.com</option>
+                                    <option value="nate.com">nate.com</option>
+                                    <option value="direct">직접입력</option>
+                                </select>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>휴대폰번호</th>
+                        <td>
+                            <span class="inp-group">
+                                <select class="sel w90" id="phonePrefix">
+                                    <option value="601">601</option>
+                                    <option value="010">010</option>
+                                    <option value="011">011</option>
+                                    <option value="016">016</option>
+                                    <option value="017">017</option>
+                                    <option value="018">018</option>
+                                    <option value="019">019</option>
+                                </select>
+                                <span class="sep">-</span>
+                                <input type="text" class="inp w120" maxlength="4" id="phoneMid">
+                                <span class="sep">-</span>
+                                <input type="text" class="inp w120" maxlength="4" id="phoneLast">
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>연락처</th>
+                        <td>
+                            <span class="inp-group">
+                                <select class="sel w90" id="contactPrefix">
+                                    <option value="">선택</option>
+                                    <option value="02">02</option>
+                                    <option value="031">031</option>
+                                    <option value="032">032</option>
+                                    <option value="033">033</option>
+                                    <option value="041">041</option>
+                                    <option value="042">042</option>
+                                    <option value="043">043</option>
+                                    <option value="051">051</option>
+                                    <option value="052">052</option>
+                                    <option value="053">053</option>
+                                    <option value="054">054</option>
+                                    <option value="055">055</option>
+                                    <option value="061">061</option>
+                                    <option value="062">062</option>
+                                    <option value="063">063</option>
+                                    <option value="064">064</option>
+                                </select>
+                                <span class="sep">-</span>
+                                <input type="text" class="inp w120" maxlength="4" id="contactMid">
+                                <span class="sep">-</span>
+                                <input type="text" class="inp w120" maxlength="4" id="contactLast">
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 배송지 정보입력 -->
+        <section class="form-section">
+            <h2 class="form-section__title">배송지 정보입력</h2>
+            <table class="form-table">
+                <colgroup>
+                    <col class="col-label">
+                    <col>
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th>배송지선택</th>
+                        <td>
+                            <label class="chk-label">
+                                <input type="checkbox" id="sameAsOrderer" onchange="copySameAsOrderer(this)">
+                                주문자와 동일
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>이름</th>
+                        <td>
+                            <input type="text" class="inp w230" id="shipName">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>배송지</th>
+                        <td>
+                            <div class="inp-group--block">
+                                <span class="inp-group">
+                                    <input type="text" class="inp w150" id="zipCode" readonly>
+                                    <button type="button" class="btn-zip" onclick="searchZip()">우편번호</button>
+                                </span>
+                                <span class="inp-group">
+                                    <input type="text" class="inp w240" id="addr1" readonly>
+                                    <input type="text" class="inp w300" id="addr2">
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>휴대폰번호</th>
+                        <td>
+                            <span class="inp-group">
+                                <select class="sel w90" id="shipPhonePrefix">
+                                    <option value="601">601</option>
+                                    <option value="010">010</option>
+                                    <option value="011">011</option>
+                                    <option value="016">016</option>
+                                    <option value="017">017</option>
+                                    <option value="018">018</option>
+                                    <option value="019">019</option>
+                                </select>
+                                <span class="sep">-</span>
+                                <input type="text" class="inp w120" maxlength="4" id="shipPhoneMid">
+                                <span class="sep">-</span>
+                                <input type="text" class="inp w120" maxlength="4" id="shipPhoneLast">
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>연락처</th>
+                        <td>
+                            <span class="inp-group">
+                                <select class="sel w90" id="shipContactPrefix">
+                                    <option value="">선택</option>
+                                    <option value="02">02</option>
+                                    <option value="031">031</option>
+                                    <option value="032">032</option>
+                                    <option value="033">033</option>
+                                    <option value="041">041</option>
+                                    <option value="042">042</option>
+                                    <option value="043">043</option>
+                                    <option value="051">051</option>
+                                    <option value="052">052</option>
+                                    <option value="053">053</option>
+                                    <option value="054">054</option>
+                                    <option value="055">055</option>
+                                    <option value="061">061</option>
+                                    <option value="062">062</option>
+                                    <option value="063">063</option>
+                                    <option value="064">064</option>
+                                </select>
+                                <span class="sep">-</span>
+                                <input type="text" class="inp w120" maxlength="4" id="shipContactMid">
+                                <span class="sep">-</span>
+                                <input type="text" class="inp w120" maxlength="4" id="shipContactLast">
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>남기실 말</th>
+                        <td>
+                            <input type="text" class="inp w-full" id="message">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 결제 정보입력 -->
+        <section class="form-section">
+            <h2 class="form-section__title">결제 정보입력</h2>
+            <table class="form-table">
+                <colgroup>
+                    <col class="col-label">
+                    <col>
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th>결제수단</th>
+                        <td>
+                            <div class="pay-list">
+                                <label class="pay-item">
+                                    <input type="radio" name="payMethod" value="bank"> 무통장입금
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>적립금사용</th>
+                        <td>
+                            <div class="inp-group">
+                                <input type="text" class="inp w120" id="pointInput"> 원
+                                <span class="point-balance">보유적립금 : 1,997,814,601,107원</span>
+                            </div>
+                            <div class="point-notice">※ 보유적립금이 1,000원 이상일 경우 1,000원 씩 최대 3,000원까지 사용이 가능합니다.</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>환불정보</th>
+                        <td>
+                            <span class="refund-info-text">환불계좌 적으시는 분들을 위해 만들어 뒀습니다.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>환불 받으실예금주</th>
+                        <td>
+                            <input type="text" class="inp w230" id="refundName">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>환불 받으실계좌<br>번호</th>
+                        <td>
+                            <span class="inp-group">
+                                <select class="sel w120" id="refundBank">
+                                    <option value="">선택</option>
+                                    <option value="kyongnam">경남은행</option>
+                                    <option value="gwangju">광주은행</option>
+                                    <option value="kb">국민은행</option>
+                                    <option value="ibk">기업은행</option>
+                                    <option value="nh">농협</option>
+                                    <option value="daegu">대구은행</option>
+                                    <option value="busan">부산은행</option>
+                                    <option value="suhyup">수협</option>
+                                    <option value="citi">씨티은행</option>
+                                    <option value="shinhan">신한은행</option>
+                                    <option value="woori">우리은행</option>
+                                    <option value="post">우체국</option>
+                                    <option value="jeonbuk">전북은행</option>
+                                    <option value="hana">KEB하나은행</option>
+                                    <option value="sc">SC은행</option>
+                                </select>
+                                <input type="text" class="inp w300" id="refundAccount">
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <div id="stopwatchHud" style="display:none; position:fixed; top:20px; right:20px; background:rgba(0,0,0,0.78); color:#fff; font-size:20px; font-weight:bold; padding:10px 20px; border-radius:8px; z-index:9999; font-family:monospace; letter-spacing:0.04em; pointer-events:none;">⏱ <span id="swTime">00:00.000</span></div>
+
+        <div class="btn-wrap">
+            <button type="button" class="btn-submit" onclick="submitOrder()">주문</button>
+            <button type="button" class="btn-prev" onclick="window.location.href='inqa.html'">취소</button>
+        </div>
+    </div>
+
+    <script>
+        function applyEmailDomain(sel) {
+            const domainInput = document.getElementById('emailDomain');
+            if (sel.value === 'direct') {
+                domainInput.readOnly = false;
+                domainInput.value = '';
+                domainInput.focus();
+            } else if (sel.value) {
+                domainInput.readOnly = true;
+                domainInput.value = sel.value;
+            } else {
+                domainInput.readOnly = false;
+                domainInput.value = '';
+            }
+        }
+
+        function copySameAsOrderer(cb) {
+            const checked = cb.checked;
+
+            // 이름
+            const shipName = document.getElementById('shipName');
+            shipName.value = checked ? document.getElementById('ordererName').value : '';
+            shipName.readOnly = checked;
+
+            // 배송지: 서울특별시 마포구 와우산로25길 6 라이브 홀
+            document.getElementById('zipCode').value = checked ? '04066' : '';
+            const addr1 = document.getElementById('addr1');
+            addr1.value = checked ? '서울특별시 마포구 와우산로25길 6' : '';
+            const addr2 = document.getElementById('addr2');
+            addr2.value = checked ? '라이브 홀' : '';
+            addr2.readOnly = checked;
+
+            // 휴대폰번호
+            const shipPhonePrefix = document.getElementById('shipPhonePrefix');
+            shipPhonePrefix.value = checked ? document.getElementById('phonePrefix').value : '';
+            shipPhonePrefix.disabled = checked;
+            const shipPhoneMid = document.getElementById('shipPhoneMid');
+            shipPhoneMid.value = checked ? document.getElementById('phoneMid').value : '';
+            shipPhoneMid.readOnly = checked;
+            const shipPhoneLast = document.getElementById('shipPhoneLast');
+            shipPhoneLast.value = checked ? document.getElementById('phoneLast').value : '';
+            shipPhoneLast.readOnly = checked;
+        }
+
+        function searchZip() {
+            if (typeof daum !== 'undefined' && daum.Postcode) {
+                new daum.Postcode({
+                    oncomplete: function (data) {
+                        document.getElementById('zipCode').value = data.zonecode;
+                        document.getElementById('addr1').value = data.address;
+                        document.getElementById('addr2').focus();
+                    }
+                }).open();
+            } else {
+                alert('우편번호 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+
+        function submitOrder() {
+            const shipFields = [
+                { id: 'shipName',       msg: '이름을 입력해주세요.' },
+                { id: 'zipCode',        msg: '우편번호를 입력해주세요.' },
+                { id: 'addr1',          msg: '배송지 주소를 입력해주세요.' },
+                { id: 'addr2',          msg: '배송지 상세주소를 입력해주세요.' },
+                { id: 'shipPhoneMid',   msg: '휴대폰번호를 입력해주세요.' },
+                { id: 'shipPhoneLast',  msg: '배송지 휴대폰번호를 입력해주세요.' },
+            ];
+
+            for (const f of shipFields) {
+                const el = document.getElementById(f.id);
+                if (!el.value.trim()) { alert(f.msg); el.focus(); return; }
+            }
+
+            if (!document.getElementById('shipPhonePrefix').value) {
+                alert('배송지 휴대폰번호 앞자리를 선택해주세요.');
+                return;
+            }
+
+            if (!document.querySelector('input[name="payMethod"]:checked')) {
+                alert('결제수단을 선택해주세요.');
+                return;
+            }
+
+            window.location.href = 'inqc.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', function () {
+            const SHIPPING = 1107;
+
+            try {
+                const parsed = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');
+
+                // 이름
+                if (parsed?.name) {
+                    const nameEl = document.getElementById('ordererName');
+                    nameEl.value = parsed.name;
+                    nameEl.readOnly = true;
+                }
+
+                // 상품 정보
+                const product = parsed?.product;
+                if (product) {
+                    const price = product.price || 0;
+                    const qty   = product.qty   || 1;
+                    const total = price * qty;
+
+                    document.getElementById('productTitle').textContent       = product.title || '티켓팅 연습';
+                    document.getElementById('productQty').textContent         = qty + '개';
+                    document.getElementById('productPrice').textContent       = price.toLocaleString() + '원';
+                    document.getElementById('productTotal').textContent       = total.toLocaleString() + '원';
+                    document.getElementById('summaryProductAmt').textContent  = total.toLocaleString() + '원';
+                    document.getElementById('summaryTotal').textContent       = (total + SHIPPING).toLocaleString() + '원';
+
+                    if (product.imageUrl) {
+                        document.getElementById('productThumb').innerHTML =
+                            `<img src="${product.imageUrl}" alt="${product.title}">`;
+                    }
+                }
+            } catch (e) {}
+
+            // 휴대폰번호: 고정값 601-1997-0814
+            document.getElementById('phonePrefix').value = '601';
+            document.getElementById('phonePrefix').disabled = true;
+            const phoneMid = document.getElementById('phoneMid');
+            phoneMid.value = '1997';
+            phoneMid.readOnly = true;
+            const phoneLast = document.getElementById('phoneLast');
+            phoneLast.value = '0814';
+            phoneLast.readOnly = true;
+
+            // 이메일: 고정값 cherry@cherry.com
+            const emailLocal = document.getElementById('emailLocal');
+            emailLocal.value = 'cherry';
+            emailLocal.readOnly = true;
+            const emailDomain = document.getElementById('emailDomain');
+            emailDomain.value = 'cherry.com';
+            emailDomain.readOnly = true;
+        });
+
+        // 스톱워치 이어서 계속
+        (function () {
+            function pad(n, len) { return String(n).padStart(len, '0'); }
+            function formatTime(ms) {
+                var min = Math.floor(ms / 60000);
+                var sec = Math.floor((ms % 60000) / 1000);
+                var msec = ms % 1000;
+                return pad(min, 2) + ':' + pad(sec, 2) + '.' + pad(msec, 3);
+            }
+            try {
+                var sess = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');
+                if (sess.stopwatchStart) {
+                    var hud = document.getElementById('stopwatchHud');
+                    var swTime = document.getElementById('swTime');
+                    if (hud) hud.style.display = 'block';
+                    setInterval(function () {
+                        if (swTime) swTime.textContent = formatTime(Date.now() - sess.stopwatchStart);
+                    }, 50);
+                }
+            } catch (e) {}
+        })();
+    </script>
+</body>
+</html>

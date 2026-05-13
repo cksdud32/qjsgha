@@ -15,3 +15,10 @@ model messages {
   content    String
   created_at DateTime @default(now())
 }
+
+// 티켓팅 연습 기록 테이블
+model ticketing_practice {
+  id        Int    @id @default(autoincrement())
+  name      String
+  stopwatch Int
+}

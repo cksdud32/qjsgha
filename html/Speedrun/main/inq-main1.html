@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>현준 - 체리상회</title>
+    <link rel="stylesheet" href="../../../css/inq-main1.css">
+</head>
+<body>
+
+<section class="top-head">
+    <div class="top-head__logo">
+        <div class="logo-mark">🍒</div>
+        <div><strong>티켓팅 연습 사이트</strong></div>
+    </div>
+    <div class="top-head__content">
+        <h1>티켓팅 연습 사이트</h1>
+        <p>본 사이트는 티켓팅 연습 공간으로 실제 티켓팅 환경과는 차이가 있을 수 있습니다. <br>
+        아울러 체리 숲 규칙에 따라 운영상 예고 없이 접속이 제한될 수 있으니 이용에 참고해 주시기 바랍니다.</p>
+    </div>
+</section>
+
+<main class="main-wrap">
+    <p class="breadcrumb">HOME &gt; <span class="bc-link">현준</span></p>
+    <h1 class="page-cat-title">현준</h1>
+    <div class="filter-bar">
+        <a class="filter-tab active">ALL</a>
+        <span class="filter-sep">/</span>
+        <a class="filter-tab">Album</a>
+        <span class="filter-sep">/</span>
+        <a class="filter-tab">Season</a>
+        <span class="filter-sep">/</span>
+        <a class="filter-tab">Daily</a>
+    </div>
+    <div class="list-meta">
+        <span class="list-count">총 <strong>1</strong>개</span>
+        <div class="sort-wrap">
+            <button class="sort-btn active">높은 가격순</button>
+            <button class="sort-btn">낮은 가격순</button>
+        </div>
+    </div>
+
+    <div id="productGrid" class="product-grid" style="visibility:hidden">
+        <div class="product-card" onclick="goToProduct()">
+            <div class="card-img-wrap">
+                <span class="badge badge-new">NEW</span>
+                <span class="badge badge-best">BEST</span>
+                <div class="card-img" id="cardImg">
+                    <img id="productImgEl" src="" alt="" style="display:none; width:100%; height:100%; object-fit:cover;">
+                    <span class="card-img-placeholder">이미지</span>
+                </div>
+            </div>
+            <div class="card-info">
+                <p class="card-name" id="productName">티켓팅 연습</p>
+                <p class="card-price">
+                    <strong class="price-now" id="productPrice">10,000원</strong>
+                    <del class="price-old">15,000원</del>
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="stopwatchHud" class="stopwatch-hud hidden">
+    ⏱ <span id="swTime">00:00.000</span>
+</div>
+
+<script src="../../../js/inq-main1.js"></script>
+</body>
+</html>

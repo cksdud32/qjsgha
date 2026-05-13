@@ -16,7 +16,9 @@ let currentRankDiff = 'easy';      // 'easy', 'medium', 'hard'
  * 0. 페이지 로드 시 실행
  */
 window.onload = function() {
-    updateRankUI(); // 초기 랭킹 로드 (이번달 + 쉬움)
+    if (document.getElementById('currentTab') || document.getElementById('rankList')) {
+        updateRankUI(); // 초기 랭킹 로드 (이번달 + 쉬움)
+    }
 };
 
 /**

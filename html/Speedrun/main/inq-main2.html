@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>티켓팅 연습 - 체리상회</title>
+    <link rel="stylesheet" href="../../../css/inq-main2.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <div class="header-cs">
+            <div class="cs-label">CS CENTER</div>
+            <div class="cs-phone">010.9167.2890</div>
+        </div>
+        <a class="header-logo">
+            <div class="logo-icon">🍒</div>
+            <div class="logo-text">체리상회</div>
+        </a>
+        <div class="header-search">
+            <input type="text" class="search-inp" placeholder="">
+            <button class="search-btn">🔍</button>
+        </div>
+    </div>
+    <nav class="site-nav">
+        <a class="nav-item">현준</a>
+        <a class="nav-item">연</a>
+        <a class="nav-item">로고</a>
+        <a class="nav-item">EVENT</a>
+        <a class="nav-item">REVIEW</a>
+        <a class="nav-item">CUSTOMER</a>
+        <a class="nav-item">LOOKBOOK</a>
+    </nav>
+</header>
+
+<main class="main-wrap">
+    <p class="breadcrumb">HOME &gt; <span class="bc-pink">현준</span> &gt; <strong>Daily</strong></p>
+
+    <div class="product-detail">
+        <!-- 이미지 -->
+        <div class="detail-img-col">
+            <div class="detail-img-main">
+                <img id="detailImg" src="" alt="" style="display:none; max-width:82%; max-height:82%; object-fit:contain;">
+                <span class="img-ph" id="imgPh">이미지</span>
+            </div>
+            <div class="detail-thumbs">
+                <div class="thumb-box">
+                    <img id="thumbImg" src="" alt="" style="display:none; width:100%; height:100%; object-fit:cover;">
+                </div>
+            </div>
+        </div>
+
+        <!-- 정보 (PC) -->
+        <div class="detail-info-col">
+            <h1 class="detail-name" id="productName">티켓팅 연습</h1>
+            <div class="detail-price-row">
+                <del class="price-old">15,000원</del>
+                <span class="price-now" id="priceNow">10,000원</span>
+                <span class="sold-badge">SOLD</span>
+            </div>
+            <hr class="sep">
+            <div class="option-row">
+                <span class="option-label" id="optionLabel">티켓팅 연습</span>
+                <div class="qty-ctrl">
+                    <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                    <input type="text" class="qty-inp" id="qtyVal" value="1" readonly>
+                    <button class="qty-btn" onclick="changeQty(1)">+</button>
+                </div>
+                <span class="option-total" id="optionTotal">10,000원</span>
+            </div>
+            <hr class="sep">
+            <div class="total-row">
+                Total : <strong class="total-price" id="totalPrice">10,000</strong> <span class="total-won">원</span>
+            </div>
+            <div class="btn-row">
+                <button class="btn-buy" onclick="buyNow()">BUY NOW</button>
+                <button class="btn-cart" disabled>ADD TO CART</button>
+                <button class="btn-wish" disabled>WISH LIST</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- 스톱워치 HUD -->
+<div id="stopwatchHud" class="stopwatch-hud hidden">
+    ⏱ <span id="swTime">00:00.000</span>
+</div>
+
+<!-- 모바일 하단 고정 바 -->
+<div class="mobile-sticky" id="mobileSticky">
+    <div class="ms-row">
+        <span class="ms-name" id="msName">티켓팅 연습</span>
+        <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <input type="text" class="qty-inp" id="msQty" value="1" readonly>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <span class="ms-price" id="msPrice">10,000원</span>
+        <button class="ms-toggle" id="msToggle" onclick="toggleMobileSticky()">∧</button>
+    </div>
+    <div class="ms-expanded" id="msExpanded" style="display:none">
+        <div class="ms-total">Total : <strong id="msTotalPrice">10,000</strong> 원</div>
+        <div class="ms-btn-row">
+            <button class="btn-buy" onclick="buyNow()">BUY NOW</button>
+            <button class="btn-cart" disabled>ADD TO CART</button>
+            <button class="btn-wish" disabled>WISH LIST</button>
+        </div>
+    </div>
+    <div class="ms-buynow-only" id="msBuynowOnly">
+        <button class="btn-buy btn-buy--full" onclick="buyNow()">BUY NOW</button>
+    </div>
+</div>
+
+<script src="../../../js/inq-main2.js"></script>
+</body>
+</html>
