@@ -222,6 +222,11 @@ body{
 .back-button {
     flex: 1;
     min-width: 140px;
+    height: 52px;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
 }
 
 .start-button {
