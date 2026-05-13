@@ -96,6 +96,89 @@
             text-align: left;
         }
 
+        .ranking-card {
+            background: #fff;
+            border-radius: 28px;
+            box-shadow: 0 18px 48px rgba(15, 23, 42, 0.1);
+            padding: 40px 48px;
+            max-width: 520px;
+            width: 100%;
+            margin-top: 24px;
+        }
+
+        .ranking-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .ranking-table th {
+            text-align: center;
+            padding: 8px 6px;
+            border-bottom: 2px solid #111827;
+            font-size: 12px;
+            color: #6b7280;
+            letter-spacing: 0.04em;
+        }
+
+        .ranking-table td {
+            text-align: center;
+            padding: 10px 6px;
+            border-bottom: 1px solid #f0f0f0;
+            font-family: monospace;
+        }
+
+        .ranking-table td.td-name {
+            font-family: inherit;
+            text-align: left;
+            padding-left: 12px;
+        }
+
+        .ranking-table td.td-rank {
+            font-weight: bold;
+            font-family: inherit;
+            width: 40px;
+        }
+
+        .ranking-table tr.rank-1 td { color: #b45309; }
+        .ranking-table tr.rank-2 td { color: #6b7280; }
+        .ranking-table tr.rank-3 td { color: #b45309; opacity: 0.7; }
+
+        .ranking-table tr.my-record {
+            background: #f0f9ff;
+        }
+
+        .ranking-table tr.my-record td {
+            font-weight: bold;
+            color: #0369a1;
+        }
+
+        .ranking-empty {
+            text-align: center;
+            color: #aaa;
+            font-size: 13px;
+            padding: 24px 0;
+        }
+
+        .ranking-loading {
+            text-align: center;
+            color: #bbb;
+            font-size: 13px;
+            padding: 24px 0;
+        }
+
+        @media (max-width: 560px) {
+            .ranking-card { padding: 28px 20px; }
+        }
+
         .step-bar {
             display: flex;
             width: 100%;
@@ -159,6 +242,11 @@
         </div>
     </div>
 
+    <div class="ranking-card">
+        <h2 class="ranking-title">🏆 스피드런 랭킹</h2>
+        <div id="rankingContent" class="ranking-loading">불러오는 중...</div>
+    </div>
+
     <script src="../../js/inq-api.js"></script>
     <script>
         function fmtTime(ms) {
@@ -208,6 +296,38 @@
             }
         }
 
+        function renderLeaderboard(leaderboard, myStopwatch) {
+            var container = document.getElementById('rankingContent');
+            if (!leaderboard || leaderboard.length === 0) {
+                container.innerHTML = '<div class="ranking-empty">아직 기록이 없습니다.</div>';
+                return;
+            }
+            var rows = leaderboard.map(function(r) {
+                var isMe = myStopwatch > 0 && r.stopwatch === myStopwatch;
+                var rankDisplay = r.rank + '등';
+                var rankClass = 'rank-' + r.rank;
+                return '<tr class="' + rankClass + (isMe ? ' my-record' : '') + '">'
+                    + '<td class="td-rank">' + rankDisplay + '</td>'
+                    + '<td class="td-name">' + r.name + (isMe ? ' 👈' : '') + '</td>'
+                    + '<td>' + fmtTime(r.stopwatch) + '</td>'
+                    + '</tr>';
+            }).join('');
+
+            container.innerHTML = '<table class="ranking-table">'
+                + '<thead><tr><th>순위</th><th style="text-align:left;padding-left:12px">닉네임</th><th>기록</th></tr></thead>'
+                + '<tbody>' + rows + '</tbody>'
+                + '</table>';
+        }
+
+        async function loadLeaderboard(myStopwatch) {
+            try {
+                var data = await getTicketingLeaderboard();
+                renderLeaderboard(data.leaderboard || [], myStopwatch);
+            } catch (e) {
+                document.getElementById('rankingContent').innerHTML = '<div class="ranking-empty">랭킹을 불러오지 못했습니다.</div>';
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', async function () {
             try {
                 var sess = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');
@@ -229,6 +349,7 @@
                         } else if (result.kept === 'old') {
                             showOldKept(name, result.oldStopwatch, result.newStopwatch);
                             document.getElementById('savingMsg').textContent = '이전 기록이 유지되었습니다.';
+                            stopwatch = result.oldStopwatch;
                         } else {
                             showNewKept(name, result.stopwatch, result.oldStopwatch);
                             document.getElementById('savingMsg').textContent = result.message || '기록이 저장되었습니다.';
@@ -241,6 +362,8 @@
                 } else {
                     document.getElementById('savingMsg').textContent = '';
                 }
+
+                loadLeaderboard(stopwatch);
             } catch (e) {
                 console.error(e);
                 document.getElementById('savingMsg').style.display = 'none';

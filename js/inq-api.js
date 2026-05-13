@@ -24,3 +24,8 @@ window.getTicketingPracticeRecords = async function() {
   const response = await fetch('/api/get-ticketing-practice');
   return response.json();
 };
+
+window.getTicketingLeaderboard = async function() {
+  const response = await fetch('/api/get-ticketing-leaderboard');
+  return response.json();
+};
