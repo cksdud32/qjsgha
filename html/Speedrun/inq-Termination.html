@@ -28,39 +28,11 @@
             width: 100%;
         }
 
-        .result-icon {
-            font-size: 72px;
-            margin-bottom: 20px;
-            line-height: 1;
-        }
-
-        .result-title {
-            font-size: 26px;
-            font-weight: bold;
-            color: #111827;
-            margin-bottom: 10px;
-            letter-spacing: -0.02em;
-        }
-
-        .result-name {
-            font-size: 18px;
-            color: #e04060;
-            font-weight: bold;
-            margin-bottom: 36px;
-        }
-
-        .result-divider {
-            border: none;
-            border-top: 1px solid #e8e8e8;
-            margin-bottom: 28px;
-        }
-
-        .result-time-label {
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 10px;
-            letter-spacing: 0.04em;
-        }
+        .result-icon { font-size: 72px; margin-bottom: 20px; line-height: 1; }
+        .result-title { font-size: 26px; font-weight: bold; color: #111827; margin-bottom: 10px; letter-spacing: -0.02em; }
+        .result-name { font-size: 18px; color: #e04060; font-weight: bold; margin-bottom: 36px; }
+        .result-divider { border: none; border-top: 1px solid #e8e8e8; margin-bottom: 28px; }
+        .result-time-label { font-size: 13px; color: #888; margin-bottom: 10px; letter-spacing: 0.04em; }
 
         .result-time {
             font-size: 52px;
@@ -68,15 +40,29 @@
             font-family: monospace;
             color: #111827;
             letter-spacing: 0.02em;
-            margin-bottom: 36px;
+            margin-bottom: 20px;
         }
 
-        .result-sub {
+        /* 이전 기록 비교 박스 */
+        .compare-box {
+            display: none;
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
             font-size: 13px;
-            color: #aaa;
-            margin-bottom: 32px;
-            line-height: 1.7;
+            color: #555;
+            text-align: left;
+            line-height: 2;
         }
+
+        .compare-box .compare-label { font-weight: bold; color: #333; }
+        .compare-box .compare-time { font-family: monospace; font-weight: bold; }
+        .compare-box .compare-time.better { color: #16a34a; }
+        .compare-box .compare-time.worse  { color: #dc2626; }
+
+        .result-sub { font-size: 13px; color: #aaa; margin-bottom: 32px; line-height: 1.7; }
 
         .btn-home {
             display: inline-block;
@@ -92,14 +78,9 @@
             text-decoration: none;
             letter-spacing: 0.02em;
         }
-
         .btn-home:hover { background: #333; }
 
-        .saving-msg {
-            font-size: 12px;
-            color: #bbb;
-            margin-top: 14px;
-        }
+        .saving-msg { font-size: 12px; color: #bbb; margin-top: 14px; }
 
         .saving-error {
             display: none;
@@ -114,7 +95,6 @@
             text-align: left;
         }
 
-        /* Step bar (완료 표시) */
         .step-bar {
             display: flex;
             width: 100%;
@@ -150,28 +130,26 @@
 <body>
 
     <div class="step-bar">
-        <div class="step-item">
-            <div class="step-icon">🛒</div>
-            장바구니
-        </div>
-        <div class="step-item">
-            <div class="step-icon">✏️</div>
-            주문서 작성/결제
-        </div>
-        <div class="step-item active">
-            <div class="step-icon">📦</div>
-            주문완료
-        </div>
+        <div class="step-item"><div class="step-icon">🛒</div>장바구니</div>
+        <div class="step-item"><div class="step-icon">✏️</div>주문서 작성/결제</div>
+        <div class="step-item active"><div class="step-icon">📦</div>주문완료</div>
     </div>
 
     <div class="result-card">
-        <div class="result-icon">🎉</div>
-        <h1 class="result-title">티켓팅 완료!</h1>
+        <div class="result-icon" id="resultIcon">🎉</div>
+        <h1 class="result-title" id="resultTitle">티켓팅 완료!</h1>
         <p class="result-name" id="resultName">닉네임님의 기록</p>
         <hr class="result-divider">
-        <p class="result-time-label">기록</p>
+        <p class="result-time-label" id="resultTimeLabel">기록</p>
         <div class="result-time" id="resultTime">--:--.---</div>
-        <p class="result-sub">주문이 정상적으로 처리되었습니다.<br>빠른 티켓팅 실력이네요!</p>
+
+        <!-- 이전/현재 기록 비교 -->
+        <div class="compare-box" id="compareBox">
+            <div><span class="compare-label" id="compareLabel1"></span> <span class="compare-time" id="compareTime1"></span></div>
+            <div><span class="compare-label" id="compareLabel2"></span> <span class="compare-time" id="compareTime2"></span></div>
+        </div>
+
+        <p class="result-sub" id="resultSub">주문이 정상적으로 처리되었습니다.<br>빠른 티켓팅 실력이네요!</p>
         <button class="btn-home" onclick="window.location.href='inq.html'">목록으로 돌아가기</button>
         <p class="saving-msg" id="savingMsg">기록 저장 중...</p>
         <div class="saving-error" id="savingError">
@@ -182,6 +160,53 @@
 
     <script src="../../js/inq-api.js"></script>
     <script>
+        function fmtTime(ms) {
+            var min  = Math.floor(ms / 60000);
+            var sec  = Math.floor((ms % 60000) / 1000);
+            var msec = ms % 1000;
+            return String(min).padStart(2,'0') + ':' + String(sec).padStart(2,'0') + '.' + String(msec).padStart(3,'0');
+        }
+
+        function showOldKept(name, oldMs, newMs) {
+            document.getElementById('resultIcon').textContent = '⌛';
+            document.getElementById('resultTitle').textContent = '이전 기록이 더 빠릅니다!';
+            document.getElementById('resultName').textContent = name + '님의 기록';
+            document.getElementById('resultTimeLabel').textContent = '현재 기록';
+            document.getElementById('resultTime').textContent = fmtTime(newMs);
+            document.getElementById('resultSub').textContent = '이전 기록이 유지됩니다.';
+
+            var box = document.getElementById('compareBox');
+            box.style.display = 'block';
+            document.getElementById('compareLabel1').textContent = '✅ 유지된 기록';
+            document.getElementById('compareTime1').className = 'compare-time better';
+            document.getElementById('compareTime1').textContent = fmtTime(oldMs);
+            document.getElementById('compareLabel2').textContent = '❌ 현재 기록';
+            document.getElementById('compareTime2').className = 'compare-time worse';
+            document.getElementById('compareTime2').textContent = fmtTime(newMs);
+        }
+
+        function showNewKept(name, newMs, oldMs) {
+            document.getElementById('resultIcon').textContent = '🎉';
+            document.getElementById('resultTitle').textContent = oldMs != null ? '기록 갱신!' : '티켓팅 완료!';
+            document.getElementById('resultName').textContent = name + '님의 기록';
+            document.getElementById('resultTimeLabel').textContent = oldMs != null ? '새 기록' : '기록';
+            document.getElementById('resultTime').textContent = fmtTime(newMs);
+            document.getElementById('resultSub').textContent = oldMs != null
+                ? '새 기록이 저장되었습니다!\n빠른 티켓팅 실력이네요!'
+                : '주문이 정상적으로 처리되었습니다.\n빠른 티켓팅 실력이네요!';
+
+            if (oldMs != null) {
+                var box = document.getElementById('compareBox');
+                box.style.display = 'block';
+                document.getElementById('compareLabel1').textContent = '✅ 새 기록';
+                document.getElementById('compareTime1').className = 'compare-time better';
+                document.getElementById('compareTime1').textContent = fmtTime(newMs);
+                document.getElementById('compareLabel2').textContent = '🗑 이전 기록';
+                document.getElementById('compareTime2').className = 'compare-time worse';
+                document.getElementById('compareTime2').textContent = fmtTime(oldMs);
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', async function () {
             try {
                 var sess = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');
@@ -189,33 +214,28 @@
                 var stopwatch = sess.stopwatch || 0;
                 var id = sess.id;
 
+                // 일단 현재 기록 기본 표시
                 document.getElementById('resultName').textContent = name + '님의 기록';
-
-                var ms = stopwatch;
-                var min = Math.floor(ms / 60000);
-                var sec = Math.floor((ms % 60000) / 1000);
-                var msec = ms % 1000;
-                document.getElementById('resultTime').textContent =
-                    String(min).padStart(2, '0') + ':' +
-                    String(sec).padStart(2, '0') + '.' +
-                    String(msec).padStart(3, '0');
+                document.getElementById('resultTime').textContent = fmtTime(stopwatch);
 
                 if (id) {
                     try {
                         var result = await updateTicketingPracticeResult(id, stopwatch);
-                        if (result && !result.error) {
-                            document.getElementById('savingMsg').textContent = '기록이 저장되었습니다.';
-                        } else {
+                        if (result && result.error) {
                             document.getElementById('savingMsg').style.display = 'none';
-                            var errBox = document.getElementById('savingError');
-                            document.getElementById('savingErrorDetail').textContent = result?.error || '알 수 없는 오류';
-                            errBox.style.display = 'block';
+                            document.getElementById('savingErrorDetail').textContent = result.error;
+                            document.getElementById('savingError').style.display = 'block';
+                        } else if (result.kept === 'old') {
+                            showOldKept(name, result.oldStopwatch, result.newStopwatch);
+                            document.getElementById('savingMsg').textContent = '이전 기록이 유지되었습니다.';
+                        } else {
+                            showNewKept(name, result.stopwatch, result.oldStopwatch);
+                            document.getElementById('savingMsg').textContent = result.message || '기록이 저장되었습니다.';
                         }
                     } catch (dbErr) {
                         document.getElementById('savingMsg').style.display = 'none';
-                        var errBox = document.getElementById('savingError');
                         document.getElementById('savingErrorDetail').textContent = '서버에 연결할 수 없습니다.';
-                        errBox.style.display = 'block';
+                        document.getElementById('savingError').style.display = 'block';
                     }
                 } else {
                     document.getElementById('savingMsg').textContent = '';
