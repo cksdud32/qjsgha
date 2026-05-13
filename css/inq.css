@@ -222,6 +222,8 @@ body{
         flex-direction: column;
         align-items: stretch;
         padding: 16px;
+        gap: 12px;
+        border-radius: 16px;
     }
     .top-head__search {
         justify-content: stretch;
@@ -229,8 +231,43 @@ body{
     .top-head__search input {
         max-width: 100%;
     }
+    .top-head__content p {
+        font-size: 13px;
+    }
     .page-title h1 {
-        font-size: 30px;
+        font-size: 28px;
+    }
+    .goods-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px 12px;
+        padding: 0 16px 32px;
+    }
+    .goods-card__image {
+        min-height: 180px;
+    }
+    .goods-image-placeholder {
+        width: 90%;
+        height: 140px;
+    }
+    .goods-card h2 {
+        font-size: 14px;
+    }
+    .price {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 400px) {
+    .goods-grid {
+        grid-template-columns: 1fr;
+        padding: 0 12px 24px;
+    }
+    .goods-card__image {
+        min-height: 220px;
+    }
+    .goods-image-placeholder {
+        width: 80%;
+        height: 180px;
     }
 }
 
