@@ -27,7 +27,7 @@ export default async function handler(request, response) {
     }
 
     await pool.query(
-      "DELETE FROM ticketing_practice WHERE stopwatch = 0 AND updated_at < NOW() - INTERVAL '30 seconds'"
+      "DELETE FROM ticketing_practice WHERE stopwatch = 0 AND updated_at < NOW() - INTERVAL '90 seconds'"
     );
 
     const result = await pool.query(
