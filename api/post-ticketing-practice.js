@@ -26,6 +26,10 @@ export default async function handler(request, response) {
       return response.status(400).json({ error: '올바른 stopwatch 값을 전달해주세요.' });
     }
 
+    await pool.query(
+      "DELETE FROM ticketing_practice WHERE stopwatch = 0 AND updated_at < NOW() - INTERVAL '30 seconds'"
+    );
+
     const result = await pool.query(
       'INSERT INTO "ticketing_practice" (name, stopwatch) VALUES ($1, $2) RETURNING id',
       [name.trim(), parsedStopwatch]

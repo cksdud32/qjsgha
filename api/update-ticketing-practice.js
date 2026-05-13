@@ -27,6 +27,10 @@ export default async function handler(request, response) {
       return response.status(400).json({ error: '올바른 stopwatch 값을 전달해주세요.' });
     }
 
+    await pool.query(
+      "DELETE FROM ticketing_practice WHERE stopwatch = 0 AND updated_at < NOW() - INTERVAL '30 seconds'"
+    );
+
     // 현재 레코드에서 name 가져오기
     const currentResult = await pool.query(
       'SELECT name FROM ticketing_practice WHERE id = $1',
