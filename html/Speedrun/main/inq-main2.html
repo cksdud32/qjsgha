@@ -8,31 +8,17 @@
 </head>
 <body>
 
-<header class="site-header">
-    <div class="header-inner">
-        <div class="header-cs">
-            <div class="cs-label">CS CENTER</div>
-            <div class="cs-phone">010.9167.2890</div>
-        </div>
-        <a class="header-logo">
-            <div class="logo-icon">🍒</div>
-            <div class="logo-text">체리상회</div>
-        </a>
-        <div class="header-search">
-            <input type="text" class="search-inp" placeholder="">
-            <button class="search-btn">🔍</button>
-        </div>
+<section class="top-head">
+    <div class="top-head__logo">
+        <div class="logo-mark">🍒</div>
+        <div><strong>티켓팅 연습 사이트</strong></div>
     </div>
-    <nav class="site-nav">
-        <a class="nav-item">현준</a>
-        <a class="nav-item">연</a>
-        <a class="nav-item">로고</a>
-        <a class="nav-item">EVENT</a>
-        <a class="nav-item">REVIEW</a>
-        <a class="nav-item">CUSTOMER</a>
-        <a class="nav-item">LOOKBOOK</a>
-    </nav>
-</header>
+    <div class="top-head__content">
+        <h1>티켓팅 연습 사이트</h1>
+        <p>본 사이트는 티켓팅 연습 공간으로 실제 티켓팅 환경과는 차이가 있을 수 있습니다. <br>
+        아울러 체리 숲 규칙에 따라 운영상 예고 없이 접속이 제한될 수 있으니 이용에 참고해 주시기 바랍니다.</p>
+    </div>
+</section>
 
 <main class="main-wrap">
     <p class="breadcrumb">HOME &gt; <span class="bc-pink">현준</span> &gt; <strong>Daily</strong></p>
@@ -54,10 +40,14 @@
         <div class="detail-info-col">
             <h1 class="detail-name" id="productName">티켓팅 연습</h1>
             <div class="detail-price-row">
-                <del class="price-old">15,000원</del>
-                <span class="price-now" id="priceNow">10,000원</span>
-                <span class="badge badge-new">NEW</span>
-                <span class="badge badge-best">BEST</span>
+                <div class="price-left">
+                    <del class="price-old">65,000원</del>
+                    <span class="price-now" id="priceNow">81,400원</span>
+                </div>
+                <div class="detail-badges">
+                    <span class="badge badge-new">NEW</span>
+                    <span class="badge badge-best">BEST</span>
+                </div>
             </div>
             <hr class="sep">
             <div class="option-row">
@@ -67,7 +57,7 @@
                     <input type="text" class="qty-inp" id="qtyVal" value="1" readonly>
                     <button class="qty-btn" onclick="changeQty(1)">+</button>
                 </div>
-                <span class="option-total" id="optionTotal">10,000원</span>
+                <span class="option-total" id="optionTotal">81,400원</span>
             </div>
             <hr class="sep">
             <div class="total-row">
@@ -96,7 +86,7 @@
             <input type="text" class="qty-inp" id="msQty" value="1" readonly>
             <button class="qty-btn" onclick="changeQty(1)">+</button>
         </div>
-        <span class="ms-price" id="msPrice">10,000원</span>
+        <span class="ms-price" id="msPrice">81,400원</span>
         <button class="ms-toggle" id="msToggle" onclick="toggleMobileSticky()">∧</button>
     </div>
     <div class="ms-expanded" id="msExpanded" style="display:none">

@@ -48,7 +48,7 @@ async function startGame() {
             stopwatch: 0,
             product: {
                 title: '티켓팅 연습',
-                price: 10000,
+                price: 81400,
                 qty: 1,
                 imageUrl: productImageEl ? productImageEl.src : null,
             },

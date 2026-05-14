@@ -47,7 +47,7 @@
                 var nameEl = document.getElementById('productName');
                 var priceEl = document.getElementById('productPrice');
                 if (nameEl) nameEl.textContent = prod.title || '티켓팅 연습';
-                if (priceEl) priceEl.textContent = (prod.price || 10000).toLocaleString() + '원';
+                if (priceEl) priceEl.textContent = (prod.price || 81400).toLocaleString() + '원';
                 if (prod.imageUrl) {
                     var imgEl = document.getElementById('productImgEl');
                     var ph = document.querySelector('.card-img-placeholder');

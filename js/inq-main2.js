@@ -1,6 +1,6 @@
 (function () {
     var timerInterval = null;
-    var basePrice = 10000;
+    var basePrice = 81400;
     var mobileExpanded = false;
 
     function pad(n, len) { return String(n).padStart(len, '0'); }
@@ -67,7 +67,7 @@
             var prod = sess.product;
 
             if (prod) {
-                basePrice = prod.price || 10000;
+                basePrice = prod.price || 81400;
                 var name  = prod.title || '티켓팅 연습';
 
                 ['productName', 'optionLabel', 'msName'].forEach(function (id) {
