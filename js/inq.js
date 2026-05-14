@@ -22,17 +22,14 @@ function updateStartButtonState() {
         return;
     }
 
-    startButton.disabled = nicknameInput.value.trim().length === 0;
+    startButton.disabled = nicknameInput.value.trim().length < 2;
 }
 
 async function startGame() {
     const nicknameInput = document.getElementById('nicknameInput');
     const nickname = nicknameInput ? nicknameInput.value.trim() : '';
 
-    if (!nickname) {
-        alert('닉네임을 입력해야 게임을 시작할 수 있습니다.');
-        return;
-    }
+    if (nickname.length < 2) return;
 
     try {
         const result = await postTicketingPracticeResult(nickname, 0);
@@ -54,6 +51,7 @@ async function startGame() {
             },
         };
         sessionStorage.setItem('ticketingPracticeSession', JSON.stringify(sessionData));
+        sessionStorage.setItem('ticketingStep', 'inqa');
         window.location.href = 'main/inq-main1.html';
     } catch (error) {
         console.error(error);

@@ -48,6 +48,7 @@
             if (sess.stopwatchStart) sess.stopwatch = Date.now() - sess.stopwatchStart;
             sessionStorage.setItem('ticketingPracticeSession', JSON.stringify(sess));
         } catch (e) {}
+        sessionStorage.setItem('ticketingStep', 'inq-main2');
         window.location.href = '../inqb.html';
     };
 
@@ -62,6 +63,11 @@
     };
 
     window.addEventListener('DOMContentLoaded', function () {
+        if (sessionStorage.getItem('ticketingStep') !== 'inq-main1') {
+            alert('티켓팅 순서에 맞게 사이트 접속 해주세요.');
+            window.location.href = '../inqa.html';
+            return;
+        }
         try {
             var sess = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');
             var prod = sess.product;
