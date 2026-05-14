@@ -366,28 +366,6 @@
     </div>
 
     <script>
-        function showAlert(msg, callback) {
-            var overlay = document.createElement('div');
-            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100000;display:flex;align-items:center;justify-content:center;';
-            var box = document.createElement('div');
-            box.style.cssText = 'background:#fff;padding:24px 32px;border-radius:8px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.25);';
-            var p = document.createElement('p');
-            p.style.cssText = 'margin:0 0 20px;font-size:15px;line-height:1.5;color:#222;font-family:"Malgun Gothic",AppleSDGothicNeo,sans-serif;';
-            p.textContent = msg;
-            var btn = document.createElement('button');
-            btn.textContent = '확인';
-            btn.style.cssText = 'background:#111;color:#fff;border:none;padding:9px 28px;font-size:14px;cursor:pointer;border-radius:4px;font-family:inherit;';
-            btn.onclick = function() {
-                document.body.removeChild(overlay);
-                if (callback) callback();
-            };
-            box.appendChild(p);
-            box.appendChild(btn);
-            overlay.appendChild(box);
-            document.body.appendChild(overlay);
-            setTimeout(function() { btn.focus(); }, 0);
-        }
-
         function applyEmailDomain(sel) {
             const domainInput = document.getElementById('emailDomain');
             if (sel.value === 'direct') {
@@ -441,7 +419,7 @@
                     }
                 }).open();
             } else {
-                showAlert('우편번호 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+                alert('우편번호 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
             }
         }
 
@@ -457,16 +435,16 @@
 
             for (const f of shipFields) {
                 const el = document.getElementById(f.id);
-                if (!el.value.trim()) { el.focus(); showAlert(f.msg); return; }
+                if (!el.value.trim()) { alert(f.msg); el.focus(); return; }
             }
 
             if (!document.getElementById('shipPhonePrefix').value) {
-                showAlert('배송지 휴대폰번호 앞자리를 선택해주세요.');
+                alert('배송지 휴대폰번호 앞자리를 선택해주세요.');
                 return;
             }
 
             if (!document.querySelector('input[name="payMethod"]:checked')) {
-                showAlert('결제수단을 선택해주세요.');
+                alert('결제수단을 선택해주세요.');
                 return;
             }
 
@@ -477,7 +455,8 @@
         window.addEventListener('DOMContentLoaded', function () {
             const step = sessionStorage.getItem('ticketingStep');
             if (step !== 'inq-main2' && step !== 'inqb') {
-                showAlert('티켓팅 순서에 맞게 사이트 접속 해주세요.', function() { window.location.href = 'inqa.html'; });
+                alert('티켓팅 순서에 맞게 사이트 접속 해주세요.');
+                window.location.href = 'inqa.html';
                 return;
             }
             const SHIPPING = 1107;
