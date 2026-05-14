@@ -281,6 +281,24 @@
                         <th>결제수단</th>
                         <td>
                             <div class="pay-list">
+                                <label class="pay-item pay-item--disabled">
+                                    <input type="radio" name="payMethod" value="card" disabled> 류현준은
+                                </label>
+                                <label class="pay-item pay-item--disabled">
+                                    <input type="radio" name="payMethod" value="transfer" disabled> 행복하자(ㅈㅉ)
+                                </label>
+                                <label class="pay-item pay-item--disabled">
+                                    <input type="radio" name="payMethod" value="transfer-escrow" disabled> 집갈래요(진짜제발)
+                                </label>
+                                <label class="pay-item pay-item--disabled">
+                                    <input type="radio" name="payMethod" value="virtual" disabled> 이거아님(음음)
+                                </label>
+                                <label class="pay-item pay-item--disabled">
+                                    <input type="radio" name="payMethod" value="virtual-escrow" disabled> 결제불가(에스크로)
+                                </label>
+                                <label class="pay-item pay-item--disabled">
+                                    <input type="radio" name="payMethod" value="mobile" disabled> 옆에거임요
+                                </label>
                                 <label class="pay-item">
                                     <input type="radio" name="payMethod" value="bank"> 무통장입금
                                 </label>
@@ -435,7 +453,8 @@
         }
 
         window.addEventListener('DOMContentLoaded', function () {
-            if (sessionStorage.getItem('ticketingStep') !== 'inq-main2') {
+            const step = sessionStorage.getItem('ticketingStep');
+            if (step !== 'inq-main2' && step !== 'inqb') {
                 alert('티켓팅 순서에 맞게 사이트 접속 해주세요.');
                 window.location.href = 'inqa.html';
                 return;

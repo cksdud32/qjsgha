@@ -355,7 +355,7 @@ body {
 
 .pay-list {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
     margin-bottom: 10px;
 }
@@ -370,11 +370,22 @@ body {
     padding: 6px 14px;
     border: 1px solid #ccc;
     background: #fff;
+    white-space: nowrap;
 }
 
 .pay-item input[type="radio"] {
     margin: 0;
     cursor: pointer;
+}
+
+.pay-item--disabled {
+    color: #aaa;
+    cursor: default;
+    background: #fafafa;
+}
+
+.pay-item--disabled input[type="radio"] {
+    cursor: default;
 }
 
 .pay-item.selected,
