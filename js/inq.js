@@ -22,7 +22,8 @@ function updateStartButtonState() {
         return;
     }
 
-    startButton.disabled = nicknameInput.value.trim().length < 2;
+    const len = nicknameInput.value.trim().length;
+    startButton.disabled = len < 2 || len > 10;
 }
 
 async function startGame() {
