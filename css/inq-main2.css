@@ -61,13 +61,8 @@ body {
 .detail-img-main {
     width: 100%;
     aspect-ratio: 1;
-    background: #fafafa;
-    background-image: radial-gradient(circle, #ccc 1.5px, transparent 1.5px);
-    background-size: 22px 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
+    position: relative;
 }
 
 .img-ph { font-size: 14px; color: #bbb; }
