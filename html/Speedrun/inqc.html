@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>결제하기 - 체리상회</title>
+    <title>티켓팅 연습 사이트</title>
     <link rel="stylesheet" href="../../css/inqb.css">
     <style>
         .order-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 30px; }
@@ -195,11 +195,11 @@
     }
 
     window.addEventListener('DOMContentLoaded', function () {
-        if (sessionStorage.getItem('ticketingStep') !== 'inqb') {
-            alert('티켓팅 순서에 맞게 사이트 접속 해주세요.');
-            window.location.href = 'inqa.html';
-            return;
-        }
+        // if (sessionStorage.getItem('ticketingStep') !== 'inqb') {
+        //     alert('티켓팅 순서에 맞게 사이트 접속 해주세요.');
+        //     window.location.href = 'inqa.html';
+        //     return;
+        // }
         var SHIPPING = 1107;
         try {
             var sess = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');

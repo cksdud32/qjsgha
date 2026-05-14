@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>주문서 작성 - 티켓팅 연습</title>
+    <title>티켓팅 연습 사이트</title>
     <link rel="stylesheet" href="../../css/inqb.css">
 </head>
 <body>
@@ -282,7 +282,7 @@
                         <td>
                             <div class="pay-list">
                                 <label class="pay-item pay-item--disabled">
-                                    <input type="radio" name="payMethod" value="card" disabled> 류현준은
+                                    <input type="radio" name="payMethod" value="card" disabled> 현준님은
                                 </label>
                                 <label class="pay-item pay-item--disabled">
                                     <input type="radio" name="payMethod" value="transfer" disabled> 행복하자(ㅈㅉ)
@@ -312,7 +312,7 @@
                                 <input type="text" class="inp w120" id="pointInput"> 원
                                 <span class="point-balance">보유적립금 : 1,997,814,601,107원</span>
                             </div>
-                            <div class="point-notice">※ 보유적립금이 1,000원 이상일 경우 1,000원 씩 최대 3,000원까지 사용이 가능합니다.</div>
+                            <div class="point-notice">흠 어차피 저거 장식일 뿐임!</div>
                         </td>
                     </tr>
                     <tr>
@@ -454,11 +454,11 @@
 
         window.addEventListener('DOMContentLoaded', function () {
             const step = sessionStorage.getItem('ticketingStep');
-            if (step !== 'inq-main2' && step !== 'inqb') {
-                alert('티켓팅 순서에 맞게 사이트 접속 해주세요.');
-                window.location.href = 'inqa.html';
-                return;
-            }
+            // if (step !== 'inq-main2' && step !== 'inqb') {
+            //     alert('티켓팅 순서에 맞게 사이트 접속 해주세요.');
+            //     window.location.href = 'inqa.html';
+            //     return;
+            // }
             const SHIPPING = 1107;
 
             try {

@@ -41,11 +41,11 @@
     };
 
     window.addEventListener('DOMContentLoaded', function () {
-        if (sessionStorage.getItem('ticketingStep') !== 'inqa') {
-            alert('티켓팅 순서에 맞게 사이트 접속 해주세요.');
-            window.location.href = '../inqa.html';
-            return;
-        }
+        // if (sessionStorage.getItem('ticketingStep') !== 'inqa') {
+        //     alert('티켓팅 순서에 맞게 사이트 접속 해주세요.');
+        //     window.location.href = '../inqa.html';
+        //     return;
+        // }
         try {
             var sess = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');
             var prod = sess.product;
