@@ -295,17 +295,76 @@ body{
 }
 
 @media (max-width: 768px) {
+    #clsa {
+        min-width: 0;
+    }
+
+    body {
+        overflow-x: hidden;
+    }
+
     .top-head {
         flex-direction: column;
         align-items: stretch;
+        padding: 16px;
+        gap: 12px;
+        border-radius: 16px;
     }
+
     .top-head__search {
         justify-content: stretch;
     }
+
     .top-head__search input {
         max-width: 100%;
     }
+
+    .detail-header {
+        padding: 0 14px;
+    }
+
     .detail-header h1 {
-        font-size: 28px;
+        font-size: 22px;
+    }
+
+    .detail-view {
+        padding: 0 14px 28px;
+        gap: 20px;
+    }
+
+    .detail-image-card,
+    .detail-info-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .detail-image-main {
+        height: 220px;
+        border-radius: 16px;
+    }
+
+    .thumb-item {
+        border-radius: 10px;
+    }
+
+    .detail-title-bar h2 {
+        font-size: 20px;
+    }
+
+    .detail-price strong {
+        font-size: 24px;
+    }
+
+    .detail-select-box {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .detail-info {
+        padding: 0 14px 28px;
+    }
+
+    .info-content {
+        padding: 16px;
     }
 }
