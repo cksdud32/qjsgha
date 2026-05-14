@@ -104,8 +104,8 @@ body {
     border-radius: 2px;
     color: #fff;
 }
-.badge-new  { background: #e53e3e; }
-.badge-best { background: #d97706; }
+.badge-new  { background: #eab308; }
+.badge-best { background: #2563eb; }
 
 .sep { border: none; border-top: 1px solid #e8e8e8; margin: 14px 0; }
 
