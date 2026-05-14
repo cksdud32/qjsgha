@@ -182,13 +182,13 @@ body{
 }
 
 .badge.new {
-    background: #fef3c7;
-    color: #92400e;
+    background: #eab308;
+    color: #fff;
 }
 
 .badge.best {
-    background: #dbffe6;
-    color: #166534;
+    background: #2563eb;
+    color: #fff;
 }
 
 .goods-card h2 {
