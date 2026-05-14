@@ -97,15 +97,15 @@ body {
 .price-old { font-size: 13px; color: #aaa; text-decoration: line-through; }
 .price-now { font-size: 20px; font-weight: bold; color: #111; }
 
-.sold-badge {
-    background: #888;
-    color: #fff;
+.badge {
     font-size: 11px;
     font-weight: bold;
     padding: 3px 10px;
     border-radius: 2px;
-    margin-left: auto;
+    color: #fff;
 }
+.badge-new  { background: #e53e3e; }
+.badge-best { background: #d97706; }
 
 .sep { border: none; border-top: 1px solid #e8e8e8; margin: 14px 0; }
 
