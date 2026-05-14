@@ -178,10 +178,32 @@
 </div>
 
 <script>
+    function showAlert(msg, callback) {
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100000;display:flex;align-items:center;justify-content:center;';
+        var box = document.createElement('div');
+        box.style.cssText = 'background:#fff;padding:24px 32px;border-radius:8px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.25);';
+        var p = document.createElement('p');
+        p.style.cssText = 'margin:0 0 20px;font-size:15px;line-height:1.5;color:#222;font-family:"Malgun Gothic",AppleSDGothicNeo,sans-serif;';
+        p.textContent = msg;
+        var btn = document.createElement('button');
+        btn.textContent = '확인';
+        btn.style.cssText = 'background:#111;color:#fff;border:none;padding:9px 28px;font-size:14px;cursor:pointer;border-radius:4px;font-family:inherit;';
+        btn.onclick = function() {
+            document.body.removeChild(overlay);
+            if (callback) callback();
+        };
+        box.appendChild(p);
+        box.appendChild(btn);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        setTimeout(function() { btn.focus(); }, 0);
+    }
+
     function confirmPayment() {
         if (!document.getElementById('bankAccount').value) {
-            alert('계좌를 선택해주세요.');
             document.getElementById('bankAccount').focus();
+            showAlert('계좌를 선택해주세요.');
             return;
         }
         try {
@@ -196,8 +218,7 @@
 
     window.addEventListener('DOMContentLoaded', function () {
         if (sessionStorage.getItem('ticketingStep') !== 'inqb') {
-            alert('티켓팅 순서에 맞게 사이트 접속 해주세요.');
-            window.location.href = 'inqa.html';
+            showAlert('티켓팅 순서에 맞게 사이트 접속 해주세요.', function() { window.location.href = 'inqa.html'; });
             return;
         }
         var SHIPPING = 1107;
