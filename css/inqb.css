@@ -441,3 +441,150 @@ body {
     color: #555;
     line-height: 1.6;
 }
+
+@media (max-width: 600px) {
+    body {
+        padding: 12px 14px;
+    }
+
+    .page-order-title {
+        font-size: 22px;
+        margin: 16px 0 18px;
+    }
+
+    .step-icon { font-size: 20px; }
+    .step-label { font-size: 11px; }
+    .step-item { padding: 14px 6px; }
+
+    /* 상품 테이블 - 세로 행 배치 */
+    .product-table thead { display: none; }
+    .product-table,
+    .product-table tbody,
+    .product-table tr,
+    .product-table td { display: block; width: 100%; box-sizing: border-box; }
+    .product-table tr { border: none; padding: 0; margin-bottom: 0; }
+    .product-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+        font-size: 14px;
+    }
+    .product-table td.td-name {
+        flex-direction: row;
+        align-items: center;
+        gap: 14px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+    .product-table td:not(.td-name)::before {
+        content: attr(data-label);
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+    }
+    .product-info-wrap { flex-direction: row; gap: 12px; }
+    .product-thumb { width: 80px; height: 80px; flex-shrink: 0; }
+    .product-name-text { font-size: 14px; line-height: 1.5; }
+
+    /* 가격 요약 - 회색 박스, 라벨 위·금액 아래 */
+    .price-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        padding: 20px 16px;
+        background: #f5f5f5;
+        border: 1px solid #e0e0e0;
+        border-top: none;
+        margin-bottom: 24px;
+    }
+    .price-summary-item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 0;
+        width: 100%;
+        padding: 0;
+        background: none;
+        border: none;
+    }
+    .price-summary-label { font-size: 13px; color: #666; margin-bottom: 4px; }
+    .price-summary-value { font-size: 22px; font-weight: bold; color: #333; }
+    .price-summary-value.total { font-size: 22px; color: #d32f2f; }
+    .price-sep {
+        display: flex;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid #ccc;
+        background: #e0e0e0;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: #777;
+        margin: 10px 0;
+        align-self: flex-start;
+    }
+
+    /* 폼 테이블 - 라벨 좌측·입력 우측 2열 유지 */
+    .col-label { width: 100px; }
+
+    .form-table th {
+        font-size: 14px;
+        font-weight: bold;
+        color: #222;
+        padding: 14px 8px 14px 0;
+        vertical-align: middle;
+        white-space: normal;
+        word-break: keep-all;
+    }
+
+    .form-table td {
+        padding: 10px 0;
+    }
+
+    /* 입력/셀렉트 높이 */
+    .inp, .sel { height: 40px; font-size: 14px; }
+
+    /* 입력 폭 모바일 조정 */
+    .inp-group { flex-wrap: wrap; gap: 4px; }
+    .inp-group--block .inp-group { flex-wrap: wrap; }
+
+    /* 단독 전체폭 입력 */
+    #ordererName, #shipName, #message, #refundName {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* 주소 */
+    #addr1, #addr2 { width: 100%; box-sizing: border-box; }
+    .w150 { width: 90px; }
+
+    /* 이메일 */
+    #emailLocal  { width: 88px; }
+    #emailDomain { width: 84px; }
+    #emailSelect { width: 88px; }
+
+    /* 전화번호 */
+    .w90  { width: 68px; }
+    .w120 { width: 78px; }
+
+    /* 우편번호 버튼 */
+    .btn-zip { height: 40px; font-size: 14px; }
+
+    /* 환불 계좌 */
+    #refundBank    { width: 100%; box-sizing: border-box; }
+    #refundAccount { width: 100%; box-sizing: border-box; margin-top: 6px; }
+    .form-table td .inp-group:has(#refundBank) { flex-direction: column; align-items: flex-start; }
+
+    /* 결제수단 라디오 */
+    .pay-list { gap: 6px; }
+    .pay-item { padding: 8px 16px; font-size: 14px; }
+
+    /* 하단 버튼 */
+    .btn-wrap { gap: 8px; }
+    .btn-prev,
+    .btn-submit { flex: 1; min-width: 0; }
+}
