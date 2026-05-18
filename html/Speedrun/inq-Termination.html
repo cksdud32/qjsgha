@@ -209,6 +209,48 @@
         }
 
         .step-icon { font-size: 24px; margin-bottom: 6px; line-height: 1; }
+
+        .survey-card {
+            background: #fff;
+            border-radius: 28px;
+            box-shadow: 0 18px 48px rgba(15, 23, 42, 0.1);
+            padding: 32px 48px;
+            max-width: 520px;
+            width: 100%;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .survey-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .survey-desc {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .btn-survey {
+            display: inline-block;
+            padding: 12px 32px;
+            background: #03c75a;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: inherit;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-survey:hover { background: #02b050; }
     </style>
 </head>
 <body>
@@ -245,6 +287,12 @@
     <div class="ranking-card">
         <h2 class="ranking-title">🏆 스피드런 랭킹</h2>
         <div id="rankingContent" class="ranking-loading">불러오는 중...</div>
+    </div>
+
+    <div class="survey-card">
+        <p class="survey-title">티켓팅 연습 사이트 설문</p>
+        <p class="survey-desc">사이트를 이용해 주셔서 감사합니다!<br>설문에 참여해 주시면 더 좋은 사이트를 만드는 데 도움이 됩니다.</p>
+        <a class="btn-survey" href="https://naver.me/xRghSxE2" target="_blank">설문 참여하기</a>
     </div>
 
     <script src="../../js/inq-api.js"></script>
