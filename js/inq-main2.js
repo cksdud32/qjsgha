@@ -36,7 +36,12 @@
 
     window.changeQty = function (delta) {
         var inp = document.getElementById('qtyVal');
-        var qty = Math.max(1, (parseInt(inp.value) || 1) + delta);
+        var current = parseInt(inp.value) || 1;
+        var qty = Math.max(1, current + delta);
+        if (qty > 1) {
+            alert('현 상품은 한 주문건당 최대 1개까지만 선택이 가능합니다.');
+            return;
+        }
         inp.value = qty;
         updateTotal();
     };
