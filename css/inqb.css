@@ -577,13 +577,27 @@ body {
     .w150 { width: 90px; }
 
     /* 이메일 */
-    #emailLocal  { width: 88px; }
-    #emailDomain { width: 84px; }
-    #emailSelect { width: 88px; }
+    .inp-group:has(> #emailLocal) {
+        flex-wrap: nowrap;
+    }
+    .inp-group:has(> #emailLocal) .sep {
+        display: none;
+    }
+    #emailLocal  { width: 76px; }
+    #emailDomain { width: 76px; }
+    #emailSelect { width: 68px; }
 
     /* 전화번호 */
-    .w90  { width: 68px; }
-    .w120 { width: 78px; }
+    .w90  { width: 60px; }
+    .w120 { width: 80px; }
+
+    /* 전화번호/연락처 그룹 줄바꿈 방지 및 구분선 숨김 */
+    .inp-group:has(> select[id$="Prefix"]) {
+        flex-wrap: nowrap;
+    }
+    .inp-group:has(> select[id$="Prefix"]) .sep {
+        display: none;
+    }
 
     /* 우편번호 버튼 */
     .btn-zip { height: 40px; font-size: 14px; }
@@ -594,8 +608,8 @@ body {
     .form-table td .inp-group:has(#refundBank) { flex-direction: column; align-items: flex-start; }
 
     /* 결제수단 라디오 */
-    .pay-list { gap: 6px; flex-wrap: nowrap; }
-    .pay-item { padding: 8px 16px; font-size: 14px; }
+    .pay-list { gap: 6px; flex-wrap: wrap; }
+    .pay-item { padding: 8px 16px; font-size: 14px; flex: 0 0 calc(50% - 3px); }
 
     /* 하단 버튼 */
     .btn-wrap { gap: 8px; }
