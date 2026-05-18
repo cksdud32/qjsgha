@@ -37,6 +37,32 @@ export default async function handler(request, response) {
       stopwatch: Number(r.stopwatch),
     }));
 
+    const myStopwatch = request.query.myStopwatch ? Number(request.query.myStopwatch) : null;
+
+    if (myStopwatch && myStopwatch > 0) {
+      const inTop10 = leaderboard.some(r => r.stopwatch === myStopwatch);
+      if (!inTop10) {
+        const myResult = await pool.query(`
+          WITH ranked AS (
+            SELECT name, stopwatch,
+                   RANK() OVER (ORDER BY stopwatch ASC) AS rank
+            FROM ticketing_practice
+            WHERE stopwatch > 0
+          )
+          SELECT * FROM ranked WHERE stopwatch = $1 LIMIT 1
+        `, [myStopwatch]);
+
+        if (myResult.rows.length > 0) {
+          const r = myResult.rows[0];
+          leaderboard.push({
+            rank:      Number(r.rank),
+            name:      maskName(r.name),
+            stopwatch: Number(r.stopwatch),
+          });
+        }
+      }
+    }
+
     return response.status(200).json({ leaderboard });
   } catch (error) {
     return response.status(500).json({ error: error.message });

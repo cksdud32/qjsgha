@@ -25,7 +25,8 @@ window.getTicketingPracticeRecords = async function() {
   return response.json();
 };
 
-window.getTicketingLeaderboard = async function() {
-  const response = await fetch('/api/get-ticketing-leaderboard');
+window.getTicketingLeaderboard = async function(myStopwatch) {
+  const url = myStopwatch ? `/api/get-ticketing-leaderboard?myStopwatch=${myStopwatch}` : '/api/get-ticketing-leaderboard';
+  const response = await fetch(url);
   return response.json();
 };

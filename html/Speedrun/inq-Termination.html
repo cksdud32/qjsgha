@@ -350,16 +350,21 @@
                 container.innerHTML = '<div class="ranking-empty">아직 기록이 없습니다.</div>';
                 return;
             }
-            var rows = leaderboard.map(function(r) {
+            var rows = '';
+            for (var i = 0; i < leaderboard.length; i++) {
+                var r = leaderboard[i];
                 var isMe = myStopwatch > 0 && r.stopwatch === myStopwatch;
+                if (i > 0 && r.rank > leaderboard[i - 1].rank + 1) {
+                    rows += '<tr><td colspan="3" style="text-align:center;color:#ccc;padding:6px;font-size:12px">···</td></tr>';
+                }
                 var rankDisplay = r.rank + '등';
                 var rankClass = 'rank-' + r.rank;
-                return '<tr class="' + rankClass + (isMe ? ' my-record' : '') + '">'
+                rows += '<tr class="' + rankClass + (isMe ? ' my-record' : '') + '">'
                     + '<td class="td-rank">' + rankDisplay + '</td>'
                     + '<td class="td-name">' + r.name + (isMe ? ' 👈' : '') + '</td>'
                     + '<td>' + fmtTime(r.stopwatch) + '</td>'
                     + '</tr>';
-            }).join('');
+            }
 
             container.innerHTML = '<table class="ranking-table">'
                 + '<thead><tr><th>순위</th><th style="text-align:left;padding-left:12px">닉네임</th><th>기록</th></tr></thead>'
@@ -369,10 +374,10 @@
 
         async function loadLeaderboard(myStopwatch) {
             try {
-                var data = await getTicketingLeaderboard();
+                var data = await getTicketingLeaderboard(myStopwatch);
                 renderLeaderboard(data.leaderboard || [], myStopwatch);
             } catch (e) {
-                document.getElementById('rankingContent').innerHTML = '<div class="ranking-empty">랭킹을 불러오지 못했습니다.</div>';
+                document.getElementById('rankingContent').innerHTML = '<div class="ranng-empty">랭킹을 불러오지 못했습니다.</div>';
             }
         }
 
