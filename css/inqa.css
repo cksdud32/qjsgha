@@ -6,6 +6,10 @@
     box-sizing: border-box;
 }
 
+button, input, select, textarea, a, label {
+    touch-action: manipulation;
+}
+
 body{
     background: #eef0ff;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -308,6 +312,53 @@ body{
 .info-content img {
     width: 100%;
     display: block;
+}
+
+.faq-section {
+    margin-top: 40px;
+    border-top: 2px solid #e5e7eb;
+    padding-top: 32px;
+}
+
+.faq-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 24px;
+}
+
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.faq-item {
+    padding: 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.faq-item dt {
+    font-size: 15px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.faq-item dd {
+    font-size: 15px;
+    color: #4b5563;
+    line-height: 1.8;
+    margin: 0;
+    padding-left: 0;
+}
+
+.faq-notice {
+    margin-top: 24px;
+    font-size: 14px;
+    color: #9ca3af;
+    line-height: 1.6;
 }
 
 @media (max-width: 980px) {

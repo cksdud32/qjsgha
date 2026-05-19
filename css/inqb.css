@@ -1,3 +1,7 @@
+button, input, select, textarea, a, label {
+    touch-action: manipulation;
+}
+
 /* === Top head === */
 .top-head {
     width: 100%;
@@ -360,7 +364,6 @@ body {
     overflow-x: auto;
     margin-bottom: 10px;
     scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
 }
 
 .pay-list::-webkit-scrollbar {

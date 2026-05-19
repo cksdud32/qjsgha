@@ -6,6 +6,10 @@
     box-sizing: border-box;
 }
 
+button, input, select, textarea, a, label {
+    touch-action: manipulation;
+}
+
 body{
     background: #f4f5ff;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
