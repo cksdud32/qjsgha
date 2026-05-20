@@ -158,6 +158,7 @@
   <div class="tabs">
     <button class="tab-btn active" data-tab="concert">콘서트</button>
     <button class="tab-btn"        data-tab="goods">굿즈</button>
+    <button class="tab-btn"        data-tab="waiting">대기 시간</button>
     <button class="tab-btn"        data-tab="notice">공지</button>
     <button class="tab-btn"        data-tab="config">사이트 설정</button>
   </div>
@@ -178,6 +179,15 @@
       <button class="add-btn" id="add-goods-btn">+ 굿즈 추가</button>
     </div>
     <div class="tbl-wrap"><div id="goods-list"><p class="empty">불러오는 중...</p></div></div>
+  </div>
+
+  <!-- 대기 시간 -->
+  <div class="tab-panel" id="tab-waiting">
+    <div class="panel-header">
+      <h2>대기 및 입장 시간</h2>
+      <button class="add-btn" id="add-waiting-btn">+ 그룹 추가</button>
+    </div>
+    <div class="tbl-wrap"><div id="waiting-list"><p class="empty">불러오는 중...</p></div></div>
   </div>
 
   <!-- 공지 -->
@@ -292,6 +302,7 @@ async function loadAll() {
   allData = data;
   renderConcerts(data.concerts);
   renderGoods(data.goods);
+  renderWaiting(data.waiting_groups);
   renderNotices(data.notices);
   renderConfig(data.config);
   renderGoodsTotal(data.concerts, data.config);
@@ -370,6 +381,25 @@ const CONFIG_LABELS = {
   next_concert_time:  '다음 콘서트 시간 (YYYY-MM-DDTHH:MM:SS)'
 };
 
+function renderWaiting(list) {
+  const el = document.getElementById('waiting-list');
+  if (!list?.length) { el.innerHTML = '<p class="empty">등록된 그룹이 없습니다.</p>'; return; }
+  el.innerHTML = `<table>
+    <thead><tr><th>콘서트</th><th>그룹명</th><th>대기 시작</th><th>입장 시작</th><th>순서</th><th>작업</th></tr></thead>
+    <tbody>${list.map(g => `<tr>
+      <td>${esc(g.concert_ref) || '공통'}</td>
+      <td>${esc(g.group_name)}</td>
+      <td>${esc(g.wait_start) || '-'}</td>
+      <td>${esc(g.entry_start) || '-'}</td>
+      <td>${g.sort_order}</td>
+      <td>
+        <button class="action-btn edit-btn"   data-type="waiting" data-id="${g.id}">수정</button>
+        <button class="action-btn delete-btn" data-type="waiting" data-id="${g.id}">삭제</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
 function renderConfig(cfg) {
   const el = document.getElementById('config-list');
   if (!cfg) { el.innerHTML = '<p class="empty">설정이 없습니다.</p>'; return; }
@@ -430,6 +460,7 @@ document.getElementById('admin-section').addEventListener('click', e => {
 
 document.getElementById('add-concert-btn').onclick = () => openModal('concert', null);
 document.getElementById('add-goods-btn').onclick   = () => openModal('goods', null);
+document.getElementById('add-waiting-btn').onclick = () => openModal('waiting', null);
 document.getElementById('add-notice-btn').onclick  = () => openModal('notice', null);
 
 // ── 모달 ─────────────────────────────────────────
@@ -439,10 +470,11 @@ function openModal(type, id) {
   if (isEdit) {
     if (type === 'concert') item = allData.concerts?.find(c => c.id === id);
     if (type === 'goods')   item = allData.goods?.find(g => g.id === id);
+    if (type === 'waiting') item = allData.waiting_groups?.find(w => w.id === id);
     if (type === 'notice')  item = allData.notices?.find(n => n.id === id);
   }
 
-  const names = { concert: '콘서트', goods: '굿즈', notice: '공지' };
+  const names = { concert: '콘서트', goods: '굿즈', waiting: '대기 그룹', notice: '공지' };
   document.getElementById('modal-title').textContent = (isEdit ? '수정: ' : '추가: ') + names[type];
   document.getElementById('modal-body').innerHTML = buildForm(type, item);
   document.getElementById('modal-save').onclick = () => saveModal(type, id);
@@ -542,9 +574,30 @@ function buildForm(type, item) {
     </div>`;
   }
 
+  if (type === 'waiting') {
+    const concertOpts = (allData.concerts || []).map(c =>
+      `<option value="${esc(c.name)}" ${item?.concert_ref === c.name ? 'selected' : ''}>${esc(c.name)}</option>`
+    ).join('');
+    return `
+    <div class="form-row">
+      <div class="form-group"><label>콘서트 (없으면 공통)</label>
+        <select id="f-waiting-concert">
+          <option value="" ${!item?.concert_ref ? 'selected' : ''}>공통</option>
+          ${concertOpts}
+        </select>
+      </div>
+      <div class="form-group"><label>순서</label><input type="number" id="f-sort_order" value="${v('sort_order', 0)}"></div>
+    </div>
+    <div class="form-group"><label>그룹명 * (예: 1반, A그룹)</label><input type="text" id="f-group_name_w" value="${v('group_name')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>대기 시작 (예: 12:00 ~)</label><input type="text" id="f-wait_start" value="${v('wait_start')}"></div>
+      <div class="form-group"><label>입장 시작 (예: 12:30 ~)</label><input type="text" id="f-entry_start" value="${v('entry_start')}"></div>
+    </div>`;
+  }
+
   if (type === 'notice') return `
     <div class="form-group"><label>타입 *</label>
-      <select id="f-type">${sel('type',['안내','주의','환불','추가정보'])}</select>
+      <select id="f-type">${sel('type',['안내','주의','환불','추가정보','대기안내','대기참고'])}</select>
     </div>
     <div class="form-group"><label>내용 * &nbsp;<span style="color:#666;font-size:11px;">링크: [텍스트](URL)</span></label>
       <textarea id="f-content">${esc(item?.content ?? '')}</textarea>
@@ -603,6 +656,17 @@ async function saveModal(type, id) {
       is_random:     document.getElementById('f-is_random').checked,
     };
     if (!payload.goods_name) { alert('굿즈명은 필수입니다.'); return; }
+  }
+
+  if (type === 'waiting') {
+    payload = {
+      concert_ref: trimOrNull(val('f-waiting-concert')),
+      group_name:  trimOrNull(val('f-group_name_w')),
+      wait_start:  trimOrNull(val('f-wait_start')),
+      entry_start: trimOrNull(val('f-entry_start')),
+      sort_order:  Number(val('f-sort_order')) || 0,
+    };
+    if (!payload.group_name) { alert('그룹명은 필수입니다.'); return; }
   }
 
   if (type === 'notice') {

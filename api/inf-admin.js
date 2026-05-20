@@ -16,11 +16,12 @@ async function validateAuth(username, password) {
 }
 
 async function getAll(res) {
-  const [concerts, goods, notices, config] = await Promise.all([
+  const [concerts, goods, notices, config, waitingGroups] = await Promise.all([
     pool.query('SELECT * FROM concert ORDER BY id'),
     pool.query('SELECT * FROM goods ORDER BY id'),
     pool.query('SELECT * FROM notice ORDER BY id'),
-    pool.query('SELECT * FROM site_config')
+    pool.query('SELECT * FROM site_config'),
+    pool.query('SELECT * FROM waiting_group ORDER BY sort_order, id')
   ]);
   const configMap = {};
   config.rows.forEach(r => { configMap[r.key] = r.value; });
@@ -28,8 +29,35 @@ async function getAll(res) {
     concerts: concerts.rows,
     goods: goods.rows,
     notices: notices.rows,
-    config: configMap
+    config: configMap,
+    waiting_groups: waitingGroups.rows
   });
+}
+
+// ── Waiting Group ─────────────────────────────────
+async function addWaiting(body, res) {
+  const { concert_ref, group_name, wait_start, entry_start, sort_order } = body;
+  await pool.query(
+    `INSERT INTO waiting_group (concert_ref,group_name,wait_start,entry_start,sort_order)
+     VALUES ($1,$2,$3,$4,$5)`,
+    [concert_ref||null, group_name, wait_start||null, entry_start||null, sort_order||0]
+  );
+  return res.status(200).json({ success: true });
+}
+
+async function updateWaiting(body, res) {
+  const { id, concert_ref, group_name, wait_start, entry_start, sort_order } = body;
+  await pool.query(
+    `UPDATE waiting_group SET concert_ref=$1,group_name=$2,wait_start=$3,entry_start=$4,sort_order=$5
+     WHERE id=$6`,
+    [concert_ref||null, group_name, wait_start||null, entry_start||null, sort_order||0, id]
+  );
+  return res.status(200).json({ success: true });
+}
+
+async function deleteWaiting(body, res) {
+  await pool.query('DELETE FROM waiting_group WHERE id=$1', [body.id]);
+  return res.status(200).json({ success: true });
 }
 
 // ── Concert ──────────────────────────────────────
@@ -168,6 +196,9 @@ export default async function handler(request, response) {
       case 'update-notice':   return updateNotice(body, response);
       case 'delete-notice':   return deleteNotice(body, response);
       case 'update-config':   return updateConfig(body, response);
+      case 'add-waiting':     return addWaiting(body, response);
+      case 'update-waiting':  return updateWaiting(body, response);
+      case 'delete-waiting':  return deleteWaiting(body, response);
       default: return response.status(400).json({ error: 'Invalid action' });
     }
   } catch (error) {

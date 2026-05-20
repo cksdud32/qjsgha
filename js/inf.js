@@ -528,6 +528,20 @@ function buildGoodsTable(goods, config) {
   });
 }
 
+function buildWaitingGroup(groups) {
+  const el = document.getElementById('waiting-group-list');
+  if (!el) return;
+  if (!groups || !groups.length) { el.innerHTML = ''; return; }
+  let html = '';
+  groups.forEach(g => {
+    html += `<b>${g.group_name}</b><br>`;
+    if (g.wait_start)  html += `입장 전 대기(줄서기): ${g.wait_start}<br>`;
+    if (g.entry_start) html += `입장 시작: ${g.entry_start}<br>`;
+    html += '<br>';
+  });
+  el.innerHTML = html;
+}
+
 function parseLinks(text) {
   return text.replace(
     /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
@@ -540,7 +554,9 @@ function buildNotices(notices) {
     '안내':    { id: 'notice-안내',    title: '※ 안내 사항 ※' },
     '주의':    { id: 'notice-주의',    title: '⚠️ 주의 사항' },
     '환불':    { id: 'notice-환불',    title: '※ 환불 안내 ※' },
-    '추가정보': { id: 'notice-추가정보', title: '※ 추가 정보 ※' }
+    '추가정보': { id: 'notice-추가정보', title: '※ 추가 정보 ※' },
+    '대기안내': { id: 'notice-대기안내', title: '※ 안내 사항 ※' },
+    '대기참고': { id: 'notice-대기참고', title: '※ 참고 사항 ※' }
   };
 
   const grouped = {};
@@ -705,6 +721,7 @@ async function loadInfData() {
     buildConcertTable(data.concerts);
     buildGoodsTable(data.goods, data.config);
     buildNotices(data.notices);
+    buildWaitingGroup(data.waiting_groups);
 
     const subtitle = document.getElementById('goods-subtitle');
     if (subtitle && data.config && data.config.goods_subtitle) {

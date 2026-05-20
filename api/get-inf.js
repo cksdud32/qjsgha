@@ -10,11 +10,12 @@ export default async function handler(request, response) {
   if (request.method !== 'GET') return response.status(405).send('Method Not Allowed');
 
   try {
-    const [concerts, goods, notices, config] = await Promise.all([
+    const [concerts, goods, notices, config, waitingGroups] = await Promise.all([
       pool.query('SELECT * FROM concert ORDER BY id'),
       pool.query('SELECT * FROM goods ORDER BY id'),
       pool.query('SELECT * FROM notice ORDER BY id'),
-      pool.query('SELECT * FROM site_config')
+      pool.query('SELECT * FROM site_config'),
+      pool.query('SELECT * FROM waiting_group ORDER BY sort_order, id')
     ]);
 
     const configMap = {};
@@ -24,7 +25,8 @@ export default async function handler(request, response) {
       concerts: concerts.rows,
       goods: goods.rows,
       notices: notices.rows,
-      config: configMap
+      config: configMap,
+      waiting_groups: waitingGroups.rows
     });
   } catch (error) {
     console.error('DB 에러:', error);
