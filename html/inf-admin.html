@@ -48,8 +48,9 @@
     #logoutBtn:hover { background: #a03535; }
 
     .tabs {
-      display: flex; gap: 2px; padding: 0 24px;
+      display: flex; gap: 2px; padding: 0 24px; flex-wrap: wrap;
       background: #1a1a2e; border-bottom: 1px solid #2a2a3e;
+      overflow-x: auto;
     }
     .tab-btn {
       padding: 12px 20px; background: transparent; color: #888;
@@ -188,6 +189,18 @@
       <button class="add-btn" id="add-waiting-btn">+ 그룹 추가</button>
     </div>
     <div class="tbl-wrap"><div id="waiting-list"><p class="empty">불러오는 중...</p></div></div>
+
+    <div class="panel-header" style="margin-top:28px;">
+      <h2>※ 안내 사항 ※</h2>
+      <button class="add-btn" id="add-waiting-notice-안내-btn">+ 안내 추가</button>
+    </div>
+    <div class="tbl-wrap"><div id="waiting-notice-안내-list"><p class="empty">불러오는 중...</p></div></div>
+
+    <div class="panel-header" style="margin-top:28px;">
+      <h2>※ 참고 사항 ※</h2>
+      <button class="add-btn" id="add-waiting-notice-참고-btn">+ 참고 추가</button>
+    </div>
+    <div class="tbl-wrap"><div id="waiting-notice-참고-list"><p class="empty">불러오는 중...</p></div></div>
   </div>
 
   <!-- 공지 -->
@@ -303,6 +316,8 @@ async function loadAll() {
   renderConcerts(data.concerts);
   renderGoods(data.goods);
   renderWaiting(data.waiting_groups);
+  renderWaitingNoticeSection('대기안내', 'waiting-notice-안내-list');
+  renderWaitingNoticeSection('대기참고', 'waiting-notice-참고-list');
   renderNotices(data.notices);
   renderConfig(data.config);
   renderGoodsTotal(data.concerts, data.config);
@@ -400,6 +415,24 @@ function renderWaiting(list) {
   </table>`;
 }
 
+function renderWaitingNoticeSection(noticeType, elId) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const list = (allData.notices || []).filter(n => n.type === noticeType);
+  if (!list.length) { el.innerHTML = '<p class="empty">등록된 내용이 없습니다.</p>'; return; }
+  el.innerHTML = `<table>
+    <thead><tr><th>내용</th><th>출처</th><th>작업</th></tr></thead>
+    <tbody>${list.map(n => `<tr>
+      <td class="truncate">${esc(n.content)}</td>
+      <td class="truncate">${esc(n.source) || '-'}</td>
+      <td>
+        <button class="action-btn edit-btn"   data-type="notice" data-id="${n.id}">수정</button>
+        <button class="action-btn delete-btn" data-type="notice" data-id="${n.id}">삭제</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
 function renderConfig(cfg) {
   const el = document.getElementById('config-list');
   if (!cfg) { el.innerHTML = '<p class="empty">설정이 없습니다.</p>'; return; }
@@ -461,10 +494,12 @@ document.getElementById('admin-section').addEventListener('click', e => {
 document.getElementById('add-concert-btn').onclick = () => openModal('concert', null);
 document.getElementById('add-goods-btn').onclick   = () => openModal('goods', null);
 document.getElementById('add-waiting-btn').onclick = () => openModal('waiting', null);
+document.getElementById('add-waiting-notice-안내-btn').onclick = () => openModal('notice', null, '대기안내');
+document.getElementById('add-waiting-notice-참고-btn').onclick = () => openModal('notice', null, '대기참고');
 document.getElementById('add-notice-btn').onclick  = () => openModal('notice', null);
 
 // ── 모달 ─────────────────────────────────────────
-function openModal(type, id) {
+function openModal(type, id, defaultType) {
   const isEdit = id !== null;
   let item = null;
   if (isEdit) {
@@ -476,7 +511,7 @@ function openModal(type, id) {
 
   const names = { concert: '콘서트', goods: '굿즈', waiting: '대기 그룹', notice: '공지' };
   document.getElementById('modal-title').textContent = (isEdit ? '수정: ' : '추가: ') + names[type];
-  document.getElementById('modal-body').innerHTML = buildForm(type, item);
+  document.getElementById('modal-body').innerHTML = buildForm(type, item, defaultType);
   document.getElementById('modal-save').onclick = () => saveModal(type, id);
   document.getElementById('modal').style.display = 'block';
 }
@@ -507,11 +542,12 @@ function toggleGoodsPriceMode() {
 document.getElementById('modal-cancel').onclick = closeModal;
 document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
 
-function buildForm(type, item) {
+function buildForm(type, item, defaultType) {
   const v = (key, def = '') => esc(item?.[key] ?? def);
-  const sel = (key, options) => options.map(o =>
-    `<option value="${esc(o)}" ${(item?.[key] ?? '') === o ? 'selected' : ''}>${esc(o)}</option>`
-  ).join('');
+  const sel = (key, options) => options.map(o => {
+    const selected = (item?.[key] ?? defaultType ?? '') === o ? 'selected' : '';
+    return `<option value="${esc(o)}" ${selected}>${esc(o)}</option>`;
+  }).join('');
 
   if (type === 'concert') return `
     <div class="form-group"><label>콘서트 이름 *</label><input type="text" id="f-name" value="${v('name')}"></div>
