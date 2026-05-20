@@ -242,29 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// 표 숨김/열기 처리
-document.querySelectorAll(".clickable-row").forEach(row => {
-  row.addEventListener("click", () => {
-    const group = row.dataset.group;
-    const arrow = row.querySelector(".arrow");
-
-    document.querySelectorAll(`.hidden-row[data-group="${group}"]`).forEach(r => {
-      if (r.classList.contains("show")) {
-        r.classList.remove("show");
-        setTimeout(() => {
-          r.style.display = "none";
-        }, 300);
-        if (arrow) arrow.classList.remove("rotate");
-      } else {
-        r.style.display = "table-row";
-        setTimeout(() => {
-          r.classList.add("show");
-        }, 10);
-        if (arrow) arrow.classList.add("rotate");
-      }
-    });
-  });
-});
 
 
 // ============ DB 데이터 로드 ============
@@ -395,6 +372,7 @@ function buildGoodsTable(goods) {
   const tbody = document.getElementById('goods-tbody');
   if (!headRow || !tbody) return;
 
+  // 고유 concert_ref 목록 (순서 유지)
   const refs = [];
   goods.forEach(g => {
     if (!refs.includes(g.concert_ref)) refs.push(g.concert_ref);
@@ -406,41 +384,86 @@ function buildGoodsTable(goods) {
     headRow.appendChild(th);
   });
 
-  const names = [];
-  goods.forEach(g => {
-    if (!names.includes(g.goods_name)) names.push(g.goods_name);
-  });
-
+  // 굿즈 맵: name → { ref: goodObject }
   const goodsMap = {};
   goods.forEach(g => {
     if (!goodsMap[g.goods_name]) goodsMap[g.goods_name] = {};
     goodsMap[g.goods_name][g.concert_ref] = g;
   });
 
+  // 고유 이름 목록 (첫 등장 순서)
+  const names = [];
+  goods.forEach(g => {
+    if (!names.includes(g.goods_name)) names.push(g.goods_name);
+  });
+
+  function getGroupName(name) {
+    return (Object.values(goodsMap[name])[0] || {}).group_name || null;
+  }
+
+  // 그룹핑: 같은 group_name끼리 묶기 (등장 순서 유지)
+  const seenGroups = {};
+  const orderedItems = [];
   names.forEach(name => {
+    const group = getGroupName(name);
+    if (!group) {
+      orderedItems.push({ type: 'single', name });
+    } else {
+      if (!seenGroups[group]) {
+        const entry = { type: 'group', group, names: [] };
+        seenGroups[group] = entry;
+        orderedItems.push(entry);
+      }
+      seenGroups[group].names.push(name);
+    }
+  });
+
+  function makeGoodsTd(name, ref) {
+    const td = document.createElement('td');
+    const g = goodsMap[name] && goodsMap[name][ref];
+    if (!g) {
+      td.textContent = '×';
+    } else {
+      const parts = [];
+      if (g.price !== null && g.price !== undefined) parts.push(g.price.toLocaleString() + '원');
+      if (g.quantity_info) parts.push(g.quantity_info);
+      if (g.detail) parts.push(g.detail);
+      td.innerHTML = parts.length ? parts.join('<br>') : '정보 없음';
+    }
+    return td;
+  }
+
+  function makeItemRow(name, isHidden, group) {
     const tr = document.createElement('tr');
-    tr.className = 'price-row';
+    tr.className = 'price-row' + (isHidden ? ' hidden-row' : '');
+    if (group) tr.dataset.group = group;
+    if (isHidden) tr.style.display = 'none';
 
     const td0 = document.createElement('td');
     td0.textContent = name;
     tr.appendChild(td0);
+    refs.forEach(ref => tr.appendChild(makeGoodsTd(name, ref)));
+    return tr;
+  }
 
-    refs.forEach(ref => {
-      const td = document.createElement('td');
-      const g = goodsMap[name] && goodsMap[name][ref];
-      if (!g) {
-        td.textContent = '×';
-      } else {
-        const parts = [];
-        if (g.price !== null && g.price !== undefined) parts.push(g.price.toLocaleString() + '원');
-        if (g.quantity_info) parts.push(g.quantity_info);
-        if (g.detail) parts.push(g.detail);
-        td.innerHTML = parts.length ? parts.join('<br>') : '정보 없음';
-      }
-      tr.appendChild(td);
-    });
+  // 행 렌더링
+  orderedItems.forEach(item => {
+    if (item.type === 'single') {
+      tbody.appendChild(makeItemRow(item.name, false, null));
+    } else {
+      // 클릭 가능한 그룹 헤더 행
+      const headerTr = document.createElement('tr');
+      headerTr.className = 'clickable-row';
+      headerTr.dataset.group = item.group;
+      const headerTd = document.createElement('td');
+      headerTd.colSpan = 1 + refs.length;
+      headerTd.innerHTML = `<span class="arrow">▼</span> 전체 ${item.group} 보기`;
+      headerTr.appendChild(headerTd);
+      tbody.appendChild(headerTr);
 
-    tbody.appendChild(tr);
+      // 숨김 굿즈 행
+      item.names.forEach(name => tbody.appendChild(makeItemRow(name, true, item.group)));
+    }
   });
 
   // 합계 행
@@ -448,7 +471,6 @@ function buildGoodsTable(goods) {
   const totalTd0 = document.createElement('td');
   totalTd0.innerHTML = '전체 가격<br><div style="font-size:13px;">(도안당 1개 기준)</div>';
   totalTr.appendChild(totalTd0);
-
   refs.forEach(ref => {
     const td = document.createElement('td');
     const total = goods
@@ -475,6 +497,27 @@ function buildGoodsTable(goods) {
     </div>
   </td>`;
   tbody.appendChild(calcTr);
+
+  // 그룹 접기/펼치기 이벤트 위임
+  tbody.addEventListener('click', (e) => {
+    const headerRow = e.target.closest('.clickable-row');
+    if (!headerRow) return;
+
+    const group = headerRow.dataset.group;
+    const arrow = headerRow.querySelector('.arrow');
+
+    tbody.querySelectorAll(`.hidden-row[data-group="${group}"]`).forEach(r => {
+      if (r.classList.contains('show')) {
+        r.classList.remove('show');
+        setTimeout(() => { r.style.display = 'none'; }, 300);
+        if (arrow) arrow.classList.remove('rotate');
+      } else {
+        r.style.display = 'table-row';
+        setTimeout(() => { r.classList.add('show'); }, 10);
+        if (arrow) arrow.classList.add('rotate');
+      }
+    });
+  });
 }
 
 function buildNotices(notices) {
