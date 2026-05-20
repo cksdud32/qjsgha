@@ -518,6 +518,13 @@ function buildGoodsTable(goods) {
   });
 }
 
+function parseLinks(text) {
+  return text.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+    '<a href="$2" class="fldzm" target="_blank" rel="noopener noreferrer">$1</a>'
+  );
+}
+
 function buildNotices(notices) {
   const typeConfig = {
     '안내':    { id: 'notice-안내',    title: '※ 안내 사항 ※' },
@@ -540,7 +547,7 @@ function buildNotices(notices) {
 
     let html = `<h3>${cfg.title}</h3><p>`;
     items.forEach(item => {
-      html += `• ${item.content}<br><br>`;
+      html += `• ${parseLinks(item.content)}<br><br>`;
     });
 
     const sources = [...new Set(items.map(i => i.source).filter(Boolean))];

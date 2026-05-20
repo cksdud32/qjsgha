@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오프라인 정보 관리</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #13131f; color: #e0e0e0; min-height: 100vh; }
+
+    /* ── 로그인 ── */
+    #login-section {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 100vh; gap: 0;
+    }
+    .login-box {
+      background: #1e1e30; border: 1px solid #333; border-radius: 12px;
+      padding: 40px 36px; width: 320px;
+    }
+    .login-box h1 { font-size: 20px; margin-bottom: 28px; text-align: center; color: #cca6e8; }
+    .login-box input {
+      display: block; width: 100%; padding: 11px 14px; margin-bottom: 12px;
+      background: #2a2a3e; border: 1px solid #444; border-radius: 8px;
+      color: #eee; font-size: 15px;
+    }
+    .login-box input:focus { outline: none; border-color: #7c5cbf; }
+    .login-box button {
+      width: 100%; padding: 12px; margin-top: 4px;
+      background: #7c5cbf; color: white; border: none;
+      border-radius: 8px; font-size: 15px; cursor: pointer; transition: background .2s;
+    }
+    .login-box button:hover { background: #9a78d8; }
+    #login-error { color: #ff6b6b; font-size: 13px; margin-top: 10px; text-align: center; min-height: 18px; }
+
+    /* ── 관리자 패널 ── */
+    #admin-section { display: none; }
+
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 24px; background: #1a1a2e; border-bottom: 1px solid #2a2a3e;
+      position: sticky; top: 0; z-index: 100;
+    }
+    header h1 { font-size: 18px; color: #cca6e8; }
+    #logoutBtn {
+      padding: 7px 16px; background: #7b2d2d; color: white;
+      border: none; border-radius: 6px; cursor: pointer; font-size: 13px;
+    }
+    #logoutBtn:hover { background: #a03535; }
+
+    .tabs {
+      display: flex; gap: 2px; padding: 0 24px;
+      background: #1a1a2e; border-bottom: 1px solid #2a2a3e;
+    }
+    .tab-btn {
+      padding: 12px 20px; background: transparent; color: #888;
+      border: none; border-bottom: 3px solid transparent;
+      cursor: pointer; font-size: 14px; transition: color .2s;
+    }
+    .tab-btn:hover { color: #ccc; }
+    .tab-btn.active { color: #cca6e8; border-bottom-color: #cca6e8; }
+
+    .tab-panel { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .tab-panel.active { display: block; }
+
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+    }
+    .panel-header h2 { font-size: 17px; }
+    .add-btn {
+      padding: 8px 16px; background: #27ae60; color: white;
+      border: none; border-radius: 7px; cursor: pointer; font-size: 13px;
+    }
+    .add-btn:hover { background: #2ecc71; }
+
+    /* ── 테이블 ── */
+    .tbl-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 500px; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid #2a2a3e; text-align: left; vertical-align: top; }
+    th { background: #1e1e30; color: #cca6e8; font-weight: 600; white-space: nowrap; }
+    tr:hover td { background: #1c1c2e; }
+    td.truncate { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .empty { color: #555; padding: 30px; text-align: center; }
+
+    .action-btn {
+      padding: 4px 10px; border: none; border-radius: 5px;
+      cursor: pointer; font-size: 12px; margin-right: 4px; white-space: nowrap;
+    }
+    .edit-btn  { background: #2471a3; color: white; }
+    .edit-btn:hover  { background: #2e86c1; }
+    .delete-btn { background: #922b21; color: white; }
+    .delete-btn:hover { background: #c0392b; }
+
+    /* ── 모달 ── */
+    #modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.72); z-index: 500; overflow-y: auto;
+    }
+    .modal-inner {
+      background: #1e1e30; border: 1px solid #333; border-radius: 10px;
+      width: 92%; max-width: 580px; margin: 40px auto; padding: 28px;
+    }
+    .modal-inner h2 { font-size: 17px; color: #cca6e8; margin-bottom: 22px; }
+    .form-group { margin-bottom: 13px; }
+    .form-group label { display: block; font-size: 12px; color: #999; margin-bottom: 4px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%; padding: 9px 12px; background: #13131f;
+      border: 1px solid #333; border-radius: 7px; color: #eee; font-size: 14px;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { outline: none; border-color: #7c5cbf; }
+    .form-group textarea { height: 90px; resize: vertical; font-family: inherit; }
+    .form-group.checkbox-group label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #ccc; cursor: pointer; }
+    .form-group.checkbox-group input[type="checkbox"] { width: 16px; height: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-buttons { display: flex; gap: 8px; justify-content: flex-end; margin-top: 22px; }
+    .modal-buttons button { padding: 10px 22px; border: none; border-radius: 7px; cursor: pointer; font-size: 14px; }
+    #modal-save   { background: #7c5cbf; color: white; }
+    #modal-save:hover { background: #9a78d8; }
+    #modal-cancel { background: #3a3a4a; color: #ccc; }
+    #modal-cancel:hover { background: #4a4a5a; }
+
+    /* ── 설정 탭 ── */
+    .config-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 0; border-bottom: 1px solid #2a2a3e;
+    }
+    .config-label { flex: 0 0 220px; font-size: 13px; color: #aaa; }
+    .config-value { flex: 1; font-size: 14px; color: #eee; word-break: break-all; }
+    .config-value.empty-val { color: #555; }
+  </style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<div id="login-section">
+  <div class="login-box">
+    <h1>오프라인 정보 관리</h1>
+    <form id="loginForm" autocomplete="on">
+      <input type="text"     id="u-input" placeholder="아이디"   autocomplete="username">
+      <input type="password" id="p-input" placeholder="비밀번호" autocomplete="current-password">
+      <button type="submit">로그인</button>
+    </form>
+    <p id="login-error"></p>
+  </div>
+</div>
+
+<!-- 관리자 패널 -->
+<div id="admin-section">
+  <header>
+    <h1>오프라인 정보 관리자</h1>
+    <button id="logoutBtn">로그아웃</button>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="concert">콘서트</button>
+    <button class="tab-btn"        data-tab="goods">굿즈</button>
+    <button class="tab-btn"        data-tab="notice">공지</button>
+    <button class="tab-btn"        data-tab="config">사이트 설정</button>
+  </div>
+
+  <!-- 콘서트 -->
+  <div class="tab-panel active" id="tab-concert">
+    <div class="panel-header">
+      <h2>콘서트 관리</h2>
+      <button class="add-btn" id="add-concert-btn">+ 콘서트 추가</button>
+    </div>
+    <div class="tbl-wrap"><div id="concert-list"><p class="empty">불러오는 중...</p></div></div>
+  </div>
+
+  <!-- 굿즈 -->
+  <div class="tab-panel" id="tab-goods">
+    <div class="panel-header">
+      <h2>굿즈 관리</h2>
+      <button class="add-btn" id="add-goods-btn">+ 굿즈 추가</button>
+    </div>
+    <div class="tbl-wrap"><div id="goods-list"><p class="empty">불러오는 중...</p></div></div>
+  </div>
+
+  <!-- 공지 -->
+  <div class="tab-panel" id="tab-notice">
+    <div class="panel-header">
+      <h2>공지 관리</h2>
+      <button class="add-btn" id="add-notice-btn">+ 공지 추가</button>
+    </div>
+    <div class="tbl-wrap"><div id="notice-list"><p class="empty">불러오는 중...</p></div></div>
+  </div>
+
+  <!-- 설정 -->
+  <div class="tab-panel" id="tab-config">
+    <div class="panel-header"><h2>사이트 설정</h2></div>
+    <div id="config-list"><p class="empty">불러오는 중...</p></div>
+  </div>
+</div>
+
+<!-- 모달 -->
+<div id="modal">
+  <div class="modal-inner">
+    <h2 id="modal-title"></h2>
+    <div id="modal-body"></div>
+    <div class="modal-buttons">
+      <button id="modal-cancel">취소</button>
+      <button id="modal-save">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 유틸 ─────────────────────────────────────────
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function esc(v) {
+  return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function val(id) { return document.getElementById(id)?.value ?? ''; }
+function trimOrNull(s) { const t = s.trim(); return t || null; }
+
+// ── 인증 ─────────────────────────────────────────
+function getAuth() {
+  const u = sessionStorage.getItem('_iu'), p = sessionStorage.getItem('_ip');
+  return (u && p) ? { username: u, password: p } : null;
+}
+function setAuth(u, p) { sessionStorage.setItem('_iu', u); sessionStorage.setItem('_ip', p); }
+function clearAuth()   { sessionStorage.removeItem('_iu'); sessionStorage.removeItem('_ip'); }
+
+// ── API ──────────────────────────────────────────
+async function api(action, extra = {}) {
+  const auth = getAuth() || {};
+  const res = await fetch('/api/inf-admin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, ...auth, ...extra })
+  });
+  return res.json();
+}
+
+// ── 로그인 ────────────────────────────────────────
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const username = val('u-input').trim();
+  const password = val('p-input');
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+
+  if (!username || !password) { errEl.textContent = '아이디와 비밀번호를 입력해주세요.'; return; }
+
+  const hashedPw = await sha256(password);
+  const data = await api('login', { username, password: hashedPw });
+
+  if (data.success) {
+    setAuth(username, hashedPw);
+    showAdmin();
+  } else {
+    errEl.textContent = data.error || '로그인에 실패했습니다.';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  clearAuth();
+  location.reload();
+});
+
+// ── 초기화 ───────────────────────────────────────
+let allData = {};
+
+async function init() {
+  const auth = getAuth();
+  if (!auth) return;
+  const res = await api('login');
+  if (res.success) showAdmin();
+  else clearAuth();
+}
+
+function showAdmin() {
+  document.getElementById('login-section').style.display = 'none';
+  document.getElementById('admin-section').style.display = 'block';
+  loadAll();
+}
+
+async function loadAll() {
+  const data = await api('get-all');
+  if (data.error) { alert('데이터 로드 실패: ' + data.error); return; }
+  allData = data;
+  renderConcerts(data.concerts);
+  renderGoods(data.goods);
+  renderNotices(data.notices);
+  renderConfig(data.config);
+}
+
+// ── 탭 ───────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── 렌더링 ───────────────────────────────────────
+function renderConcerts(list) {
+  const el = document.getElementById('concert-list');
+  if (!list?.length) { el.innerHTML = '<p class="empty">등록된 콘서트가 없습니다.</p>'; return; }
+  el.innerHTML = `<table>
+    <thead><tr><th>이름</th><th>날짜</th><th>상태</th><th>티켓가격</th><th>배송비</th><th>작업</th></tr></thead>
+    <tbody>${list.map(c => `<tr>
+      <td>${esc(c.name)}</td>
+      <td>${esc(c.date_label)}</td>
+      <td>${esc(c.status)}</td>
+      <td>${c.ticket_price != null ? Number(c.ticket_price).toLocaleString()+'원' : '-'}</td>
+      <td>${c.delivery_fee != null ? Number(c.delivery_fee).toLocaleString()+'원' : '-'}</td>
+      <td>
+        <button class="action-btn edit-btn"   data-type="concert" data-id="${c.id}">수정</button>
+        <button class="action-btn delete-btn" data-type="concert" data-id="${c.id}">삭제</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function renderGoods(list) {
+  const el = document.getElementById('goods-list');
+  if (!list?.length) { el.innerHTML = '<p class="empty">등록된 굿즈가 없습니다.</p>'; return; }
+  el.innerHTML = `<table>
+    <thead><tr><th>굿즈명</th><th>콘서트</th><th>가격</th><th>그룹</th><th>수량정보</th><th>랜덤</th><th>작업</th></tr></thead>
+    <tbody>${list.map(g => `<tr>
+      <td>${esc(g.goods_name)}</td>
+      <td>${esc(g.concert_ref)}</td>
+      <td>${g.price != null ? Number(g.price).toLocaleString()+'원' : '-'}</td>
+      <td>${esc(g.group_name) || '-'}</td>
+      <td>${esc(g.quantity_info) || '-'}</td>
+      <td>${g.is_random ? 'O' : '-'}</td>
+      <td>
+        <button class="action-btn edit-btn"   data-type="goods" data-id="${g.id}">수정</button>
+        <button class="action-btn delete-btn" data-type="goods" data-id="${g.id}">삭제</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function renderNotices(list) {
+  const el = document.getElementById('notice-list');
+  if (!list?.length) { el.innerHTML = '<p class="empty">등록된 공지가 없습니다.</p>'; return; }
+  el.innerHTML = `<table>
+    <thead><tr><th>타입</th><th>내용</th><th>출처</th><th>작업</th></tr></thead>
+    <tbody>${list.map(n => `<tr>
+      <td>${esc(n.type)}</td>
+      <td class="truncate">${esc(n.content)}</td>
+      <td class="truncate">${esc(n.source) || '-'}</td>
+      <td>
+        <button class="action-btn edit-btn"   data-type="notice" data-id="${n.id}">수정</button>
+        <button class="action-btn delete-btn" data-type="notice" data-id="${n.id}">삭제</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+const CONFIG_LABELS = {
+  goods_subtitle:     '굿즈 부제목',
+  next_concert_date:  '다음 콘서트 날짜 (YYYY-MM-DD)',
+  next_concert_time:  '다음 콘서트 시간 (YYYY-MM-DDTHH:MM:SS)'
+};
+
+function renderConfig(cfg) {
+  const el = document.getElementById('config-list');
+  if (!cfg) { el.innerHTML = '<p class="empty">설정이 없습니다.</p>'; return; }
+  el.innerHTML = Object.entries(cfg).map(([key, value]) => `
+    <div class="config-row">
+      <span class="config-label">${esc(CONFIG_LABELS[key] || key)}</span>
+      <span class="config-value ${value ? '' : 'empty-val'}">${esc(value) || '(비어 있음)'}</span>
+      <button class="action-btn edit-btn" data-type="config" data-key="${esc(key)}" data-value="${esc(value)}">수정</button>
+    </div>
+  `).join('');
+}
+
+// ── 이벤트 위임 (수정/삭제 버튼) ─────────────────
+document.getElementById('admin-section').addEventListener('click', e => {
+  const btn = e.target.closest('.action-btn');
+  if (!btn) return;
+  const type = btn.dataset.type;
+  const id   = btn.dataset.id ? Number(btn.dataset.id) : null;
+
+  if (btn.classList.contains('edit-btn')) {
+    if (type === 'config') openConfigModal(btn.dataset.key, btn.dataset.value);
+    else openModal(type, id);
+  } else if (btn.classList.contains('delete-btn')) {
+    deleteItem(type, id);
+  }
+});
+
+document.getElementById('add-concert-btn').onclick = () => openModal('concert', null);
+document.getElementById('add-goods-btn').onclick   = () => openModal('goods', null);
+document.getElementById('add-notice-btn').onclick  = () => openModal('notice', null);
+
+// ── 모달 ─────────────────────────────────────────
+function openModal(type, id) {
+  const isEdit = id !== null;
+  let item = null;
+  if (isEdit) {
+    if (type === 'concert') item = allData.concerts?.find(c => c.id === id);
+    if (type === 'goods')   item = allData.goods?.find(g => g.id === id);
+    if (type === 'notice')  item = allData.notices?.find(n => n.id === id);
+  }
+
+  const names = { concert: '콘서트', goods: '굿즈', notice: '공지' };
+  document.getElementById('modal-title').textContent = (isEdit ? '수정: ' : '추가: ') + names[type];
+  document.getElementById('modal-body').innerHTML = buildForm(type, item);
+  document.getElementById('modal-save').onclick = () => saveModal(type, id);
+  document.getElementById('modal').style.display = 'block';
+}
+
+function openConfigModal(key, value) {
+  document.getElementById('modal-title').textContent = '설정 수정: ' + (CONFIG_LABELS[key] || key);
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-group">
+      <label>${esc(CONFIG_LABELS[key] || key)}</label>
+      <input type="text" id="f-config-value" value="${esc(value)}">
+    </div>`;
+  document.getElementById('modal-save').onclick = async () => {
+    const newVal = val('f-config-value');
+    const res = await api('update-config', { key, value: newVal });
+    if (res.success) { allData.config[key] = newVal; renderConfig(allData.config); closeModal(); }
+    else alert('저장 실패: ' + (res.error || '오류'));
+  };
+  document.getElementById('modal').style.display = 'block';
+}
+
+function closeModal() { document.getElementById('modal').style.display = 'none'; }
+document.getElementById('modal-cancel').onclick = closeModal;
+document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
+
+function buildForm(type, item) {
+  const v = (key, def = '') => esc(item?.[key] ?? def);
+  const sel = (key, options) => options.map(o =>
+    `<option value="${esc(o)}" ${(item?.[key] ?? '') === o ? 'selected' : ''}>${esc(o)}</option>`
+  ).join('');
+
+  if (type === 'concert') return `
+    <div class="form-group"><label>콘서트 이름 *</label><input type="text" id="f-name" value="${v('name')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>날짜 표시 (예: 4월18일)</label><input type="text" id="f-date_label" value="${v('date_label')}"></div>
+      <div class="form-group"><label>상태</label>
+        <select id="f-status"><option value="">-</option>${sel('status',['진행예정','진행중','종료','취소'])}</select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>티켓 가격 (원)</label><input type="number" id="f-ticket_price" value="${v('ticket_price')}"></div>
+      <div class="form-group"><label>배송비 (원)</label><input type="number" id="f-delivery_fee" value="${v('delivery_fee')}"></div>
+    </div>
+    <div class="form-group"><label>티켓 인포 (예: 체리상회 (https://...))</label><input type="text" id="f-ticketing_info" value="${v('ticketing_info')}"></div>
+    <div class="form-group"><label>입장 전 대기 시간</label><input type="text" id="f-waiting_time" value="${v('waiting_time')}"></div>
+    <div class="form-group"><label>입장 후 대기 시간</label><input type="text" id="f-entry_wait_time" value="${v('entry_wait_time')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>진행 시간</label><input type="text" id="f-run_time" value="${v('run_time')}"></div>
+      <div class="form-group"><label>굿즈 구매 시간</label><input type="text" id="f-goods_sale_time" value="${v('goods_sale_time')}"></div>
+    </div>
+    <div class="form-group"><label>장소 URL (네이버 지도)</label><input type="text" id="f-location_url" value="${v('location_url')}"></div>
+    <div class="form-group"><label>드레스 코드</label><input type="text" id="f-dress_code" value="${v('dress_code')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>셋리스트 URL</label><input type="text" id="f-setlist_url" value="${v('setlist_url')}"></div>
+      <div class="form-group"><label>추가 정보 URL</label><input type="text" id="f-extra_info_url" value="${v('extra_info_url')}"></div>
+    </div>`;
+
+  if (type === 'goods') return `
+    <div class="form-group"><label>굿즈명 *</label><input type="text" id="f-goods_name" value="${v('goods_name')}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>콘서트 참조 (예: 체리제)</label><input type="text" id="f-concert_ref" value="${v('concert_ref')}"></div>
+      <div class="form-group"><label>그룹명 (예: 뱃지 / 없으면 빈칸)</label><input type="text" id="f-group_name" value="${v('group_name')}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>가격 (원, 비워두면 정보없음)</label><input type="number" id="f-price" value="${v('price')}"></div>
+      <div class="form-group"><label>수량 정보 (예: 60묶음)</label><input type="text" id="f-quantity_info" value="${v('quantity_info')}"></div>
+    </div>
+    <div class="form-group"><label>상세 정보 (예: 일러 4종)</label><input type="text" id="f-detail" value="${v('detail')}"></div>
+    <div class="form-group checkbox-group">
+      <label><input type="checkbox" id="f-is_random" ${item?.is_random ? 'checked' : ''}> 랜덤 굿즈</label>
+    </div>`;
+
+  if (type === 'notice') return `
+    <div class="form-group"><label>타입 *</label>
+      <select id="f-type">${sel('type',['안내','주의','환불','추가정보'])}</select>
+    </div>
+    <div class="form-group"><label>내용 * &nbsp;<span style="color:#666;font-size:11px;">링크: [텍스트](URL)</span></label>
+      <textarea id="f-content">${esc(item?.content ?? '')}</textarea>
+    </div>
+    <div class="form-group"><label>출처</label><input type="text" id="f-source" value="${v('source')}"></div>`;
+
+  return '';
+}
+
+async function saveModal(type, id) {
+  const isEdit = id !== null;
+  let payload = {};
+
+  if (type === 'concert') {
+    payload = {
+      name:            trimOrNull(val('f-name')),
+      date_label:      trimOrNull(val('f-date_label')),
+      status:          trimOrNull(val('f-status')),
+      ticket_price:    val('f-ticket_price') || null,
+      delivery_fee:    val('f-delivery_fee') || null,
+      ticketing_info:  trimOrNull(val('f-ticketing_info')),
+      waiting_time:    trimOrNull(val('f-waiting_time')),
+      entry_wait_time: trimOrNull(val('f-entry_wait_time')),
+      run_time:        trimOrNull(val('f-run_time')),
+      goods_sale_time: trimOrNull(val('f-goods_sale_time')),
+      location_url:    trimOrNull(val('f-location_url')),
+      dress_code:      trimOrNull(val('f-dress_code')),
+      setlist_url:     trimOrNull(val('f-setlist_url')),
+      extra_info_url:  trimOrNull(val('f-extra_info_url')),
+    };
+    if (!payload.name) { alert('콘서트 이름은 필수입니다.'); return; }
+  }
+
+  if (type === 'goods') {
+    payload = {
+      goods_name:    trimOrNull(val('f-goods_name')),
+      concert_ref:   trimOrNull(val('f-concert_ref')),
+      price:         val('f-price') || null,
+      quantity_info: trimOrNull(val('f-quantity_info')),
+      detail:        trimOrNull(val('f-detail')),
+      group_name:    trimOrNull(val('f-group_name')),
+      is_random:     document.getElementById('f-is_random').checked,
+    };
+    if (!payload.goods_name) { alert('굿즈명은 필수입니다.'); return; }
+  }
+
+  if (type === 'notice') {
+    payload = {
+      type:    val('f-type'),
+      content: val('f-content').trim(),
+      source:  trimOrNull(val('f-source')),
+    };
+    if (!payload.content) { alert('내용은 필수입니다.'); return; }
+  }
+
+  if (isEdit) payload.id = id;
+
+  const res = await api((isEdit ? 'update-' : 'add-') + type, payload);
+  if (res.success) { closeModal(); await loadAll(); }
+  else alert('저장 실패: ' + (res.error || '오류가 발생했습니다.'));
+}
+
+async function deleteItem(type, id) {
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+  const res = await api('delete-' + type, { id });
+  if (res.success) await loadAll();
+  else alert('삭제 실패: ' + (res.error || '오류가 발생했습니다.'));
+}
+
+// ── 시작 ─────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
