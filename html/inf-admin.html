@@ -390,6 +390,7 @@ function renderGoods(list) {
 }
 
 let currentNoticeFilter = 'all';
+let noticeShowAll = false;
 
 function renderNotices(list) {
   const el = document.getElementById('notice-list');
@@ -400,9 +401,14 @@ function renderNotices(list) {
     : all.filter(n => n.type === currentNoticeFilter);
 
   if (!filtered.length) { el.innerHTML = '<p class="empty">등록된 공지가 없습니다.</p>'; return; }
+
+  const limit = (currentNoticeFilter === 'all' && !noticeShowAll) ? 10 : filtered.length;
+  const shown = filtered.slice(0, limit);
+  const hasMore = currentNoticeFilter === 'all' && filtered.length > 10 && !noticeShowAll;
+
   el.innerHTML = `<table>
     <thead><tr><th>타입</th><th>내용</th><th>출처</th><th>작업</th></tr></thead>
-    <tbody>${filtered.map(n => `<tr>
+    <tbody>${shown.map(n => `<tr>
       <td>${esc(n.type)}</td>
       <td class="truncate">${esc(n.content)}</td>
       <td class="truncate">${esc(n.source) || '-'}</td>
@@ -411,7 +417,8 @@ function renderNotices(list) {
         <button class="action-btn delete-btn" data-type="notice" data-id="${n.id}">삭제</button>
       </td>
     </tr>`).join('')}</tbody>
-  </table>`;
+  </table>
+  ${hasMore ? `<button onclick="noticeShowAll=true;renderNotices();" style="margin-top:10px;padding:6px 16px;background:#444;color:#fff;border:none;border-radius:6px;cursor:pointer;">전체 보기 (${filtered.length}개)</button>` : ''}`;
 }
 
 document.querySelector('#tab-notice .filter-bar').addEventListener('click', e => {
@@ -420,6 +427,7 @@ document.querySelector('#tab-notice .filter-bar').addEventListener('click', e =>
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   currentNoticeFilter = btn.dataset.filter;
+  noticeShowAll = false;
   renderNotices();
 });
 
