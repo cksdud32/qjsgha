@@ -55,7 +55,7 @@ async function updateRankUI() {
 
     // 3. API 호출 (기간과 난이도를 모두 파라미터로 전송)
     try {
-        const response = await fetch(`/api/get-ranking?type=${currentRankPeriod}&diff=${currentRankDiff}`);
+        const response = await fetch(`/api/ranking?type=${currentRankPeriod}&diff=${currentRankDiff}`);
         const rankings = await response.json();
 
         rankList.innerHTML = ''; 
@@ -281,7 +281,7 @@ async function saveRanking() {
         };
 
         // API 호출
-        const response = await fetch('/api/post-ranking', {
+        const response = await fetch('/api/ranking', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem \"c:\\\\Users\\\\USER\\\\Desktop\\\\vs\\\\qjsgha\\\\api\")",
+      "Bash(Select-Object Name)"
+    ]
+  }
+}
