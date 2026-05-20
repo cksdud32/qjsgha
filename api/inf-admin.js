@@ -62,16 +62,16 @@ async function deleteWaiting(body, res) {
 
 // ── Concert ──────────────────────────────────────
 async function addConcert(body, res) {
-  const { name, date_label, status, ticket_price, delivery_fee, ticketing_info,
+  const { name, date_label, event_date, status, ticket_price, delivery_fee, ticketing_info,
           waiting_time, entry_wait_time, run_time, goods_sale_time,
           location_url, dress_code, setlist_url, extra_info_url } = body;
   await pool.query(
     `INSERT INTO concert
-     (name,date_label,status,ticket_price,delivery_fee,ticketing_info,
+     (name,date_label,event_date,status,ticket_price,delivery_fee,ticketing_info,
       waiting_time,entry_wait_time,run_time,goods_sale_time,
       location_url,dress_code,setlist_url,extra_info_url)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
-    [name, date_label||null, status||null, ticket_price||null, delivery_fee||null,
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+    [name, date_label||null, event_date||null, status||null, ticket_price||null, delivery_fee||null,
      ticketing_info||null, waiting_time||null, entry_wait_time||null,
      run_time||null, goods_sale_time||null,
      location_url||null, dress_code||null, setlist_url||null, extra_info_url||null]
@@ -80,16 +80,16 @@ async function addConcert(body, res) {
 }
 
 async function updateConcert(body, res) {
-  const { id, name, date_label, status, ticket_price, delivery_fee, ticketing_info,
+  const { id, name, date_label, event_date, status, ticket_price, delivery_fee, ticketing_info,
           waiting_time, entry_wait_time, run_time, goods_sale_time,
           location_url, dress_code, setlist_url, extra_info_url } = body;
   await pool.query(
     `UPDATE concert SET
-     name=$1,date_label=$2,status=$3,ticket_price=$4,delivery_fee=$5,
-     ticketing_info=$6,waiting_time=$7,entry_wait_time=$8,run_time=$9,
-     goods_sale_time=$10,location_url=$11,dress_code=$12,setlist_url=$13,extra_info_url=$14
-     WHERE id=$15`,
-    [name, date_label||null, status||null, ticket_price||null, delivery_fee||null,
+     name=$1,date_label=$2,event_date=$3,status=$4,ticket_price=$5,delivery_fee=$6,
+     ticketing_info=$7,waiting_time=$8,entry_wait_time=$9,run_time=$10,
+     goods_sale_time=$11,location_url=$12,dress_code=$13,setlist_url=$14,extra_info_url=$15
+     WHERE id=$16`,
+    [name, date_label||null, event_date||null, status||null, ticket_price||null, delivery_fee||null,
      ticketing_info||null, waiting_time||null, entry_wait_time||null,
      run_time||null, goods_sale_time||null,
      location_url||null, dress_code||null, setlist_url||null, extra_info_url||null, id]

@@ -597,6 +597,7 @@ function buildForm(type, item, defaultType) {
     <div class="form-group"><label>콘서트 이름 *</label><input type="text" id="f-name" value="${v('name')}"></div>
     <div class="form-row">
       <div class="form-group"><label>날짜 표시 (예: 4월18일)</label><input type="text" id="f-date_label" value="${v('date_label')}"></div>
+      <div class="form-group"><label>실제 날짜 (디스코드 알림용, YYYY-MM-DD)</label><input type="date" id="f-event_date" value="${v('event_date')}"></div>
       <div class="form-group"><label>상태</label>
         <select id="f-status"><option value="">-</option>${sel('status',['진행예정','진행중','종료','취소'])}</select>
       </div>
@@ -695,6 +696,7 @@ async function saveModal(type, id) {
     payload = {
       name:            trimOrNull(val('f-name')),
       date_label:      trimOrNull(val('f-date_label')),
+      event_date:      trimOrNull(val('f-event_date')),
       status:          trimOrNull(val('f-status')),
       ticket_price:    val('f-ticket_price') || null,
       delivery_fee:    val('f-delivery_fee') || null,
