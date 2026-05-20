@@ -76,23 +76,25 @@ async function deleteConcert(body, res) {
 
 // ── Goods ─────────────────────────────────────────
 async function addGoods(body, res) {
-  const { goods_name, concert_ref, price, quantity_info, detail, group_name, is_random } = body;
+  const { goods_name, concert_ref, price, quantity_info, detail, group_name, is_random, price_data } = body;
   await pool.query(
-    `INSERT INTO goods (goods_name,concert_ref,price,quantity_info,detail,group_name,is_random)
-     VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+    `INSERT INTO goods (goods_name,concert_ref,price,quantity_info,detail,group_name,is_random,price_data)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
     [goods_name, concert_ref||null, price||null, quantity_info||null,
-     detail||null, group_name||null, is_random||false]
+     detail||null, group_name||null, is_random||false,
+     price_data ? JSON.stringify(price_data) : null]
   );
   return res.status(200).json({ success: true });
 }
 
 async function updateGoods(body, res) {
-  const { id, goods_name, concert_ref, price, quantity_info, detail, group_name, is_random } = body;
+  const { id, goods_name, concert_ref, price, quantity_info, detail, group_name, is_random, price_data } = body;
   await pool.query(
     `UPDATE goods SET goods_name=$1,concert_ref=$2,price=$3,quantity_info=$4,
-     detail=$5,group_name=$6,is_random=$7 WHERE id=$8`,
+     detail=$5,group_name=$6,is_random=$7,price_data=$8 WHERE id=$9`,
     [goods_name, concert_ref||null, price||null, quantity_info||null,
-     detail||null, group_name||null, is_random||false, id]
+     detail||null, group_name||null, is_random||false,
+     price_data ? JSON.stringify(price_data) : null, id]
   );
   return res.status(200).json({ success: true });
 }

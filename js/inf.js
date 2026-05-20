@@ -365,14 +365,18 @@ function buildConcertTable(concerts) {
   });
 }
 
-function buildGoodsTable(goods) {
+function buildGoodsTable(goods, config) {
   const headRow = document.getElementById('goods-head-row');
   const tbody = document.getElementById('goods-tbody');
   if (!headRow || !tbody) return;
 
-  // 고유 concert_ref 목록 (순서 유지)
+  // ALL 굿즈(concert_ref=null)와 일반 굿즈 분리
+  const allGoods    = goods.filter(g => g.concert_ref === null);
+  const normalGoods = goods.filter(g => g.concert_ref !== null);
+
+  // 고유 concert_ref 목록 (순서 유지, null 제외)
   const refs = [];
-  goods.forEach(g => {
+  normalGoods.forEach(g => {
     if (!refs.includes(g.concert_ref)) refs.push(g.concert_ref);
   });
 
@@ -384,9 +388,17 @@ function buildGoodsTable(goods) {
 
   // 굿즈 맵: name → { ref: goodObject }
   const goodsMap = {};
-  goods.forEach(g => {
+  normalGoods.forEach(g => {
     if (!goodsMap[g.goods_name]) goodsMap[g.goods_name] = {};
     goodsMap[g.goods_name][g.concert_ref] = g;
+  });
+  // ALL 굿즈를 각 콘서트 ref에 주입 (price는 price_data에서 추출)
+  allGoods.forEach(g => {
+    if (!goodsMap[g.goods_name]) goodsMap[g.goods_name] = {};
+    refs.forEach(ref => {
+      const p = g.price_data ? Number(g.price_data[ref]) : null;
+      goodsMap[g.goods_name][ref] = { ...g, price: isNaN(p) ? null : p };
+    });
   });
 
   // 고유 이름 목록 (첫 등장 순서)
@@ -471,10 +483,8 @@ function buildGoodsTable(goods) {
   totalTr.appendChild(totalTd0);
   refs.forEach(ref => {
     const td = document.createElement('td');
-    const total = goods
-      .filter(g => g.concert_ref === ref && g.price !== null && !g.is_random)
-      .reduce((sum, g) => sum + Number(g.price), 0);
-    td.textContent = total ? total.toLocaleString() + '원' : '정보 없음';
+    const manualTotal = config && config['goods_total_' + ref];
+    td.textContent = manualTotal || '정보 없음';
     totalTr.appendChild(td);
   });
   tbody.appendChild(totalTr);
@@ -693,7 +703,7 @@ async function loadInfData() {
     const data = await res.json();
 
     buildConcertTable(data.concerts);
-    buildGoodsTable(data.goods);
+    buildGoodsTable(data.goods, data.config);
     buildNotices(data.notices);
 
     const subtitle = document.getElementById('goods-subtitle');

@@ -144,6 +144,7 @@
       <button type="submit">로그인</button>
     </form>
     <p id="login-error"></p>
+    <a href="inf.html" style="display:block; margin-top:16px; text-align:center; color:#888; font-size:13px; text-decoration:none;">← 오프라인 사이트로 돌아가기</a>
   </div>
 </div>
 
@@ -192,6 +193,8 @@
   <div class="tab-panel" id="tab-config">
     <div class="panel-header"><h2>사이트 설정</h2></div>
     <div id="config-list"><p class="empty">불러오는 중...</p></div>
+    <div class="panel-header" style="margin-top:24px;"><h2>콘서트별 굿즈 합계</h2></div>
+    <div id="goods-total-list"><p class="empty">불러오는 중...</p></div>
   </div>
 </div>
 
@@ -291,6 +294,7 @@ async function loadAll() {
   renderGoods(data.goods);
   renderNotices(data.notices);
   renderConfig(data.config);
+  renderGoodsTotal(data.concerts, data.config);
 }
 
 // ── 탭 ───────────────────────────────────────────
@@ -330,8 +334,8 @@ function renderGoods(list) {
     <thead><tr><th>굿즈명</th><th>콘서트</th><th>가격</th><th>그룹</th><th>수량정보</th><th>랜덤</th><th>작업</th></tr></thead>
     <tbody>${list.map(g => `<tr>
       <td>${esc(g.goods_name)}</td>
-      <td>${esc(g.concert_ref)}</td>
-      <td>${g.price != null ? Number(g.price).toLocaleString()+'원' : '-'}</td>
+      <td>${g.concert_ref != null ? esc(g.concert_ref) : '<b>ALL</b>'}</td>
+      <td>${g.price_data ? Object.entries(g.price_data).map(([k,v]) => `${k}: ${Number(v).toLocaleString()}원`).join(' / ') : (g.price != null ? Number(g.price).toLocaleString()+'원' : '-')}</td>
       <td>${esc(g.group_name) || '-'}</td>
       <td>${esc(g.quantity_info) || '-'}</td>
       <td>${g.is_random ? 'O' : '-'}</td>
@@ -369,13 +373,44 @@ const CONFIG_LABELS = {
 function renderConfig(cfg) {
   const el = document.getElementById('config-list');
   if (!cfg) { el.innerHTML = '<p class="empty">설정이 없습니다.</p>'; return; }
-  el.innerHTML = Object.entries(cfg).map(([key, value]) => `
+  const filteredEntries = Object.entries(cfg).filter(([key]) => !key.startsWith('goods_total_'));
+  el.innerHTML = filteredEntries.map(([key, value]) => `
     <div class="config-row">
       <span class="config-label">${esc(CONFIG_LABELS[key] || key)}</span>
       <span class="config-value ${value ? '' : 'empty-val'}">${esc(value) || '(비어 있음)'}</span>
       <button class="action-btn edit-btn" data-type="config" data-key="${esc(key)}" data-value="${esc(value)}">수정</button>
     </div>
-  `).join('');
+  `).join('') || '<p class="empty">설정이 없습니다.</p>';
+}
+
+function renderGoodsTotal(concerts, cfg) {
+  const el = document.getElementById('goods-total-list');
+  if (!concerts?.length) { el.innerHTML = '<p class="empty">콘서트가 없습니다.</p>'; return; }
+  el.innerHTML = concerts.map(c => {
+    const key = 'goods_total_' + c.name;
+    const val = cfg?.[key] ?? '';
+    return `<div class="config-row">
+      <span class="config-label">${esc(c.name)} 합계</span>
+      <input type="text" class="goods-total-input" data-key="${esc(key)}"
+             placeholder="예: 35,000원 (도안당 1개 기준)" value="${esc(val)}"
+             style="flex:1; background:#1e1e2e; border:1px solid #555; color:#fff; padding:6px 10px; border-radius:4px;">
+      <button class="action-btn" onclick="saveGoodsTotal('${esc(key)}', this)">저장</button>
+    </div>`;
+  }).join('');
+}
+
+async function saveGoodsTotal(key, btn) {
+  const row = btn.closest('.config-row');
+  const input = row.querySelector('.goods-total-input');
+  const value = input.value.trim();
+  const res = await api('update-config', { key, value });
+  if (res.success) {
+    allData.config[key] = value;
+    btn.textContent = '✓';
+    setTimeout(() => { btn.textContent = '저장'; }, 1500);
+  } else {
+    alert('저장 실패: ' + (res.error || '오류'));
+  }
 }
 
 // ── 이벤트 위임 (수정/삭제 버튼) ─────────────────
@@ -431,6 +466,12 @@ function openConfigModal(key, value) {
 }
 
 function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+function toggleGoodsPriceMode() {
+  const isAll = !document.getElementById('f-concert_ref').value;
+  document.getElementById('price-single').style.display = isAll ? 'none' : 'flex';
+  document.getElementById('price-all').style.display = isAll ? 'block' : 'none';
+}
 document.getElementById('modal-cancel').onclick = closeModal;
 document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
 
@@ -466,20 +507,40 @@ function buildForm(type, item) {
       <div class="form-group"><label>추가 정보 URL</label><input type="text" id="f-extra_info_url" value="${v('extra_info_url')}"></div>
     </div>`;
 
-  if (type === 'goods') return `
+  if (type === 'goods') {
+    const isAll = item ? item.concert_ref === null : false;
+    const concertOpts = (allData.concerts || []).map(c =>
+      `<option value="${esc(c.name)}" ${(!isAll && item?.concert_ref === c.name) ? 'selected' : ''}>${esc(c.name)}</option>`
+    ).join('');
+    const perConcertPrices = (allData.concerts || []).map(c => {
+      const pval = item?.price_data?.[c.name] ?? '';
+      return `<div class="form-group"><label>${esc(c.name)} 가격 (원)</label><input type="number" class="concert-price-input" data-concert="${esc(c.name)}" value="${pval}"></div>`;
+    }).join('');
+    return `
     <div class="form-group"><label>굿즈명 *</label><input type="text" id="f-goods_name" value="${v('goods_name')}"></div>
     <div class="form-row">
-      <div class="form-group"><label>콘서트 참조 (예: 체리제)</label><input type="text" id="f-concert_ref" value="${v('concert_ref')}"></div>
+      <div class="form-group"><label>콘서트</label>
+        <select id="f-concert_ref" onchange="toggleGoodsPriceMode()">
+          <option value="" ${isAll ? 'selected' : ''}>ALL (전체 콘서트)</option>
+          ${concertOpts}
+        </select>
+      </div>
       <div class="form-group"><label>그룹명 (예: 뱃지 / 없으면 빈칸)</label><input type="text" id="f-group_name" value="${v('group_name')}"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label>가격 (원, 비워두면 정보없음)</label><input type="number" id="f-price" value="${v('price')}"></div>
-      <div class="form-group"><label>수량 정보 (예: 60묶음)</label><input type="text" id="f-quantity_info" value="${v('quantity_info')}"></div>
+    <div id="price-single" style="display:${isAll ? 'none' : 'flex'}; gap:12px;">
+      <div class="form-group" style="flex:1"><label>가격 (원, 비워두면 정보없음)</label><input type="number" id="f-price" value="${v('price')}"></div>
     </div>
-    <div class="form-group"><label>상세 정보 (예: 일러 4종)</label><input type="text" id="f-detail" value="${v('detail')}"></div>
+    <div id="price-all" style="display:${isAll ? 'block' : 'none'};">
+      ${perConcertPrices}
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>수량 정보 (예: 60묶음)</label><input type="text" id="f-quantity_info" value="${v('quantity_info')}"></div>
+      <div class="form-group"><label>상세 정보 (예: 일러 4종)</label><input type="text" id="f-detail" value="${v('detail')}"></div>
+    </div>
     <div class="form-group checkbox-group">
       <label><input type="checkbox" id="f-is_random" ${item?.is_random ? 'checked' : ''}> 랜덤 굿즈</label>
     </div>`;
+  }
 
   if (type === 'notice') return `
     <div class="form-group"><label>타입 *</label>
@@ -518,10 +579,24 @@ async function saveModal(type, id) {
   }
 
   if (type === 'goods') {
+    const concertRef = trimOrNull(val('f-concert_ref'));
+    let price = null;
+    let price_data = null;
+    if (concertRef === null) {
+      price_data = {};
+      document.querySelectorAll('.concert-price-input').forEach(input => {
+        const p = input.value.trim();
+        if (p) price_data[input.dataset.concert] = Number(p);
+      });
+      if (!Object.keys(price_data).length) price_data = null;
+    } else {
+      price = val('f-price') || null;
+    }
     payload = {
       goods_name:    trimOrNull(val('f-goods_name')),
-      concert_ref:   trimOrNull(val('f-concert_ref')),
-      price:         val('f-price') || null,
+      concert_ref:   concertRef,
+      price,
+      price_data,
       quantity_info: trimOrNull(val('f-quantity_info')),
       detail:        trimOrNull(val('f-detail')),
       group_name:    trimOrNull(val('f-group_name')),
