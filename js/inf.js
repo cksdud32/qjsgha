@@ -264,6 +264,7 @@ function buildConcertTable(concerts) {
   const rowDefs = [
     {
       label: '날짜',
+      mergeKey: (c) => (c.date_label || '') + '|' + (c.status || ''),
       cell: (c) => {
         const parts = [c.date_label, c.status ? `(${c.status})` : ''].filter(Boolean);
         return parts.join('') || '정보 없음';
@@ -271,6 +272,7 @@ function buildConcertTable(concerts) {
     },
     {
       label: '티켓 인포',
+      mergeKey: (c) => c.ticketing_info || '',
       html: (c) => {
         const url = extractUrl(c.ticketing_info);
         if (url) {
@@ -282,34 +284,42 @@ function buildConcertTable(concerts) {
     },
     {
       label: '가격',
+      mergeKey: (c) => String(c.ticket_price ?? ''),
       cell: (c) => c.ticket_price ? c.ticket_price.toLocaleString() + '￦' : '정보 없음'
     },
     {
       label: '배송비',
+      mergeKey: (c) => String(c.delivery_fee ?? ''),
       cell: (c) => c.delivery_fee ? c.delivery_fee.toLocaleString() + '￦' : '정보 없음'
     },
     {
       label: '티켓팅',
+      mergeKey: (c) => c.status || '',
       cell: (c) => c.status || '정보 없음'
     },
     {
       label: '입장 전 대기 시간<br>및 입장 시작 시간',
+      mergeKey: (c) => c.waiting_time || '',
       cell: (c) => c.waiting_time || '정보 없음'
     },
     {
       label: '입장 후 대기 시간',
+      mergeKey: (c) => c.entry_wait_time || '',
       cell: (c) => c.entry_wait_time || '정보 없음'
     },
     {
       label: '진행 시간',
+      mergeKey: (c) => c.run_time || '',
       cell: (c) => c.run_time || '정보 없음'
     },
     {
       label: '굿즈 구매 시간<br>(품절 주의)',
+      mergeKey: (c) => c.goods_sale_time || '',
       cell: (c) => c.goods_sale_time || '정보 없음'
     },
     {
       label: '장소',
+      mergeKey: (c) => c.location_url || '',
       html: (c) => {
         if (!c.location_url) return '정보 없음';
         return `<div class="map-wrap" id="map-area-${c.id}">
@@ -322,6 +332,7 @@ function buildConcertTable(concerts) {
     },
     {
       label: '드레스 코드',
+      mergeKey: (c) => c.dress_code || '',
       cell: (c) => c.dress_code || '정보 없음'
     },
     {
@@ -350,16 +361,29 @@ function buildConcertTable(concerts) {
     th.innerHTML = def.label;
     tr.appendChild(th);
 
-    concerts.forEach((c, idx) => {
-      const td = document.createElement('td');
-      if (def.tdStyle) td.setAttribute('style', def.tdStyle(c));
-      if (def.html) {
-        td.innerHTML = def.html(c, idx);
-      } else {
-        td.textContent = def.cell(c, idx);
+    if (def.mergeKey) {
+      let i = 0;
+      while (i < concerts.length) {
+        const key = def.mergeKey(concerts[i]);
+        let span = 1;
+        while (i + span < concerts.length && def.mergeKey(concerts[i + span]) === key) span++;
+        const td = document.createElement('td');
+        if (span > 1) td.colSpan = span;
+        if (def.tdStyle) td.setAttribute('style', def.tdStyle(concerts[i]));
+        if (def.html) td.innerHTML = def.html(concerts[i], i);
+        else td.textContent = def.cell(concerts[i], i);
+        tr.appendChild(td);
+        i += span;
       }
-      tr.appendChild(td);
-    });
+    } else {
+      concerts.forEach((c, idx) => {
+        const td = document.createElement('td');
+        if (def.tdStyle) td.setAttribute('style', def.tdStyle(c));
+        if (def.html) td.innerHTML = def.html(c, idx);
+        else td.textContent = def.cell(c, idx);
+        tr.appendChild(td);
+      });
+    }
 
     tbody.appendChild(tr);
   });
