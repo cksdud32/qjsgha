@@ -754,7 +754,23 @@ async function loadInfData() {
       subtitle.textContent = '※ ' + data.config.goods_subtitle;
     }
 
+    const linkArea = document.getElementById('goods-link-area');
+    if (linkArea && data.config) {
+      const url   = data.config.goods_link_url;
+      const label = data.config.goods_link_label;
+      if (url && label) {
+        linkArea.innerHTML = `<p>이미지 및 자세한 내용은 아래 링크 클릭<br>
+          <a href="${url}" class="link-as" target="_blank" rel="noopener noreferrer">${label}<br>${url}</a></p><br>`;
+      }
+    }
+
     if (data.config) {
+      const titleEl = document.getElementById('live-title');
+      if (titleEl) titleEl.textContent = data.config.live_title || 'CHERRY LIVE:';
+
+      const dateEl = document.getElementById('live-date');
+      if (dateEl) dateEl.textContent = data.config.live_date_label || '정보 없음';
+
       const dateStr = data.config.next_concert_date;
       const timeStr = data.config.next_concert_time;
       if (dateStr) _ddayTarget.day  = new Date(dateStr);

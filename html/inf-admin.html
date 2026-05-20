@@ -432,9 +432,13 @@ document.querySelector('#tab-notice .filter-bar').addEventListener('click', e =>
 });
 
 const CONFIG_LABELS = {
+  live_title:         '라이브 제목 (예: CHERRY LIVE:)',
+  live_date_label:    '날짜·시간 표시 (예: 2025년 6월 15일 오후 6시)',
   goods_subtitle:     '굿즈 부제목',
-  next_concert_date:  '다음 콘서트 날짜 (YYYY-MM-DD)',
-  next_concert_time:  '다음 콘서트 시간 (YYYY-MM-DDTHH:MM:SS)'
+  goods_link_label:   '굿즈 링크 텍스트 (예: 체리제 굿즈 목록 보러가기(체리 숲))',
+  goods_link_url:     '굿즈 링크 URL',
+  next_concert_date:  '디데이 기준 날짜 (YYYY-MM-DD)',
+  next_concert_time:  '디데이 기준 시간 (YYYY-MM-DDTHH:MM:SS)'
 };
 
 function renderWaiting(list) {
