@@ -7,6 +7,15 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
+function getRawBody(request) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    request.on('data', chunk => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
+    request.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    request.on('error', reject);
+  });
+}
+
 function verifySignature(rawBody, signature, timestamp, publicKey) {
   try {
     const sigBytes = Buffer.from(signature, 'hex');
@@ -29,25 +38,20 @@ export default async function handler(request, response) {
   const signature = request.headers['x-signature-ed25519'];
   const timestamp = request.headers['x-signature-timestamp'];
 
-  // Vercel plain functions: request.body is the raw JSON string
-  const rawBody = typeof request.body === 'string'
-    ? request.body
-    : JSON.stringify(request.body);
+  const rawBody = await getRawBody(request);
 
   if (!verifySignature(rawBody, signature, timestamp, process.env.DISCORD_PUBLIC_KEY)) {
     return response.status(401).send('Invalid request signature');
   }
 
-  const interaction = typeof request.body === 'string'
-    ? JSON.parse(request.body)
-    : request.body;
+  const interaction = JSON.parse(rawBody);
 
-  // PING (type 1) → PONG (type 1)
+  // PING → PONG
   if (interaction.type === 1) {
     return response.status(200).json({ type: 1 });
   }
 
-  // APPLICATION_COMMAND (type 2)
+  // APPLICATION_COMMAND
   if (interaction.type === 2) {
     const { name, options } = interaction.data;
     const guildId = interaction.guild_id;
