@@ -64,35 +64,11 @@ export default async function handler(request, response) {
 
       if (action === '등록') {
         try {
-          const webhookRes = await fetch(
-            `https://discord.com/api/v10/channels/${channelId}/webhooks`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bot ${process.env.DISCORD_BOT_TOKEN}`
-              },
-              body: JSON.stringify({ name: '류현준 알리미' })
-            }
-          );
-
-          if (!webhookRes.ok) {
-            const err = await webhookRes.text();
-            console.error('웹훅 생성 실패:', err);
-            return response.status(200).json({
-              type: 4,
-              data: { content: '❌ 웹훅 생성 실패. 봇에게 **웹훅 관리** 권한이 있는지 확인해 주세요.', flags: 64 }
-            });
-          }
-
-          const webhook = await webhookRes.json();
-          const webhookUrl = `https://discord.com/api/webhooks/${webhook.id}/${webhook.token}`;
-
           await pool.query(
-            `INSERT INTO discord_channels (guild_id, channel_id, webhook_url)
-             VALUES ($1, $2, $3)
-             ON CONFLICT (guild_id) DO UPDATE SET channel_id = $2, webhook_url = $3`,
-            [guildId, channelId, webhookUrl]
+            `INSERT INTO discord_channels (guild_id, channel_id)
+             VALUES ($1, $2)
+             ON CONFLICT (guild_id) DO UPDATE SET channel_id = $2`,
+            [guildId, channelId]
           );
 
           return response.status(200).json({
@@ -121,7 +97,6 @@ export default async function handler(request, response) {
             });
           }
 
-          await fetch(existing.rows[0].webhook_url, { method: 'DELETE' });
           await pool.query(`DELETE FROM discord_channels WHERE guild_id = $1`, [guildId]);
 
           return response.status(200).json({

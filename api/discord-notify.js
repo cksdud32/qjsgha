@@ -44,25 +44,30 @@ export default async function handler(request, response) {
       embeds
     });
 
-    // 구독한 채널의 웹훅 URL 목록 조회
-    const channelsResult = await pool.query(`SELECT webhook_url FROM discord_channels`);
+    // 구독한 채널 목록 조회
+    const channelsResult = await pool.query(`SELECT channel_id FROM discord_channels`);
 
     if (channelsResult.rows.length === 0) {
       return response.status(200).json({ success: true, message: '구독 채널이 없습니다.' });
     }
 
+    const botToken = process.env.DISCORD_BOT_TOKEN;
+
     const sendResults = await Promise.allSettled(
       channelsResult.rows.map(row =>
-        fetch(row.webhook_url, {
+        fetch(`https://discord.com/api/v10/channels/${row.channel_id}/messages`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bot ${botToken}`
+          },
           body: messageBody
         }).then(async r => {
           if (!r.ok) {
             const err = await r.text();
-            throw new Error(`webhook error: ${err}`);
+            throw new Error(`channel ${row.channel_id}: ${err}`);
           }
-          return row.webhook_url;
+          return row.channel_id;
         })
       )
     );
