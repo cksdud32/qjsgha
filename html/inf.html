@@ -108,92 +108,9 @@
             <h2>콘서트 일정</h2>
             <table>
               <thead>
-                <tr>
-                  <th>/</th>
-                  <th>다시 시작 체리제</th>
-                  <th>7월콘(취소)</th>
-                </tr>
+                <tr id="concert-head-row"><th>/</th></tr>
               </thead>
-              <tbody>
-                <tr>
-                  <th>날짜</td>
-                  <td>4월18일(종료)</td>
-                  <td>7월25일(취소)</td>
-                </tr>
-                <tr>
-                  <th>티켓 인포</td>
-                  <td><a href="https://xn--oy2bo3kfwkc1j.com/goods/view.php?gidx=411" class="fldzm" target="_blank"
-                      rel="noopener noreferrer">체리상회 바로가기</a><!--정보 없음--></td>
-                  <td><!--<a href="#" class="fldzm" target="_blank"
-                    rel="noopener noreferrer">체리상회 바로가기</a>-->정보 없음</td>
-                </tr>
-                <tr>
-                  <th>가격</td>
-                  <td>65,000￦</td>
-                  <td>정보 없음</td>
-                </tr>
-                <tr>
-                  <th>배송비</td>
-                  <td colspan="2"> 4,000￦</td>
-                </tr>
-                <tr>
-                  <th>티켓팅</td>
-                  <td>
-                    <!--<a href="#" class="fldzm" target="_blank" rel="noopener noreferrer">수요일(17일)까지</a>-->
-                    종료
-                  </td>
-                  <td>
-                    <!--<a href="#" class="fldzm" target="_blank" rel="noopener noreferrer"></a>-->
-                    티켓팅 미정
-                  </td>
-                </tr>
-                <th>입장 전 대기 시간<br>및 입장 시작 시간</td>
-                <td>아래 버튼 참고</td>
-                <td>정보 없음</td>
-                </tr>
-                <tr>
-                  <th>입장 후 대기 시간<br>3반 기준</td>
-                  <td>1시~3시</td>
-                  <td>12시30분~3시</td>
-                </tr>
-                <tr>
-                  <th>진행 시간</td>
-                  <td>3시~6시</td>
-                  <td>3시~7시</td>
-                </tr>
-                <tr>
-                  <th>굿즈 구매 시간<br>(품절 주의)</td>
-                  <td>3반 입장~2시n분 까지<br>이후에는 콘서트 종료 후</td>
-                  <td>A그룹 입장~2시n분 까지<br>이후에는 콘서트 종료 후</td>
-                </tr>
-                <tr>
-                  <th>장소</td>
-                  <td colspan="2" style="padding: 0; margin: 0; padding-bottom: 10px;">
-                    <div id="map-area" class="map-wrap">
-                      <iframe src="https://naver.me/FCA8aHD4" style="padding-bottom: 10px;"></iframe>
-                    </div>
-                    <a href="https://naver.me/FCA8aHD4" target="_blank" rel="noopener noreferrer"
-                      style="text-decoration: underline; color: blue;">
-                      길찾기 / 상세 위치 보기</a>
-                  </td>
-                </tr>
-                <tr>
-                  <th>드레스 코드</td>
-                  <td>교복, 체육복, 반티, 생활복등</td>
-                  <td>정보 없음</td>
-                </tr>
-                <tr>
-                  <th>셋리스트 보기</td>
-                  <td class="Live-Setlist"><a href="#">셋리스트 보기</a></td>
-                  <td>정보 없음</td><!--<td class="Live-Setlist"><a href="#">셋리스트 보기</a></td>-->
-                </tr>
-                <tr>
-                  <th>추가 정보 보기</td>
-                  <td><a href="https://naver.me/Gmpa1cw6" class="fldzm" target="_blank" rel="noopener noreferrer">체리 숲
-                      바로가기</a><br>3번,4번</td>
-                  <td>정보 없음</td>
-                </tr>
-              </tbody>
+              <tbody id="concert-tbody"></tbody>
             </table>
             <div class="data" data-area="concert">
               <div class="toggle-text" data-target="hiddenContentA">▼ 대기 및 입장시간 보기</div>
@@ -247,241 +164,25 @@
               </div>
             </div>
             <div class="hidden-box" id="hiddenContentB">
-              <div class="content">
-                <h3>※ 안내 사항 ※</h3>
-                <p>
-                  • 본 공연은 전석 스탠딩으로 진행되는 콘서트입니다.<br>
-                  중간에 짧은 휴식 시간이 마련되어 있으나, 장소가 협소하여 앉아서 쉬기에는<br>
-                  조금 어려울 수 있으니 편한 신발을 신고 오시는 것을 추천드립니다.<br>
-                  <br>
-                  • 원활한 입장을 위해 안내해 드린 입장 시간보다 5~10분 정도<br>
-                  미리 도착하셔서 여유 있게 준비해 주시길 부탁드립니다.<br>
-                  <br>
-                  • 굿즈 구매를 원하시는 분들은 입장 후 오른쪽 대기줄을 이용해 주시고,<br>
-                  구매하지 않는 분들은 왼쪽 통로를 통해 바로 입장해 주시면 됩니다.<br>
-                  <br>
-                  • 행봉이나 감정봉의 수리 및 교환을 신청하신 분들은 입장하신 뒤<br>
-                  가까이 계신 스태프분께 말씀해 주시면 바로 수령하실 수 있습니다.<br>
-                  <br>
-                  • 공연 중 촬영된 영상은 추후 편집되어 멤버십 전용 영상으로 업로드됩니다.<br>
-                  객석 쪽은 따로 블러 처리가 되지 않아 후면이나 측면이 살짝 노출될 수 있으니<br>
-                  이 점 미리 참고해 주시기 바랍니다.<br>
-                  <br>
-                  • 체버릿 코롯토를 소지하고 계신 분들은 오프라인 행사만의 특별한 특전을<br>
-                  받으실 수 있습니다. 잊지 말고 꼭 지참해서 방문해 주세요.<br>
-                  <br>
-                  • 모든 회원증 관련 상품들은 현재 효력이 만료되어,<br>
-                  더 이상 별도의 특전이 제공되지 않는 점 양해 부탁드립니다.<br>
-                  <br><br>
-                  <strong>본 내용은 체리제 및 이전 콘서트 운영 방식을 기준으로 작성되었습니다.</strong>
-                </p>
-              </div>
+              <div class="content" id="notice-안내"></div>
             </div>
             <div class="hidden-box" id="hiddenContentC">
-              <div class="content">
-                <h3>⚠️ 주의 사항</h3>
-                <p>
-                  • 본 콘서트 중에는 모든 형태의 녹화 및 녹음이 금지됩니다.<br>
-                  녹화나 녹음 적발 시 티켓은 즉시 취소되며 퇴장 조치될 수 있습니다.<br>
-                  공연 기록은 콘서트 시작 전이나 휴식 시간을 이용해 주시길 부탁드립니다.<br>
-                  <br>
-                  • 본인의 대기 시간이 아님에도 주변을 지속적으로 배회하여 인파를 형성할 경우,<br>
-                  원활한 운영을 위해 여러 차례 적발 시 티켓이 취소될 수 있습니다.<br>
-                  <br>
-                  • 안전한 관람을 위해 현장 스태프의 지시를 반드시 따라주세요.<br>
-                  반복적으로 불이행할 경우 티켓이 취소될 수 있습니다. (스태프분들 말 잘 듣기!)<br>
-                  <br>
-                  • 무통장 입금 시 정확한 금액과 입금자명을 반드시 기입해 주세요.<br>
-                  해당 사항이 지켜지지 않아 발생하는 누락은 개인의 과실로 처리되며,<br>
-                  체리상회 등에서는 별도의 도움을 받기 어려울 수 있습니다.<br>
-                  <br><br>
-                  <strong>본 내용은 체리상회 티켓 인포와 초대장 정보를 참고하여 작성되었습니다.</strong><br>
-                  <strong>자세한 사항은 체리상회 공식 티켓 인포를 확인해 주시기 바랍니다.</strong>
-                </p>
-              </div>
+              <div class="content" id="notice-주의"></div>
             </div>
             <div class="hidden-box" id="hiddenContentD">
-              <div class="content">
-                <h3>※ 환불 안내 ※</h3>
-                <p>
-                  <br>
-                  행사 14일전까지: 티켓 가격 100% 환불<br>
-                  행사 7일전까지: 티켓 가격 50% 환불<br>
-                  행사 2일전까지: 티켓 가격 20% 환불<br>
-                  <br>
-                  이 이후의 환불은 불가합니다. <br>
-                  또한 반송 택배비는 개인 부담이니 유의 바랍니다. <br>
-                  <br><br>
-                  <strong>본 내용은 체리상회 인포 하단에 적혀 있으며 <br>
-                    체리제를 기준으로 작성되었습니다.</strong>
-                </p>
-              </div>
+              <div class="content" id="notice-환불"></div>
             </div>
             <div class="hidden-box" id="hiddenContentE">
-              <div class="content">
-                <h3>※ 체리제 추가 정보 ※</h3>
-                <p>
-                  <br>
-                  • 이번 콘서트에서는 편지가 입장시 주는 러브레터 메모지에 <br>
-                  마음들을 담아주시면 무대 위에서 Q&A처럼 읽어주실 예정입니다. <br>
-                  현장에서 궁금하신 내용이나 하고 싶은 얘기를 적어, <br>
-                  추후 스텝이 수거할 때 전달해 주시면 됩니다. <br>
-                  <a href="https://naver.me/5RAcqCLC" class="fldzm" target="_blank" rel="noopener noreferrer">관련 공지
-                    보기</a>
-                  <br>
-                  • 이번 체리제는 모든 곡이 밴드로 진행됩니다. <br>
-                  <br><br>
-                  <strong>본 내용은 체리상회 인포에 적혀 있는 내용을 <br>
-                    참고하여 작성되었숩나다.</strong>
-                </p>
-              </div>
+              <div class="content" id="notice-추가정보"></div>
             </div>
           </li>
           <li style="width: 50%;">
             <h2 style="font-size: 22px;">콘서트 굿즈 - 현장 판매<br>(<small>※ 현재 등록된 굿즈는 체리제/체라히 굿즈입니다.</small>)</h2>
             <table>
               <thead>
-                <tr>
-                  <th>굿즈 목록</th>
-                  <th>체리제 굿즈 가격</th>
-                  <th>2월콘 굿즈 가격</th>
-                </tr>
+                <tr id="goods-head-row"><th>굿즈 목록</th></tr>
               </thead>
-              <tbody>
-                <!--<tr class="clickable-row" data-group="poster">
-                  <td colspan="3"><span class="arrow">▼</span> 전체 포스터 보기</td>
-                </tr>-->
-                <tr class="price-row" data-group="poster"> <!--hidden-row-->
-                  <td>A2 포스터</td>
-                  <td>정보 없음</td>
-                  <td>20,000원</td>
-                </tr>
-                <tr class="hidden-row price-row" data-group="poster">
-                  <td>B4 포스터</td>
-                  <td> × </td>
-                  <td> × </td>
-                </tr>
-                <!--<tr class="clickable-row" data-group="Poster">
-                  <td colspan="3"><span class="arrow">▼</span>전체 패키지 보기</td>
-                </tr>-->
-                <tr class="price-row" data-group="Poster"><!--hidden-row -->
-                  <td>패키지</td>
-                  <td>20,000원 <br> 티켓, 엽서, 포카, 뱃지</td>
-                  <td>20,000원 <br> 엽서, 포카, 카드텍, 티켓, 뱃지</td>
-                </tr>
-                <tr class="hidden-row price-row" data-group="Poster">
-                  <td>서브 포스터 패키지</td>
-                  <td> × </td>
-                  <td> × </td>
-                </tr>
-                <tr class="clickable-row" data-group="Badge">
-                  <td colspan="3"><span class="arrow">▼</span>전체 뱃지 보기</td>
-                </tr>
-                <tr class="hidden-row price-row" data-group="Badge">
-                  <td>털 뱃지</td>
-                  <td> × </td>
-                  <td>일러 2종류 / 10,000원</td>
-                </tr>
-                <tr class="hidden-row price-row" data-group="Badge">
-                  <td>랜덤 뱃지 6종</td>
-                  <td> × </td>
-                  <td>개당 7,000원</td>
-                </tr>
-                <tr class="hidden-row price-row" data-group="Badge">
-                  <td>곰모양 매트펄 뱃지</td>
-                  <td>일러 4종류(80개씩)<br> 개당 7,000원</td>
-                  <td> × </td>
-                </tr>
-                <!--<tr>
-                   <tr class="price-row"> 
-                  <td>카드텍</td>
-                  <td> × </td>
-                  <td> × </td>
-                </tr>-->
-                <tr class="price-row">
-                  <td>랜덤 포카</td>
-                  <td> × </td>
-                  <td>개당 2,000원 <br>한세트에 18,000원</td>
-                </tr>
-                <tr>
-                  <td>올콜시 특전</td>
-                  <td> × </td>
-                  <td>랜덤 포카 6종 올콜시</td>
-                </tr>
-                <tr class="clickable-row" data-group="Photo_card">
-                  <td colspan="3"><span class="arrow">▼</span>전체 포토카드 세트 보기</td>
-                </tr>
-                <tr class="hidden-row price-row" data-group="Photo_card">
-                  <td>곰 포카 세트</td>
-                  <td>12,000원 / 60묶음<br>일러 4종</td>
-                  <td> × </td>
-                </tr>
-                <tr class="hidden-row price-row" data-group="Photo_card">
-                  <td>생애 일러 포카 세트</td>
-                  <td> × </td>
-                  <td>일러 6종 <br>20,000원</td>
-                </tr>
-                <tr class="price-row">
-                  <td>슬로건</td>
-                  <td>20,000원</td>
-                  <td>25,000원</td>
-                </tr>
-                <tr class="price-row">
-                  <td>아크릴 코롯토</td>
-                  <td>20,000원 / 50개</td>
-                  <td>20,000원</td>
-                </tr>
-             <!--   <tr class="clickable-row" data-group="keyring">
-                  <td colspan="3"><span class="arrow">▼</span>전체 에폭시 키링 보기</td>
-                </tr>
-                <tr class="hidden-row price-row" data-group="keyring">
-                  <td> 애폭시 삐용삐용 키링</td>
-                  <td>10,000원 / 60개</td>
-                  <td> × </td>
-                </tr>
-                <tr class="hidden-row price-row" data-group="keyring">
-                  <td> 애폭시 게임기 키링</td>
-                  <td>10,000원 / 60개</td>
-                  <td> × </td>
-                </tr>
-                <tr class="price-row">
-                  <td>체리제 스티커</td>
-                  <td>장당 5,000원 / 200장</td>
-                  <td> × </td>
-                </tr> -->
-                <tr class="price-row">
-                  <td>틴케이스</td>
-                  <td>8,000원 / 도안 2종<br>도안당 40개</td>
-                  <td> × </td>
-                </tr>
-               <!-- <tr class="price-row">
-                  <td>아크릴 집게</td>
-                  <td>개당 8,000원 / 도안 2종<br>도안당 50개</td>
-                  <td> × </td>
-                </tr> -->
-                <tr>
-                  <td>전체 가격<br>
-                    <div style="font-size: 13px;">(도안당 1개 기준)</div>
-                  </td>
-                  <td>116,000원<br>(카드텍 한세트 기준)</td>
-                  <td>206,000원<br>(카드텍 한세트 기준)</td>
-                </tr>
-                <tr id="calculator-row" style="display:none;">
-                  <td colspan="3">
-                    <div class="calculator">
-                      <div class="calculator-header">
-                        🟢 계산기 활성화 중
-                        <button id="resetCalc">초기화</button>
-                        <button id="closeCalc">닫기</button>
-                      </div>
-                      <ul id="calcList"></ul>
-                      <div class="calc-total">
-                        총합: <span id="calcTotal">0</span>원
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
+              <tbody id="goods-tbody"></tbody>
             </table>
             <p><b>랜덤 카드텍, 랜덤 포카 등의 한 세트 구성 안내</b> <br>
               본 사이트에서는 기본 일러스트 수에 3개를 더해 한 세트를 구성하고 있습니다.<br>

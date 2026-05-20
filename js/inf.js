@@ -267,126 +267,394 @@ document.querySelectorAll(".clickable-row").forEach(row => {
 });
 
 
-// 계산기
-document.addEventListener('DOMContentLoaded', () => {
-  const calcRow = document.getElementById('calculator-row');
-  const calcList = document.getElementById('calcList');
-  const calcTotal = document.getElementById('calcTotal');
-  const header = document.querySelector('.calculator-header');
+// ============ DB 데이터 로드 ============
 
+function extractUrl(text) {
+  if (!text) return null;
+  const m = text.match(/https?:\/\/[^\s)]+/);
+  return m ? m[0] : null;
+}
+
+function buildConcertTable(concerts) {
+  const headRow = document.getElementById('concert-head-row');
+  const tbody = document.getElementById('concert-tbody');
+  if (!headRow || !tbody) return;
+
+  concerts.forEach(c => {
+    const th = document.createElement('th');
+    th.textContent = c.name + (c.status === '취소' ? `(${c.status})` : '');
+    headRow.appendChild(th);
+  });
+
+  const rowDefs = [
+    {
+      label: '날짜',
+      cell: (c) => {
+        const parts = [c.date_label, c.status ? `(${c.status})` : ''].filter(Boolean);
+        return parts.join('') || '정보 없음';
+      }
+    },
+    {
+      label: '티켓 인포',
+      html: (c) => {
+        const url = extractUrl(c.ticketing_info);
+        if (url) {
+          const label = (c.ticketing_info || '').replace(/\s*\(https?:\/\/[^\s)]+\)/, '').trim();
+          return `<a href="${url}" class="fldzm" target="_blank" rel="noopener noreferrer">${label || '바로가기'}</a>`;
+        }
+        return c.ticketing_info || '정보 없음';
+      }
+    },
+    {
+      label: '가격',
+      cell: (c) => c.ticket_price ? c.ticket_price.toLocaleString() + '￦' : '정보 없음'
+    },
+    {
+      label: '배송비',
+      cell: (c) => c.delivery_fee ? c.delivery_fee.toLocaleString() + '￦' : '정보 없음'
+    },
+    {
+      label: '티켓팅',
+      cell: (c) => c.status || '정보 없음'
+    },
+    {
+      label: '입장 전 대기 시간<br>및 입장 시작 시간',
+      cell: (c) => c.waiting_time || '정보 없음'
+    },
+    {
+      label: '입장 후 대기 시간',
+      cell: (c) => c.entry_wait_time || '정보 없음'
+    },
+    {
+      label: '진행 시간',
+      cell: (c) => c.run_time || '정보 없음'
+    },
+    {
+      label: '굿즈 구매 시간<br>(품절 주의)',
+      cell: (c) => c.goods_sale_time || '정보 없음'
+    },
+    {
+      label: '장소',
+      html: (c) => {
+        if (!c.location_url) return '정보 없음';
+        return `<div class="map-wrap" id="map-area-${c.id}">
+          <iframe src="${c.location_url}" style="padding-bottom:10px;"></iframe>
+        </div>
+        <a href="${c.location_url}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;color:blue;">
+          길찾기 / 상세 위치 보기</a>`;
+      },
+      tdStyle: (c) => c.location_url ? 'padding:0;padding-bottom:10px;' : ''
+    },
+    {
+      label: '드레스 코드',
+      cell: (c) => c.dress_code || '정보 없음'
+    },
+    {
+      label: '셋리스트 보기',
+      html: (c, idx) => {
+        if (!c.setlist_url) {
+          return idx === 0
+            ? `<span class="Live-Setlist"><a href="#">셋리스트 보기</a></span>`
+            : '정보 없음';
+        }
+        return `<a href="${c.setlist_url}" class="fldzm" target="_blank" rel="noopener noreferrer">셋리스트 보기</a>`;
+      }
+    },
+    {
+      label: '추가 정보 보기',
+      html: (c) => {
+        if (!c.extra_info_url) return '정보 없음';
+        return `<a href="${c.extra_info_url}" class="fldzm" target="_blank" rel="noopener noreferrer">체리 숲 바로가기</a>`;
+      }
+    }
+  ];
+
+  rowDefs.forEach(def => {
+    const tr = document.createElement('tr');
+    const th = document.createElement('th');
+    th.innerHTML = def.label;
+    tr.appendChild(th);
+
+    concerts.forEach((c, idx) => {
+      const td = document.createElement('td');
+      if (def.tdStyle) td.setAttribute('style', def.tdStyle(c));
+      if (def.html) {
+        td.innerHTML = def.html(c, idx);
+      } else {
+        td.textContent = def.cell(c, idx);
+      }
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+function buildGoodsTable(goods) {
+  const headRow = document.getElementById('goods-head-row');
+  const tbody = document.getElementById('goods-tbody');
+  if (!headRow || !tbody) return;
+
+  const refs = [];
+  goods.forEach(g => {
+    if (!refs.includes(g.concert_ref)) refs.push(g.concert_ref);
+  });
+
+  refs.forEach(ref => {
+    const th = document.createElement('th');
+    th.textContent = ref + ' 굿즈 가격';
+    headRow.appendChild(th);
+  });
+
+  const names = [];
+  goods.forEach(g => {
+    if (!names.includes(g.goods_name)) names.push(g.goods_name);
+  });
+
+  const goodsMap = {};
+  goods.forEach(g => {
+    if (!goodsMap[g.goods_name]) goodsMap[g.goods_name] = {};
+    goodsMap[g.goods_name][g.concert_ref] = g;
+  });
+
+  names.forEach(name => {
+    const tr = document.createElement('tr');
+    tr.className = 'price-row';
+
+    const td0 = document.createElement('td');
+    td0.textContent = name;
+    tr.appendChild(td0);
+
+    refs.forEach(ref => {
+      const td = document.createElement('td');
+      const g = goodsMap[name] && goodsMap[name][ref];
+      if (!g) {
+        td.textContent = '×';
+      } else {
+        const parts = [];
+        if (g.price !== null && g.price !== undefined) parts.push(g.price.toLocaleString() + '원');
+        if (g.quantity_info) parts.push(g.quantity_info);
+        if (g.detail) parts.push(g.detail);
+        td.innerHTML = parts.length ? parts.join('<br>') : '정보 없음';
+      }
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  // 합계 행
+  const totalTr = document.createElement('tr');
+  const totalTd0 = document.createElement('td');
+  totalTd0.innerHTML = '전체 가격<br><div style="font-size:13px;">(도안당 1개 기준)</div>';
+  totalTr.appendChild(totalTd0);
+
+  refs.forEach(ref => {
+    const td = document.createElement('td');
+    const total = goods
+      .filter(g => g.concert_ref === ref && g.price !== null && !g.is_random)
+      .reduce((sum, g) => sum + Number(g.price), 0);
+    td.textContent = total ? total.toLocaleString() + '원' : '정보 없음';
+    totalTr.appendChild(td);
+  });
+  tbody.appendChild(totalTr);
+
+  // 계산기 행
+  const calcTr = document.createElement('tr');
+  calcTr.id = 'calculator-row';
+  calcTr.style.display = 'none';
+  calcTr.innerHTML = `<td colspan="${1 + refs.length}">
+    <div class="calculator">
+      <div class="calculator-header">
+        🟢 계산기 활성화 중
+        <button id="resetCalc">초기화</button>
+        <button id="closeCalc">닫기</button>
+      </div>
+      <ul id="calcList"></ul>
+      <div class="calc-total">총합: <span id="calcTotal">0</span>원</div>
+    </div>
+  </td>`;
+  tbody.appendChild(calcTr);
+}
+
+function buildNotices(notices) {
+  const typeConfig = {
+    '안내':    { id: 'notice-안내',    title: '※ 안내 사항 ※' },
+    '주의':    { id: 'notice-주의',    title: '⚠️ 주의 사항' },
+    '환불':    { id: 'notice-환불',    title: '※ 환불 안내 ※' },
+    '추가정보': { id: 'notice-추가정보', title: '※ 추가 정보 ※' }
+  };
+
+  const grouped = {};
+  notices.forEach(n => {
+    if (!grouped[n.type]) grouped[n.type] = [];
+    grouped[n.type].push(n);
+  });
+
+  Object.entries(grouped).forEach(([type, items]) => {
+    const cfg = typeConfig[type];
+    if (!cfg) return;
+    const el = document.getElementById(cfg.id);
+    if (!el) return;
+
+    let html = `<h3>${cfg.title}</h3><p>`;
+    items.forEach(item => {
+      html += `• ${item.content}<br><br>`;
+    });
+
+    const sources = [...new Set(items.map(i => i.source).filter(Boolean))];
+    if (sources.length) {
+      html += `<strong>본 내용은 ${sources.join(', ')}을(를) 기준으로 작성되었습니다.</strong>`;
+    }
+    html += '</p>';
+    el.innerHTML = html;
+  });
+}
+
+function initCalculator() {
   const openBtn = document.getElementById('Calculator');
-  const resetBtn = document.getElementById('resetCalc');
-  const closeBtn = document.getElementById('closeCalc');
+  if (!openBtn) return;
+
+  const goodsTbody = document.getElementById('goods-tbody');
+  if (!goodsTbody) return;
 
   let isCalcOpen = false;
-  let activeConcert = null;
+  let activeConcertIdx = null;
   const cart = {};
 
-
-  openBtn.addEventListener('click', () => {
-    calcRow.style.display = 'table-row';
-    isCalcOpen = true;
-    updateHeader();
-  });
-
-  closeBtn.addEventListener('click', () => {
-    calcRow.style.display = 'none';
-    isCalcOpen = false;
-    resetCalculator();
-  });
-
-  resetBtn.addEventListener('click', resetCalculator);
-
-  function resetCalculator() {
-    activeConcert = null;
-    for (const k in cart) delete cart[k];
-    calcList.innerHTML = '';
-    calcTotal.textContent = '0';
-    updateHeader();
+  function getRefNames() {
+    const ths = document.querySelectorAll('#goods-head-row th');
+    return Array.from(ths).slice(1).map(th => th.textContent.replace(' 굿즈 가격', ''));
   }
 
   function updateHeader() {
+    const header = document.querySelector('.calculator-header');
+    if (!header) return;
+    const refs = getRefNames();
     let text = '🟢 계산기 활성화 중';
-    if (activeConcert === 'jan') text += ' (체리제)';
-    if (activeConcert === 'feb') text += ' (2월콘)';
+    if (activeConcertIdx !== null && refs[activeConcertIdx - 1]) {
+      text += ` (${refs[activeConcertIdx - 1]})`;
+    }
     header.childNodes[0].nodeValue = text + ' ';
   }
 
-
   function render() {
+    const calcList = document.getElementById('calcList');
+    const calcTotal = document.getElementById('calcTotal');
+    if (!calcList || !calcTotal) return;
     let total = 0;
     calcList.innerHTML = '';
-
     Object.values(cart).forEach(item => {
       total += item.price * item.count;
       const li = document.createElement('li');
       li.textContent = `${item.name} × ${item.count}`;
       calcList.appendChild(li);
     });
-
     calcTotal.textContent = total.toLocaleString();
   }
 
-  document.querySelectorAll('.price-row').forEach(row => {
-    const tds = row.querySelectorAll('td');
-    if (tds.length !== 3) return;
+  function resetCalculator() {
+    activeConcertIdx = null;
+    for (const k in cart) delete cart[k];
+    const calcList = document.getElementById('calcList');
+    const calcTotal = document.getElementById('calcTotal');
+    if (calcList) calcList.innerHTML = '';
+    if (calcTotal) calcTotal.textContent = '0';
+    updateHeader();
+  }
 
-    tds.forEach((td, index) => {
-      if (index === 0) return;
-
-      td.addEventListener('click', () => {
-        if (!isCalcOpen) {
-          alert('계산기 열기 버튼을 클릭하여 추가하십시오');
-          return;
-        }
-
-        if (!activeConcert) {
-          activeConcert = index === 1 ? 'jan' : 'feb';
-          updateHeader();
-        }
-
-        const priceTd =
-          activeConcert === 'jan' ? tds[1] : tds[2];
-
-        const priceMatch = priceTd.innerText.match(/([0-9,]+)원/);
-        if (!priceMatch) return;
-
-        const price = Number(priceMatch[1].replace(/,/g, ''));
-        if (!price) return;
-
-        const name = row.cells[0].innerText.trim();
-        const key = `${name}_${price}_${activeConcert}`;
-
-        cart[key] = cart[key] || {
-          name,
-          price,
-          count: 0
-        };
-
-        cart[key].count++;
-        render();
-      });
-    });
+  openBtn.addEventListener('click', () => {
+    const calcRow = document.getElementById('calculator-row');
+    if (calcRow) calcRow.style.display = 'table-row';
+    isCalcOpen = true;
+    updateHeader();
   });
-});
 
+  // 이벤트 위임으로 닫기/초기화 버튼과 굿즈 행 클릭 처리
+  goodsTbody.addEventListener('click', (e) => {
+    if (e.target.id === 'closeCalc') {
+      const calcRow = document.getElementById('calculator-row');
+      if (calcRow) calcRow.style.display = 'none';
+      isCalcOpen = false;
+      resetCalculator();
+      return;
+    }
+    if (e.target.id === 'resetCalc') {
+      resetCalculator();
+      return;
+    }
 
-// 셋리스트 팝업
-document.addEventListener('DOMContentLoaded', () => {
-  const openBtn = document.querySelector('.Live-Setlist');
+    const td = e.target.closest('td');
+    if (!td) return;
+    const row = td.closest('tr.price-row');
+    if (!row) return;
+
+    if (!isCalcOpen) {
+      alert('계산기 열기 버튼을 클릭하여 추가하십시오');
+      return;
+    }
+
+    const tds = row.querySelectorAll('td');
+    const tdIdx = Array.from(tds).indexOf(td);
+    if (tdIdx === 0) return;
+
+    if (activeConcertIdx === null) {
+      activeConcertIdx = tdIdx;
+      updateHeader();
+    }
+
+    const priceTd = tds[activeConcertIdx];
+    if (!priceTd) return;
+    const priceMatch = priceTd.innerText.match(/([0-9,]+)원/);
+    if (!priceMatch) return;
+
+    const price = Number(priceMatch[1].replace(/,/g, ''));
+    if (!price) return;
+
+    const name = tds[0].innerText.trim();
+    const key = `${name}_${price}_${activeConcertIdx}`;
+    cart[key] = cart[key] || { name, price, count: 0 };
+    cart[key].count++;
+    render();
+  });
+}
+
+function initSetlistPopup() {
   const popup = document.querySelector('.popup_12');
   const closeBtn = document.querySelector('.popup_exe');
+  if (!popup || !closeBtn) return;
 
-  openBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    popup.style.display = 'block';
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('.Live-Setlist a');
+    if (link) {
+      e.preventDefault();
+      popup.style.display = 'block';
+    }
   });
 
   closeBtn.addEventListener('click', (e) => {
     e.preventDefault();
     popup.style.display = 'none';
   });
-});
+}
+
+async function loadInfData() {
+  try {
+    const res = await fetch('/api/get-inf');
+    if (!res.ok) throw new Error('API 응답 오류: ' + res.status);
+    const data = await res.json();
+
+    buildConcertTable(data.concerts);
+    buildGoodsTable(data.goods);
+    buildNotices(data.notices);
+    initCalculator();
+    initSetlistPopup();
+  } catch (e) {
+    console.error('데이터 로드 실패:', e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadInfData);
 
 // 네이버 앱에서만 지도 숨김 처리
 window.addEventListener('DOMContentLoaded', function() {
