@@ -21,9 +21,11 @@
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "@vercel/postgres": "^0.10.0",
+    "discord-interactions": "^4.4.0",
     "dotenv": "^17.4.2",
     "pg": "^8.20.0",
-    "prisma": "^6.19.3"
+    "prisma": "^6.19.3",
+    "tweetnacl": "^1.0.3"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

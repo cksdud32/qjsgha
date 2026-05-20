@@ -1,0 +1,46 @@
+{
+  "name": "discord-interactions",
+  "version": "4.4.0",
+  "description": "Helpers for discord interactions",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/discord/discord-interactions-js.git"
+  },
+  "engines": {
+    "node": ">=18.4.0"
+  },
+  "bugs": {
+    "url": "https://github.com/discord/discord-interactions-js/issues"
+  },
+  "homepage": "https://github.com/discord/discord-interactions-js",
+  "files": [
+    "dist/**/*"
+  ],
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "discord"
+  ],
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "fix": "biome check --apply .",
+    "lint": "biome check .",
+    "test": "jest --verbose"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.5",
+    "@commitlint/cli": "^20.0.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@types/express": "^4.17.9",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.0.0",
+    "body-parser": "^2.0.0",
+    "express": "^4.17.1",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.4",
+    "typescript": "^5.0.0"
+  }
+}

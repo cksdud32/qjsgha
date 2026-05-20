@@ -18,16 +18,16 @@ export default async function handler(request, response) {
     const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
     const todayStr = kst.toISOString().slice(0, 10);
 
-    const result = await pool.query(
+    const concertResult = await pool.query(
       `SELECT name, date_label, status FROM concert WHERE event_date = $1`,
       [todayStr]
     );
 
-    if (result.rows.length === 0) {
+    if (concertResult.rows.length === 0) {
       return response.status(200).json({ success: true, message: '오늘 예정된 콘서트가 없습니다.' });
     }
 
-    const embeds = result.rows.map(c => ({
+    const embeds = concertResult.rows.map(c => ({
       title: '🎵 오늘 류현준 오프라인 일정이 있습니다!',
       color: 0xCCA6E8,
       fields: [
@@ -39,18 +39,42 @@ export default async function handler(request, response) {
       timestamp: new Date().toISOString()
     }));
 
-    const discordRes = await fetch(process.env.DISCORD_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        content: '🔔 **오늘 류현준 님의 오프라인 일정이 있습니다!**',
-        embeds
-      })
+    const messageBody = JSON.stringify({
+      content: '🔔 **오늘 류현준 님의 오프라인 일정이 있습니다!**',
+      embeds
     });
 
-    if (!discordRes.ok) throw new Error('디스코드 웹훅 전송 실패');
+    // 구독한 채널의 웹훅 URL 목록 조회
+    const channelsResult = await pool.query(`SELECT webhook_url FROM discord_channels`);
 
-    return response.status(200).json({ success: true, message: `${result.rows.length}건 알림 전송 완료` });
+    if (channelsResult.rows.length === 0) {
+      return response.status(200).json({ success: true, message: '구독 채널이 없습니다.' });
+    }
+
+    const sendResults = await Promise.allSettled(
+      channelsResult.rows.map(row =>
+        fetch(row.webhook_url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: messageBody
+        }).then(async r => {
+          if (!r.ok) {
+            const err = await r.text();
+            throw new Error(`webhook error: ${err}`);
+          }
+          return row.webhook_url;
+        })
+      )
+    );
+
+    const succeeded = sendResults.filter(r => r.status === 'fulfilled').length;
+    const failed = sendResults.filter(r => r.status === 'rejected').map(r => r.reason?.message);
+
+    return response.status(200).json({
+      success: true,
+      message: `${succeeded}개 채널 전송 완료`,
+      ...(failed.length > 0 && { errors: failed })
+    });
   } catch (error) {
     console.error('Discord notify error:', error);
     return response.status(500).json({ success: false, error: error.message });
