@@ -579,7 +579,7 @@ function buildNotices(notices) {
     '주의':    { id: 'notice-주의',    title: '⚠️ 주의 사항' },
     '환불':    { id: 'notice-환불',    title: '※ 환불 안내 ※' },
     '추가정보': { id: 'notice-추가정보', title: '※ 추가 정보 ※' },
-    '대기안내': { id: 'notice-대기안내', title: '※ 안내 사항 ※' },
+    '대기안내': { id: 'notice-대기안내', title: '※ 안내 사항 ※', hideSource: true },
     '대기참고': { id: 'notice-대기참고', title: '※ 참고 사항 ※' }
   };
 
@@ -600,9 +600,11 @@ function buildNotices(notices) {
       html += `• ${parseLinks(item.content)}<br><br>`;
     });
 
-    const sources = [...new Set(items.map(i => i.source).filter(Boolean))];
-    if (sources.length) {
-      html += `<strong>본 내용은 ${sources.join(', ')}을(를) 기준으로 작성되었습니다.</strong>`;
+    if (!cfg.hideSource) {
+      const sources = [...new Set(items.map(i => i.source).filter(Boolean))];
+      if (sources.length) {
+        html += `<strong>본 내용은 ${sources.join(', ')}을(를) 기준으로 작성되었습니다.</strong>`;
+      }
     }
     html += '</p>';
     el.innerHTML = html;
