@@ -690,6 +690,12 @@ async function loadInfData() {
     buildConcertTable(data.concerts);
     buildGoodsTable(data.goods);
     buildNotices(data.notices);
+
+    const subtitle = document.getElementById('goods-subtitle');
+    if (subtitle && data.config && data.config.goods_subtitle) {
+      subtitle.textContent = '※ ' + data.config.goods_subtitle;
+    }
+
     initCalculator();
     initSetlistPopup();
   } catch (e) {
