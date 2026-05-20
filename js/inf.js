@@ -567,10 +567,10 @@ function buildWaitingGroup(groups) {
 }
 
 function parseLinks(text) {
-  return text.replace(
-    /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
-    '<a href="$2" class="fldzm" target="_blank" rel="noopener noreferrer">$1</a>'
-  );
+  return text
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+      '<a href="$2" class="fldzm" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(/\n/g, '<br>');
 }
 
 function buildNotices(notices) {
