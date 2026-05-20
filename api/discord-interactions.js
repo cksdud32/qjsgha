@@ -1,4 +1,4 @@
-import { InteractionType, InteractionResponseType, verifyKey } from 'discord-interactions';
+import nacl from 'tweetnacl';
 import pg from 'pg';
 const { Pool } = pg;
 
@@ -6,6 +6,20 @@ const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: { rejectUnauthorized: false }
 });
+
+function verifySignature(rawBody, signature, timestamp, publicKey) {
+  try {
+    const sigBytes = Buffer.from(signature, 'hex');
+    const keyBytes = Buffer.from(publicKey, 'hex');
+    const msg = Buffer.concat([
+      Buffer.from(timestamp, 'utf8'),
+      Buffer.from(rawBody, 'utf8')
+    ]);
+    return nacl.sign.detached.verify(msg, sigBytes, keyBytes);
+  } catch {
+    return false;
+  }
+}
 
 export default async function handler(request, response) {
   if (request.method !== 'POST') {
@@ -15,18 +29,12 @@ export default async function handler(request, response) {
   const signature = request.headers['x-signature-ed25519'];
   const timestamp = request.headers['x-signature-timestamp'];
 
-  // Vercel이 JSON 바디를 자동 파싱하므로 원본 바이트 재구성
+  // Vercel plain functions: request.body is the raw JSON string
   const rawBody = typeof request.body === 'string'
     ? request.body
     : JSON.stringify(request.body);
 
-  const isValid = verifyKey(
-    Buffer.from(rawBody),
-    signature,
-    timestamp,
-    process.env.DISCORD_PUBLIC_KEY
-  );
-  if (!isValid) {
+  if (!verifySignature(rawBody, signature, timestamp, process.env.DISCORD_PUBLIC_KEY)) {
     return response.status(401).send('Invalid request signature');
   }
 
@@ -34,13 +42,13 @@ export default async function handler(request, response) {
     ? JSON.parse(request.body)
     : request.body;
 
-  // Discord PING 응답
-  if (interaction.type === InteractionType.PING) {
-    return response.status(200).json({ type: InteractionResponseType.PONG });
+  // PING (type 1) → PONG (type 1)
+  if (interaction.type === 1) {
+    return response.status(200).json({ type: 1 });
   }
 
-  // 슬래시 커맨드 처리
-  if (interaction.type === InteractionType.APPLICATION_COMMAND) {
+  // APPLICATION_COMMAND (type 2)
+  if (interaction.type === 2) {
     const { name, options } = interaction.data;
     const guildId = interaction.guild_id;
     const channelId = interaction.channel_id;
@@ -66,7 +74,7 @@ export default async function handler(request, response) {
             const err = await webhookRes.text();
             console.error('웹훅 생성 실패:', err);
             return response.status(200).json({
-              type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+              type: 4,
               data: {
                 content: '❌ 웹훅 생성에 실패했습니다. 봇에게 **웹훅 관리** 권한이 있는지 확인해 주세요.',
                 flags: 64
@@ -85,7 +93,7 @@ export default async function handler(request, response) {
           );
 
           return response.status(200).json({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            type: 4,
             data: {
               content: '✅ **성공!** 앞으로 이 채널로 류현준 님의 오프라인 일정을 매일 아침 배달해 드릴게요!',
               flags: 64
@@ -94,7 +102,7 @@ export default async function handler(request, response) {
         } catch (err) {
           console.error('등록 오류:', err);
           return response.status(200).json({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            type: 4,
             data: { content: '❌ 등록 중 오류가 발생했습니다.', flags: 64 }
           });
         }
@@ -109,7 +117,7 @@ export default async function handler(request, response) {
 
           if (existing.rows.length === 0) {
             return response.status(200).json({
-              type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+              type: 4,
               data: { content: '이 서버는 아직 알림을 등록하지 않았습니다.', flags: 64 }
             });
           }
@@ -118,13 +126,13 @@ export default async function handler(request, response) {
           await pool.query(`DELETE FROM discord_channels WHERE guild_id = $1`, [guildId]);
 
           return response.status(200).json({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            type: 4,
             data: { content: '🔕 알림 구독을 취소했습니다.', flags: 64 }
           });
         } catch (err) {
           console.error('취소 오류:', err);
           return response.status(200).json({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            type: 4,
             data: { content: '❌ 취소 중 오류가 발생했습니다.', flags: 64 }
           });
         }
