@@ -581,7 +581,6 @@ function toggleGoodsPriceMode() {
   document.getElementById('price-all').style.display = isAll ? 'block' : 'none';
 }
 document.getElementById('modal-cancel').onclick = closeModal;
-document.getElementById('modal').addEventListener('click', e => { if (e.target === document.getElementById('modal')) closeModal(); });
 
 function buildForm(type, item, defaultType) {
   const v = (key, def = '') => esc(item?.[key] ?? def);
