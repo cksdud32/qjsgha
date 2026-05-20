@@ -60,6 +60,14 @@
     .tab-btn:hover { color: #ccc; }
     .tab-btn.active { color: #cca6e8; border-bottom-color: #cca6e8; }
 
+    .filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .filter-btn {
+      padding: 5px 14px; border-radius: 20px; border: 1px solid #555;
+      background: transparent; color: #888; cursor: pointer; font-size: 12px;
+    }
+    .filter-btn:hover { border-color: #cca6e8; color: #cca6e8; }
+    .filter-btn.active { background: #cca6e8; border-color: #cca6e8; color: #1a1a2e; font-weight: bold; }
+
     .tab-panel { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
     .tab-panel.active { display: block; }
 
@@ -208,6 +216,14 @@
     <div class="panel-header">
       <h2>공지 관리</h2>
       <button class="add-btn" id="add-notice-btn">+ 공지 추가</button>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">전체</button>
+      <button class="filter-btn" data-filter="안내">안내</button>
+      <button class="filter-btn" data-filter="주의">주의</button>
+      <button class="filter-btn" data-filter="환불">환불</button>
+      <button class="filter-btn" data-filter="추가정보">참고</button>
+      <button class="filter-btn" data-filter="대기">대기</button>
     </div>
     <div class="tbl-wrap"><div id="notice-list"><p class="empty">불러오는 중...</p></div></div>
   </div>
@@ -373,12 +389,20 @@ function renderGoods(list) {
   </table>`;
 }
 
+let currentNoticeFilter = 'all';
+
 function renderNotices(list) {
   const el = document.getElementById('notice-list');
-  if (!list?.length) { el.innerHTML = '<p class="empty">등록된 공지가 없습니다.</p>'; return; }
+  const all = list || allData.notices || [];
+
+  const filtered = currentNoticeFilter === 'all' ? all
+    : currentNoticeFilter === '대기' ? all.filter(n => n.type === '대기안내' || n.type === '대기참고')
+    : all.filter(n => n.type === currentNoticeFilter);
+
+  if (!filtered.length) { el.innerHTML = '<p class="empty">등록된 공지가 없습니다.</p>'; return; }
   el.innerHTML = `<table>
     <thead><tr><th>타입</th><th>내용</th><th>출처</th><th>작업</th></tr></thead>
-    <tbody>${list.map(n => `<tr>
+    <tbody>${filtered.map(n => `<tr>
       <td>${esc(n.type)}</td>
       <td class="truncate">${esc(n.content)}</td>
       <td class="truncate">${esc(n.source) || '-'}</td>
@@ -389,6 +413,15 @@ function renderNotices(list) {
     </tr>`).join('')}</tbody>
   </table>`;
 }
+
+document.querySelector('#tab-notice .filter-bar').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentNoticeFilter = btn.dataset.filter;
+  renderNotices();
+});
 
 const CONFIG_LABELS = {
   goods_subtitle:     '굿즈 부제목',
