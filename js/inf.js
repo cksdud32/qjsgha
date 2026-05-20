@@ -165,25 +165,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 // 디데이
-function updateDDay() {
-  const targetDay = new Date(""); //형식 ex: 2026, 1, 7 (2026년 2월 7일)
-  const targetTime = new Date(""); //형식 ex: 2026-02-15T15:00:00
+let _ddayTarget = { day: null, time: null };
 
+function updateDDay() {
   const ddayElement = document.getElementById("dday");
   const timeLeftElement = document.getElementById("timeLeft");
+  if (!ddayElement || !timeLeftElement) return;
 
-  if (isNaN(targetDay.getTime()) || isNaN(targetTime.getTime())) {
+  const targetDay  = _ddayTarget.day;
+  const targetTime = _ddayTarget.time;
+
+  if (!targetDay || isNaN(targetDay.getTime()) || !targetTime || isNaN(targetTime.getTime())) {
     ddayElement.textContent = "일정 미정";
     timeLeftElement.textContent = "";
     return;
   }
 
-  const now = new Date();
+  const now   = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
   const diffDays = Math.round((targetDay - today) / 86400000);
-
-  const isDDay = today.getTime() === targetDay.getTime();
+  const isDDay   = today.getTime() === targetDay.getTime();
 
   if (diffDays > 0 && !isDDay) {
     ddayElement.textContent = `D-${diffDays}`;
@@ -193,13 +194,10 @@ function updateDDay() {
     ddayElement.textContent = `D+${Math.abs(diffDays)}`;
   }
 
-  const diffTime = targetTime - now;
-
-  const absDiff = Math.abs(diffTime);
-  const hours = Math.floor(absDiff / (1000 * 60 * 60));
+  const absDiff = Math.abs(targetTime - now);
+  const hours   = Math.floor(absDiff / (1000 * 60 * 60));
   const minutes = Math.floor((absDiff / (1000 * 60)) % 60);
   const seconds = Math.floor((absDiff / 1000) % 60);
-
   timeLeftElement.textContent = `${hours}시간 ${minutes}분 ${seconds}초`;
 }
 
@@ -694,6 +692,14 @@ async function loadInfData() {
     const subtitle = document.getElementById('goods-subtitle');
     if (subtitle && data.config && data.config.goods_subtitle) {
       subtitle.textContent = '※ ' + data.config.goods_subtitle;
+    }
+
+    if (data.config) {
+      const dateStr = data.config.next_concert_date;
+      const timeStr = data.config.next_concert_time;
+      if (dateStr) _ddayTarget.day  = new Date(dateStr);
+      if (timeStr) _ddayTarget.time = new Date(timeStr);
+      updateDDay();
     }
 
     initCalculator();
