@@ -1,4 +1,3 @@
-//곡,번호 검색 기능
 function getInitials(text) {
     const CHO = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
     let result = '';
@@ -15,7 +14,75 @@ function getInitials(text) {
     return result;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+const TYPE_SELECTOR = {
+    '일본 커버곡1': '.jap ul',
+    '일본 커버곡2': '.ja ul',
+    '오리지널': '.kso ul',
+    '오리지널 곡': '.kso ul',
+    '한국 커버곡': '.kor ul'
+};
+
+function renderSongs(songs) {
+    songs.forEach(song => {
+        const selector = TYPE_SELECTOR[song.song_type];
+        if (!selector) return;
+        const ul = document.querySelector(selector);
+        if (!ul) return;
+
+        const li = document.createElement('li');
+
+        const numText = song.number2
+            ? `${song.number1} / ${song.number2}`
+            : String(song.number1);
+
+        const p = document.createElement('p');
+        p.textContent = `제목 : ${song.song_title} / 번호 : ${numText}`;
+        li.appendChild(p);
+
+        if (song.lyrics_key1) {
+            const div = document.createElement('div');
+            div.style.cssText = 'display: flex; flex-direction: column;';
+            const btn1 = document.createElement('button');
+            btn1.className = 'lyrics-btn';
+            btn1.dataset.number = song.number1;
+            btn1.textContent = '가사 보기 (ver.1)';
+            const btn2 = document.createElement('button');
+            btn2.className = 'lyrics-btn';
+            btn2.dataset.number = song.lyrics_key1;
+            btn2.textContent = '가사 보기 (ver.2)';
+            div.appendChild(btn1);
+            div.appendChild(btn2);
+            li.appendChild(div);
+        } else {
+            const btn = document.createElement('button');
+            btn.className = 'lyrics-btn';
+            btn.dataset.number = song.number1;
+            btn.textContent = '가사 보기';
+            li.appendChild(btn);
+        }
+
+        if (song.link_url) {
+            const a = document.createElement('a');
+            a.href = song.link_url;
+            a.textContent = song.link_label || '바로가기';
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            li.appendChild(a);
+        }
+        if (song.link_url2) {
+            const a = document.createElement('a');
+            a.href = song.link_url2;
+            a.textContent = song.link_label2 || '바로가기';
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            li.appendChild(a);
+        }
+
+        ul.appendChild(li);
+    });
+}
+
+function initSearch() {
     const searchInput = document.getElementById('searchInput');
     const results = document.getElementById('results');
     const contents = document.querySelectorAll('p:not(.popup3 p):not(.skq p):not(.open-popup3)');
@@ -28,22 +95,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.song-filter button').forEach(btn => {
         btn.addEventListener('click', () => {
-            if (currentCategory === btn.dataset.type) {
-                currentCategory = 'all';
-            } else {
-                currentCategory = btn.dataset.type;
-            }
-
+            currentCategory = currentCategory === btn.dataset.type ? 'all' : btn.dataset.type;
             document.querySelectorAll('.song-filter button').forEach(b => b.classList.remove('active'));
             const activeBtn = document.querySelector(`.song-filter button[data-type="${currentCategory}"]`);
             if (activeBtn) activeBtn.classList.add('active');
-
             searchInput.dispatchEvent(new Event('input'));
         });
     });
 
     function clearHighlight() {
-        contents.forEach(el => el.style.backgroundColor = '');
+        contents.forEach(el => {
+            el.style.backgroundColor = '';
+            el.style.color = '';
+        });
     }
 
     searchInput.addEventListener('input', () => {
@@ -93,7 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (matched) {
                 hasResults = true;
-
                 const li = document.createElement('li');
                 let highlightedText = text;
 
@@ -104,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     let keywordIndex = 0;
 
                     const removedTitlePattern = /제목\s*:\s*|번호\s*:\s*/gi;
-                    let removedMatches = [];
+                    const removedMatches = [];
                     let match;
                     while ((match = removedTitlePattern.exec(text)) !== null) {
                         removedMatches.push({ start: match.index, end: match.index + match[0].length });
@@ -132,9 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (startPos >= 0 && matchedLength > 0) {
                         const before = text.slice(0, startPos);
-                        const match = text.slice(startPos, startPos + matchedLength);
+                        const matchStr = text.slice(startPos, startPos + matchedLength);
                         const after = text.slice(startPos + matchedLength);
-                        highlightedText = `${before}<mark>${match}</mark>${after}`;
+                        highlightedText = `${before}<mark>${matchStr}</mark>${after}`;
                     }
                 }
 
@@ -152,22 +215,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     const rect = target.getBoundingClientRect();
                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    const targetPos = rect.top + scrollTop;
+                    window.scrollTo({ top: rect.top + scrollTop - 50, behavior: 'smooth' });
 
-                    window.scrollTo({ top: targetPos - 50, behavior: 'smooth' });
                     const isDarkMode = document.body.classList.contains('dark-mode');
-
                     if (isDarkMode) {
-                        // 다크 모드일 때: 진한 보라색 배경 + 글자색 흰색 유지
-                        target.style.backgroundColor = '#e7dfff'; // 진한 보라 (Deep Purple)
+                        target.style.backgroundColor = '#e7dfff';
                         target.style.color = '#000000';
                     } else {
-                        // 라이트 모드일 때: 기존 연한 보라 배경 + 글자색 검정
                         target.style.backgroundColor = '#370089';
                         target.style.color = '#ffffff';
                     }
 
-                    // 5초 뒤에 초기화할 때 색상도 같이 초기화
                     setTimeout(() => {
                         target.style.backgroundColor = '';
                         target.style.color = '';
@@ -176,34 +234,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        if (hasResults) results.classList.add('show-border');
-        else results.classList.remove('show-border');
+        results.classList.toggle('show-border', hasResults);
     });
-});
-
-//가사 보기 버튼(가사 불러오기)
-let lyricsData = {};
-
-async function loadAllLyrics() {
-    const response = await fetch('lyrics.json');
-    lyricsData = await response.json();
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadAllLyrics();
+let lyricsData = {};
 
+function initLyricsButtons() {
     document.querySelectorAll('.lyrics-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const num = btn.dataset.number;
-            const content = lyricsData[num] || "가사가 등록되지 않았습니다.";
-
+            const content = lyricsData[num] || '가사가 등록되지 않았습니다.';
             const titleText = btn.closest('li').querySelector('p').innerText;
-
             document.getElementById('modalTitle').innerText = titleText;
             document.getElementById('modalLyrics').innerText = content;
             document.getElementById('lyricsModal').style.display = 'block';
         });
     });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const [lyricsRes, songsRes] = await Promise.all([
+        fetch('lyrics.json'),
+        fetch('/api/get-karaoke')
+    ]);
+
+    lyricsData = await lyricsRes.json();
+    const songs = await songsRes.json();
+
+    renderSongs(songs);
+    initSearch();
+    initLyricsButtons();
 
     document.getElementById('closeBtn').addEventListener('click', () => {
         document.getElementById('lyricsModal').style.display = 'none';
