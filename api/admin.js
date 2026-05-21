@@ -1,6 +1,10 @@
 import pg from 'pg';
-import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 const { Pool } = pg;
+
+function sha256(text) {
+  return crypto.createHash('sha256').update(text).digest('hex');
+}
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -23,16 +27,11 @@ export async function login(request, response) {
     }
 
     const result = await pool.query(
-      'SELECT id, username, password FROM "AdminUsers" WHERE username = $1',
-      [username]
+      'SELECT id, username FROM "AdminUsers" WHERE username = $1 AND password = $2',
+      [username, sha256(password)]
     );
 
     if (result.rows.length === 0) {
-      return response.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' });
-    }
-
-    const valid = await bcrypt.compare(password, result.rows[0].password);
-    if (!valid) {
       return response.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' });
     }
 
