@@ -15,7 +15,7 @@ async function validateAuth(username, password) {
   if (!username || !password) return false;
   const res = await pool.query(
     'SELECT id FROM "AdminUsers" WHERE username = $1 AND password = $2',
-    [username, sha256(password)]
+    [username, password]
   );
   return res.rows.length > 0;
 }
