@@ -1,5 +1,10 @@
 import pg from 'pg';
+import crypto from 'crypto';
 const { Pool } = pg;
+
+function sha256(text) {
+  return crypto.createHash('sha256').update(text).digest('hex');
+}
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -10,7 +15,7 @@ async function validateAuth(username, password) {
   if (!username || !password) return false;
   const res = await pool.query(
     'SELECT id FROM "AdminUsers" WHERE username = $1 AND password = $2',
-    [username, password]
+    [username, sha256(password)]
   );
   return res.rows.length > 0;
 }
