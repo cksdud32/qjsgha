@@ -106,7 +106,7 @@ async function runGame() {
 
     try {
         // 백엔드 API 호출
-        const response = await fetch(`/api/get-data?difficulty=${currentDifficulty}`);
+        const response = await fetch(`/api/quiz?difficulty=${currentDifficulty}`);
         
         // pg 라이브러리 연결 실패 또는 테이블 부재 시 에러 처리
         if (!response.ok) {
@@ -355,7 +355,7 @@ async function submitSuggestion() {
     }
 
     try {
-        const response = await fetch('/api/post-suggestion', {
+        const response = await fetch('/api/quiz', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, question_text, answer, answer2, answer3, difficulty })

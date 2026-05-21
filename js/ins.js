@@ -295,7 +295,7 @@ function initLyricsButtons() {
 document.addEventListener('DOMContentLoaded', async () => {
     const [lyricsRes, songsRes] = await Promise.all([
         fetch('lyrics.json'),
-        fetch('/api/get-karaoke')
+        fetch('/api/get-inf?section=karaoke')
     ]);
 
     lyricsData = await lyricsRes.json();

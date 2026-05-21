@@ -9,6 +9,17 @@ const pool = new Pool({
 export default async function handler(request, response) {
   if (request.method !== 'GET') return response.status(405).send('Method Not Allowed');
 
+  if (request.query.section === 'karaoke') {
+    try {
+      const result = await pool.query(
+        'SELECT song_title, song_type, number1, number2, lyrics_key1, lyrics_label, lyrics_label2, link_url, link_label, link_url2, link_label2 FROM karaoke_number ORDER BY id'
+      );
+      return response.status(200).json(result.rows);
+    } catch (error) {
+      return response.status(500).json({ error: error.message });
+    }
+  }
+
   try {
     const [concerts, goods, notices, config, waitingGroups] = await Promise.all([
       pool.query('SELECT * FROM concert ORDER BY id'),
