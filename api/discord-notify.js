@@ -36,6 +36,7 @@ export default async function handler(request, response) {
           { name: '📅 날짜', value: c.date_label || todayStr, inline: true },
           { name: '🎫 상태', value: c.status || '진행 예정', inline: true }
         ],
+        description: '[자세한 정보 보기](https://dear-hyeonjun.vercel.app/html/inf.html)',
         footer: { text: '류현준 비공식 팬사이트 알리미' },
         timestamp: new Date().toISOString()
       }));
@@ -62,6 +63,7 @@ export default async function handler(request, response) {
           { name: '📌 콘서트', value: next.name, inline: true },
           { name: '📅 날짜', value: next.date_label || String(next.event_date).slice(0, 10), inline: true }
         ],
+        description: '[자세한 정보 보기](https://dear-hyeonjun.vercel.app/html/inf.html)',
         footer: { text: '류현준 비공식 팬사이트 알리미' },
         timestamp: new Date().toISOString()
       }];
