@@ -154,6 +154,26 @@ export default async function handler(request, response) {
       });
     }
 
+    if (name === '도움말') {
+      return response.status(200).json({
+        type: 4,
+        data: {
+          embeds: [{
+            title: '📖 명령어 도움말',
+            color: 0xCCA6E8,
+            fields: [
+              { name: '/현준알림 등록', value: '이 채널에 류현준 님의 오프라인 일정 알림을 등록합니다.', inline: false },
+              { name: '/현준알림 취소', value: '이 채널의 알림 구독을 취소합니다.', inline: false },
+              { name: '/오프라인', value: '류현준 님의 예정된 오프라인 일정을 확인합니다.', inline: false },
+              { name: '/노래방 검색:제목', value: '류현준 님의 TJ 노래방 번호를 검색합니다.', inline: false }
+            ],
+            footer: { text: '류현준 비공식 팬사이트' }
+          }],
+          flags: 64
+        }
+      });
+    }
+
     if (name === '오프라인') {
       try {
         const now = new Date();
@@ -210,7 +230,7 @@ export default async function handler(request, response) {
       const query = options?.[0]?.value || '';
       try {
         const result = await pool.query(
-          `SELECT song_title, song_type, number1, number2 FROM karaoke_number WHERE song_title ILIKE $1 ORDER BY id LIMIT 5`,
+          `SELECT song_title, song_type, number1, number2 FROM karaoke_number WHERE song_title ILIKE $1 ORDER BY song_type, id LIMIT 5`,
           [`%${query}%`]
         );
 
@@ -227,7 +247,7 @@ export default async function handler(request, response) {
           const link = `${SITE_BASE}?num=${song.number1}`;
           return {
             name: song.song_title,
-            value: `번호 : ${numText}\n[사이트에서 보기](${link})`,
+            value: `종류 : ${song.song_type}\n번호 : ${numText}\n[사이트에서 보기](${link})`,
             inline: false
           };
         });

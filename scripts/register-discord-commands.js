@@ -44,6 +44,10 @@ const commands = [
   {
     name: '공지사항',
     description: '알림을 구독한 모든 채널에 공지를 전송합니다.'
+  },
+  {
+    name: '도움말',
+    description: '사용 가능한 명령어 목록을 확인합니다.'
   }
 ];
 
