@@ -238,6 +238,16 @@ function initSearch() {
     });
 }
 
+function updateSongCount(songs) {
+    const jp = songs.filter(s => s.song_type === '일본 커버곡1' || s.song_type === '일본 커버곡2').length;
+    const origin = songs.filter(s => s.song_type === '오리지널' || s.song_type === '오리지널 곡').length;
+    const kr = songs.filter(s => s.song_type === '한국 커버곡').length;
+    const total = jp + origin + kr;
+
+    const el = document.getElementById('song-count-info');
+    if (el) el.textContent = `현재 곡 수:${total}곡(일본 커버곡: ${jp}곡, 오리지널 곡: ${origin}곡, 한국 커버 곡 ${kr}곡)`;
+}
+
 function scrollToNum() {
     const params = new URLSearchParams(window.location.search);
     const targetNum = params.get('num');
@@ -292,6 +302,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const songs = await songsRes.json();
 
     renderSongs(songs);
+    updateSongCount(songs);
     initSearch();
     initLyricsButtons();
     scrollToNum();
