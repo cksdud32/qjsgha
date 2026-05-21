@@ -54,24 +54,10 @@ export default async function handler(request, response) {
     return response.status(200).json({ type: 1 });
   }
 
-  if (interaction.type === 2) {
-    const { name, options } = interaction.data;
-    const guildId = interaction.guild_id;
-    const channelId = interaction.channel_id;
-    const action = options?.[0]?.value;
-
-    const ADMIN_ID = '847104232326955078';
-    const userId = interaction.member?.user?.id ?? interaction.user?.id;
-
-    if (name === '공지사항') {
-      if (userId !== ADMIN_ID) {
-        return response.status(200).json({
-          type: 4,
-          data: { content: '❌ 이 명령어를 사용할 권한이 없습니다.', flags: 64 }
-        });
-      }
-
-      const content = options?.[0]?.value || '';
+  if (interaction.type === 5) {
+    if (interaction.data.custom_id === 'announcement_modal') {
+      const content = interaction.data.components[0].components[0].value;
+      const botToken = process.env.DISCORD_BOT_TOKEN;
 
       try {
         const channelsResult = await pool.query(`SELECT channel_id FROM discord_channels`);
@@ -83,7 +69,6 @@ export default async function handler(request, response) {
           });
         }
 
-        const botToken = process.env.DISCORD_BOT_TOKEN;
         const messageBody = JSON.stringify({
           embeds: [{
             title: '📢 류현준 팬사이트 공지사항',
@@ -121,12 +106,52 @@ export default async function handler(request, response) {
           }
         });
       } catch (err) {
-        console.error('공지사항 오류:', err);
+        console.error('공지사항 모달 오류:', err);
         return response.status(200).json({
           type: 4,
           data: { content: '❌ 전송 중 오류가 발생했습니다.', flags: 64 }
         });
       }
+    }
+  }
+
+  if (interaction.type === 2) {
+    const { name, options } = interaction.data;
+    const guildId = interaction.guild_id;
+    const channelId = interaction.channel_id;
+    const action = options?.[0]?.value;
+
+    const ADMIN_ID = '847104232326955078';
+    const userId = interaction.member?.user?.id ?? interaction.user?.id;
+
+    if (name === '공지사항') {
+      if (userId !== ADMIN_ID) {
+        return response.status(200).json({
+          type: 4,
+          data: { content: '❌ 이 명령어를 사용할 권한이 없습니다.', flags: 64 }
+        });
+      }
+
+      return response.status(200).json({
+        type: 9,
+        data: {
+          custom_id: 'announcement_modal',
+          title: '공지사항 전송',
+          components: [{
+            type: 1,
+            components: [{
+              type: 4,
+              custom_id: 'announcement_content',
+              label: '공지 내용',
+              style: 2,
+              placeholder: '전송할 공지 내용을 입력하세요',
+              required: true,
+              min_length: 1,
+              max_length: 2000
+            }]
+          }]
+        }
+      });
     }
 
     if (name === '오프라인') {

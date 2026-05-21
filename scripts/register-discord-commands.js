@@ -43,15 +43,7 @@ const commands = [
   },
   {
     name: '공지사항',
-    description: '알림을 구독한 모든 채널에 공지를 전송합니다.',
-    options: [
-      {
-        name: '내용',
-        description: '전송할 공지 내용',
-        type: 3,
-        required: true
-      }
-    ]
+    description: '알림을 구독한 모든 채널에 공지를 전송합니다.'
   }
 ];
 
