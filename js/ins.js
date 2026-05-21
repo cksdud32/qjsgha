@@ -45,11 +45,11 @@ function renderSongs(songs) {
             const btn1 = document.createElement('button');
             btn1.className = 'lyrics-btn';
             btn1.dataset.number = song.number1;
-            btn1.textContent = '가사 보기 (ver.1)';
+            btn1.textContent = song.lyrics_label ? `${song.lyrics_label} 가사 보기` : '가사 보기 (ver.1)';
             const btn2 = document.createElement('button');
             btn2.className = 'lyrics-btn';
             btn2.dataset.number = song.lyrics_key1;
-            btn2.textContent = '가사 보기 (ver.2)';
+            btn2.textContent = song.lyrics_label2 ? `${song.lyrics_label2} 가사 보기` : '가사 보기 (ver.2)';
             div.appendChild(btn1);
             div.appendChild(btn2);
             li.appendChild(div);
