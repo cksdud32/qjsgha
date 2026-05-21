@@ -1,4 +1,5 @@
 import pg from 'pg';
+import bcrypt from 'bcryptjs';
 const { Pool } = pg;
 
 const pool = new Pool({
@@ -22,11 +23,16 @@ export async function login(request, response) {
     }
 
     const result = await pool.query(
-      'SELECT id, username FROM "AdminUsers" WHERE username = $1 AND password = $2',
-      [username, password]
+      'SELECT id, username, password FROM "AdminUsers" WHERE username = $1',
+      [username]
     );
 
     if (result.rows.length === 0) {
+      return response.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' });
+    }
+
+    const valid = await bcrypt.compare(password, result.rows[0].password);
+    if (!valid) {
       return response.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' });
     }
 
