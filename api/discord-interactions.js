@@ -191,6 +191,7 @@ export default async function handler(request, response) {
               title: '📋 류현준 오프라인 일정',
               color: 0xCCA6E8,
               fields,
+              description: '[📎 자세한 정보 보기](https://dear-hyeonjun.vercel.app/html/inf.html)',
               footer: { text: '류현준 비공식 팬사이트' },
               timestamp: new Date().toISOString()
             }]
