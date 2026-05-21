@@ -72,9 +72,8 @@ export default async function handler(request, response) {
         const messageBody = JSON.stringify({
           embeds: [{
             title: '📢 류현준 팬사이트 공지사항',
-            description: content,
+            description: `${content}\n\n[류현준 비공식 팬사이트](https://dear-hyeonjun.vercel.app)`,
             color: 0xCCA6E8,
-            footer: { text: '류현준 비공식 팬사이트' },
             timestamp: new Date().toISOString()
           }]
         });
@@ -167,7 +166,7 @@ export default async function handler(request, response) {
               { name: '/오프라인', value: '류현준 님의 예정된 오프라인 일정을 확인합니다.', inline: false },
               { name: '/노래방 검색:제목', value: '류현준 님의 TJ 노래방 번호를 검색합니다.', inline: false }
             ],
-            footer: { text: '류현준 비공식 팬사이트' }
+            description: '[류현준 비공식 팬사이트](https://dear-hyeonjun.vercel.app)'
           }],
           flags: 64
         }
@@ -211,8 +210,7 @@ export default async function handler(request, response) {
               title: '📋 류현준 오프라인 일정',
               color: 0xCCA6E8,
               fields,
-              description: '[📎 자세한 정보 보기](https://dear-hyeonjun.vercel.app/html/inf.html)',
-              footer: { text: '류현준 비공식 팬사이트' },
+              description: '[류현준 비공식 팬사이트](https://dear-hyeonjun.vercel.app)',
               timestamp: new Date().toISOString()
             }]
           }
@@ -260,7 +258,7 @@ export default async function handler(request, response) {
               title: `🎤 노래방 검색 결과 — "${query}"`,
               color: 0xCCA6E8,
               fields,
-              footer: { text: '류현준 비공식 팬사이트' }
+              description: '[류현준 비공식 팬사이트](https://dear-hyeonjun.vercel.app)'
             }]
           }
         });
