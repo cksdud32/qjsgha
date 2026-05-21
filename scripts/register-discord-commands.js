@@ -24,6 +24,18 @@ const commands = [
         ]
       }
     ]
+  },
+  {
+    name: '노래방',
+    description: '류현준 님의 TJ 노래방 번호를 검색합니다.',
+    options: [
+      {
+        name: '검색',
+        description: '검색할 곡 제목',
+        type: 3,
+        required: true
+      }
+    ]
   }
 ];
 

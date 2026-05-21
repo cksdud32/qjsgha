@@ -60,6 +60,52 @@ export default async function handler(request, response) {
     const channelId = interaction.channel_id;
     const action = options?.[0]?.value;
 
+    if (name === '노래방') {
+      const query = options?.[0]?.value || '';
+      try {
+        const result = await pool.query(
+          `SELECT song_title, song_type, number1, number2 FROM karaoke_number WHERE song_title ILIKE $1 ORDER BY id LIMIT 5`,
+          [`%${query}%`]
+        );
+
+        if (result.rows.length === 0) {
+          return response.status(200).json({
+            type: 4,
+            data: { content: `❌ **"${query}"** 에 해당하는 곡을 찾지 못했습니다.`, flags: 64 }
+          });
+        }
+
+        const SITE_BASE = 'https://dear-hyeonjun.vercel.app/html/ins.html';
+        const fields = result.rows.map(song => {
+          const numText = song.number2 ? `${song.number1} / ${song.number2}` : String(song.number1);
+          const link = `${SITE_BASE}?num=${song.number1}`;
+          return {
+            name: song.song_title,
+            value: `번호 : ${numText}\n[사이트에서 보기](${link})`,
+            inline: false
+          };
+        });
+
+        return response.status(200).json({
+          type: 4,
+          data: {
+            embeds: [{
+              title: `🎤 노래방 검색 결과 — "${query}"`,
+              color: 0xCCA6E8,
+              fields,
+              footer: { text: '류현준 비공식 팬사이트' }
+            }]
+          }
+        });
+      } catch (err) {
+        console.error('노래방 검색 오류:', err);
+        return response.status(200).json({
+          type: 4,
+          data: { content: '❌ 검색 중 오류가 발생했습니다.', flags: 64 }
+        });
+      }
+    }
+
     if (name === '현준알림') {
 
       if (action === '등록') {

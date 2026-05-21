@@ -238,6 +238,35 @@ function initSearch() {
     });
 }
 
+function scrollToNum() {
+    const params = new URLSearchParams(window.location.search);
+    const targetNum = params.get('num');
+    if (!targetNum) return;
+
+    const btn = document.querySelector(`.lyrics-btn[data-number="${targetNum}"]`);
+    if (!btn) return;
+
+    const target = btn.closest('li').querySelector('p');
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    window.scrollTo({ top: rect.top + scrollTop - 80, behavior: 'smooth' });
+
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    if (isDarkMode) {
+        target.style.backgroundColor = '#e7dfff';
+        target.style.color = '#000000';
+    } else {
+        target.style.backgroundColor = '#370089';
+        target.style.color = '#ffffff';
+    }
+    setTimeout(() => {
+        target.style.backgroundColor = '';
+        target.style.color = '';
+    }, 5000);
+}
+
 let lyricsData = {};
 
 function initLyricsButtons() {
@@ -265,6 +294,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderSongs(songs);
     initSearch();
     initLyricsButtons();
+    scrollToNum();
 
     document.getElementById('closeBtn').addEventListener('click', () => {
         document.getElementById('lyricsModal').style.display = 'none';
