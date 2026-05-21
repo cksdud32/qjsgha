@@ -36,6 +36,10 @@ const commands = [
         required: true
       }
     ]
+  },
+  {
+    name: '오프라인',
+    description: '류현준 님의 오프라인 일정 정보를 확인합니다.'
   }
 ];
 

@@ -60,6 +60,57 @@ export default async function handler(request, response) {
     const channelId = interaction.channel_id;
     const action = options?.[0]?.value;
 
+    if (name === '오프라인') {
+      try {
+        const now = new Date();
+        const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+        const todayStr = kst.toISOString().slice(0, 10);
+
+        const result = await pool.query(
+          `SELECT name, date_label, event_date, status FROM concert WHERE event_date >= $1 ORDER BY event_date ASC LIMIT 5`,
+          [todayStr]
+        );
+
+        if (result.rows.length === 0) {
+          return response.status(200).json({
+            type: 4,
+            data: { content: '📭 현재 예정된 오프라인 일정이 없습니다.', flags: 64 }
+          });
+        }
+
+        const fields = result.rows.map(c => {
+          const dateStr = c.date_label || String(c.event_date).slice(0, 10);
+          const diffMs = new Date(c.event_date) - new Date(todayStr);
+          const dDay = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+          const dLabel = dDay === 0 ? 'D-Day' : `D-${dDay}`;
+          return {
+            name: `${c.name} (${dLabel})`,
+            value: `📅 ${dateStr}${c.status ? `\n🎫 ${c.status}` : ''}`,
+            inline: false
+          };
+        });
+
+        return response.status(200).json({
+          type: 4,
+          data: {
+            embeds: [{
+              title: '📋 류현준 오프라인 일정',
+              color: 0xCCA6E8,
+              fields,
+              footer: { text: '류현준 비공식 팬사이트' },
+              timestamp: new Date().toISOString()
+            }]
+          }
+        });
+      } catch (err) {
+        console.error('오프라인 조회 오류:', err);
+        return response.status(200).json({
+          type: 4,
+          data: { content: '❌ 조회 중 오류가 발생했습니다.', flags: 64 }
+        });
+      }
+    }
+
     if (name === '노래방') {
       const query = options?.[0]?.value || '';
       try {
