@@ -245,9 +245,10 @@ export default async function handler(request, response) {
         const fields = result.rows.map(song => {
           const numText = song.number2 ? `${song.number1} / ${song.number2}` : String(song.number1);
           const link = `${SITE_BASE}?num=${song.number1}`;
+          const typeLabel = song.song_type.replace(/^일본 커버곡[12]$/, '일본 커버곡');
           return {
             name: song.song_title,
-            value: `종류 : ${song.song_type}\n번호 : ${numText}\n[사이트에서 보기](${link})`,
+            value: `종류 : ${typeLabel}\n번호 : ${numText}\n[사이트에서 보기](${link})`,
             inline: false
           };
         });
