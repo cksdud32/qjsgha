@@ -60,6 +60,75 @@ export default async function handler(request, response) {
     const channelId = interaction.channel_id;
     const action = options?.[0]?.value;
 
+    const ADMIN_ID = '847104232326955078';
+    const userId = interaction.member?.user?.id ?? interaction.user?.id;
+
+    if (name === '공지사항') {
+      if (userId !== ADMIN_ID) {
+        return response.status(200).json({
+          type: 4,
+          data: { content: '❌ 이 명령어를 사용할 권한이 없습니다.', flags: 64 }
+        });
+      }
+
+      const content = options?.[0]?.value || '';
+
+      try {
+        const channelsResult = await pool.query(`SELECT channel_id FROM discord_channels`);
+
+        if (channelsResult.rows.length === 0) {
+          return response.status(200).json({
+            type: 4,
+            data: { content: '📭 구독 중인 채널이 없습니다.', flags: 64 }
+          });
+        }
+
+        const botToken = process.env.DISCORD_BOT_TOKEN;
+        const messageBody = JSON.stringify({
+          embeds: [{
+            title: '📢 류현준 팬사이트 공지사항',
+            description: content,
+            color: 0xCCA6E8,
+            footer: { text: '류현준 비공식 팬사이트' },
+            timestamp: new Date().toISOString()
+          }]
+        });
+
+        const sendResults = await Promise.allSettled(
+          channelsResult.rows.map(row =>
+            fetch(`https://discord.com/api/v10/channels/${row.channel_id}/messages`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bot ${botToken}`
+              },
+              body: messageBody
+            }).then(async r => {
+              if (!r.ok) throw new Error(await r.text());
+              return row.channel_id;
+            })
+          )
+        );
+
+        const succeeded = sendResults.filter(r => r.status === 'fulfilled').length;
+        const failed = sendResults.filter(r => r.status === 'rejected').length;
+
+        return response.status(200).json({
+          type: 4,
+          data: {
+            content: `✅ 공지 전송 완료 — ${succeeded}개 채널 성공${failed > 0 ? `, ${failed}개 실패` : ''}`,
+            flags: 64
+          }
+        });
+      } catch (err) {
+        console.error('공지사항 오류:', err);
+        return response.status(200).json({
+          type: 4,
+          data: { content: '❌ 전송 중 오류가 발생했습니다.', flags: 64 }
+        });
+      }
+    }
+
     if (name === '오프라인') {
       try {
         const now = new Date();

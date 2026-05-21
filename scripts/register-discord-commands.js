@@ -40,6 +40,18 @@ const commands = [
   {
     name: '오프라인',
     description: '류현준 님의 오프라인 일정 정보를 확인합니다.'
+  },
+  {
+    name: '공지사항',
+    description: '알림을 구독한 모든 채널에 공지를 전송합니다.',
+    options: [
+      {
+        name: '내용',
+        description: '전송할 공지 내용',
+        type: 3,
+        required: true
+      }
+    ]
   }
 ];
 
