@@ -241,7 +241,6 @@ export default async function handler(request, response) {
           });
         }
 
-        const SITE_BASE = 'https://dear-hyeonjun.vercel.app/html/ins.html';
         const fields = result.rows.map(song => {
           const numText = song.number2 ? `${song.number1} / ${song.number2}` : String(song.number1);
           const link = `${SITE_BASE}?num=${song.number1}`;
