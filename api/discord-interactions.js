@@ -371,6 +371,13 @@ export default async function handler(request, response) {
     }
 
     if (name === '현준알림') {
+      const perms = BigInt(interaction.member?.permissions ?? '0');
+      if ((perms & 8n) !== 8n) {
+        return response.status(200).json({
+          type: 4,
+          data: { content: '❌ 서버 관리자 권한이 있는 사람만 사용할 수 있습니다.', flags: 64 }
+        });
+      }
 
       if (action === '등록') {
         try {
