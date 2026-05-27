@@ -7,6 +7,31 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
+const CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const CHOSUNG_GROUP1 = new Set(['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ']);
+
+function firstConsonant(text) {
+  for (const ch of text) {
+    if (/\d/.test(ch)) return 'digit';
+    if (/[A-Za-z]/.test(ch)) return 'alpha';
+    const code = ch.charCodeAt(0);
+    if (code >= 0xAC00 && code <= 0xD7A3) {
+      return CHOSUNG[Math.floor((code - 0xAC00) / 28 / 21)];
+    }
+  }
+  return '';
+}
+
+function determineSongType(trackTitle, natType, isCover) {
+  if (!isCover) return '오리지널 곡';
+  if (natType === 1) return '한국 커버곡';
+  const first = firstConsonant(trackTitle);
+  if (first === 'digit' || first === 'alpha' || CHOSUNG_GROUP1.has(first)) return '일본 커버곡1';
+  return '일본 커버곡2';
+}
+
+const ADMIN_ID = '847104232326955078';
+
 function getRawBody(request) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -121,7 +146,6 @@ export default async function handler(request, response) {
     const channelId = interaction.channel_id;
     const action = options?.[0]?.value;
 
-    const ADMIN_ID = '847104232326955078';
     const userId = interaction.member?.user?.id ?? interaction.user?.id;
 
     if (name === '공지사항') {
@@ -325,6 +349,79 @@ export default async function handler(request, response) {
           });
         }
       }
+    }
+  }
+
+  if (interaction.type === 3) {
+    const customId = interaction.data?.custom_id ?? '';
+    if (!customId.startsWith('reg:') && !customId.startsWith('rej:')) {
+      return response.status(400).json({ error: 'Unknown component' });
+    }
+
+    const userId = interaction.member?.user?.id ?? interaction.user?.id;
+    if (userId !== ADMIN_ID) {
+      return response.status(200).json({
+        type: 4,
+        data: { content: '❌ 이 버튼을 사용할 권한이 없습니다.', flags: 64 }
+      });
+    }
+
+    const [action, pendingIdStr] = customId.split(':', 2);
+    const pendingId = parseInt(pendingIdStr, 10);
+
+    try {
+      const { rows } = await pool.query(
+        'SELECT id, track_title, tj_number, nat_type, is_cover FROM pending_karaoke WHERE id = $1',
+        [pendingId]
+      );
+
+      if (rows.length === 0) {
+        return response.status(200).json({
+          type: 4,
+          data: { content: '이미 처리된 항목이야.', flags: 64 }
+        });
+      }
+
+      const pending = rows[0];
+
+      if (action === 'reg') {
+        const songType = determineSongType(pending.track_title, pending.nat_type, pending.is_cover);
+        await pool.query(
+          `INSERT INTO karaoke_number (song_title, song_type, number1)
+           VALUES ($1, $2, $3)
+           ON CONFLICT (song_title) DO NOTHING`,
+          [pending.track_title, songType, pending.tj_number]
+        );
+        await pool.query('DELETE FROM pending_karaoke WHERE id = $1', [pendingId]);
+
+        return response.status(200).json({
+          type: 7,
+          data: {
+            content: `✅ 등록 완료: \`${pending.track_title}\` → ${pending.tj_number} (${songType})`,
+            embeds: [],
+            components: []
+          }
+        });
+      }
+
+      if (action === 'rej') {
+        await pool.query('DELETE FROM pending_karaoke WHERE id = $1', [pendingId]);
+
+        return response.status(200).json({
+          type: 7,
+          data: {
+            content: `❌ 기각: \`${pending.track_title}\``,
+            embeds: [],
+            components: []
+          }
+        });
+      }
+    } catch (err) {
+      console.error('버튼 인터랙션 오류:', err);
+      return response.status(200).json({
+        type: 4,
+        data: { content: '❌ 처리 중 오류가 발생했습니다.', flags: 64 }
+      });
     }
   }
 
