@@ -386,9 +386,7 @@ export default async function handler(request, response) {
       if (action === 'reg') {
         const songType = determineSongType(pending.track_title, pending.nat_type, pending.is_cover);
         await pool.query(
-          `INSERT INTO karaoke_number (song_title, song_type, number1)
-           VALUES ($1, $2, $3)
-           ON CONFLICT (song_title) DO NOTHING`,
+          `INSERT INTO karaoke_number (song_title, song_type, number1) VALUES ($1, $2, $3)`,
           [pending.track_title, songType, pending.tj_number]
         );
         await pool.query('DELETE FROM pending_karaoke WHERE id = $1', [pendingId]);
@@ -419,7 +417,7 @@ export default async function handler(request, response) {
       console.error('버튼 인터랙션 오류:', err);
       return response.status(200).json({
         type: 4,
-        data: { content: '❌ 처리 중 오류가 발생했습니다.', flags: 64 }
+        data: { content: `❌ 오류: \`${err.message}\``, flags: 64 }
       });
     }
   }
