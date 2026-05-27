@@ -311,9 +311,16 @@ export default async function handler(request, response) {
         }
 
         const songTitle = getOpt('곡제목');
-        const number1 = getOpt('번호1');
-        const number2 = getOpt('번호2') ?? null;
+        const number1 = getOpt('number1');
+        const number2 = getOpt('number2') ?? null;
         const songType = getOpt('종류');
+
+        if (!songTitle || !number1 || !songType) {
+          return response.status(200).json({
+            type: 4,
+            data: { content: '❌ 필수 항목(곡제목, 번호1, 종류)이 누락되었습니다.', flags: 64 }
+          });
+        }
 
         try {
           await pool.query(
