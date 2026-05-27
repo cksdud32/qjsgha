@@ -284,7 +284,6 @@ export default async function handler(request, response) {
               title: `🎤 노래방 검색 결과 — "${query}"`,
               color: 0xCCA6E8,
               fields,
-              description: '[노래방 페이지 바로가기](https://dear-hyeonjun.vercel.app/html/ins.html)',
               footer: { text: '류현준 비공식 팬사이트' }
             }]
           }

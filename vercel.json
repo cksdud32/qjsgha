@@ -8,7 +8,7 @@
   "crons": [
     {
       "path": "/api/discord-notify",
-      "schedule": "0 0 * * *"
+      "schedule": "14 23 * * *"
     }
   ]
 }
