@@ -27,13 +27,51 @@ const commands = [
   },
   {
     name: '노래방',
-    description: '류현준 님의 TJ 노래방 번호를 검색합니다.',
+    description: '노래방 번호 검색 및 등록',
     options: [
       {
         name: '검색',
-        description: '검색할 곡 제목',
-        type: 3,
-        required: true
+        description: '곡 제목으로 노래방 번호를 검색합니다.',
+        type: 1,
+        options: [
+          {
+            name: '제목',
+            description: '검색할 곡 제목',
+            type: 3,
+            required: true
+          }
+        ]
+      },
+      {
+        name: '번호추가',
+        description: '(관리자) 노래방 번호를 직접 추가합니다.',
+        type: 1,
+        options: [
+          {
+            name: '곡제목',
+            description: '등록할 곡 제목',
+            type: 3,
+            required: true
+          },
+          {
+            name: '번호',
+            description: 'TJ 노래방 번호',
+            type: 3,
+            required: true
+          },
+          {
+            name: '종류',
+            description: '곡 종류',
+            type: 3,
+            required: true,
+            choices: [
+              { name: '오리지널 곡', value: '오리지널 곡' },
+              { name: '한국 커버곡', value: '한국 커버곡' },
+              { name: '일본 커버곡1', value: '일본 커버곡1' },
+              { name: '일본 커버곡2', value: '일본 커버곡2' }
+            ]
+          }
+        ]
       }
     ]
   },
