@@ -32,6 +32,29 @@ function determineSongType(trackTitle, natType, isCover) {
 
 const ADMIN_ID = '847104232326955078';
 
+const SONG_TYPE_ORDER = { '오리지널 곡': 0, '한국 커버곡': 1, '일본 커버곡1': 2, '일본 커버곡2': 3 };
+
+function titleSortKey(title) {
+  const ch = (title || '')[0] || '';
+  if (/\d/.test(ch)) return '0_' + title;
+  if (/[A-Za-z]/.test(ch)) return '1_' + ch.toLowerCase() + '_' + title.toLowerCase();
+  const code = ch.charCodeAt(0);
+  if (code >= 0xAC00 && code <= 0xD7A3) {
+    const idx = Math.floor((code - 0xAC00) / 28 / 21);
+    return '2_' + String(idx).padStart(2, '0') + '_' + title;
+  }
+  return '3_' + title;
+}
+
+function sortSongs(songs) {
+  return songs.slice().sort((a, b) => {
+    const tA = SONG_TYPE_ORDER[a.song_type] ?? 99;
+    const tB = SONG_TYPE_ORDER[b.song_type] ?? 99;
+    if (tA !== tB) return tA - tB;
+    return titleSortKey(a.song_title).localeCompare(titleSortKey(b.song_title), 'ko');
+  });
+}
+
 function getRawBody(request) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -259,11 +282,12 @@ export default async function handler(request, response) {
         const query = getOpt('제목') || '';
         try {
           const result = await pool.query(
-            `SELECT song_title, song_type, number1, number2 FROM karaoke_number WHERE song_title ILIKE $1 ORDER BY song_type, id LIMIT 5`,
+            `SELECT song_title, song_type, number1, number2 FROM karaoke_number WHERE song_title ILIKE $1`,
             [`%${query}%`]
           );
+          const sorted = sortSongs(result.rows).slice(0, 5);
 
-          if (result.rows.length === 0) {
+          if (sorted.length === 0) {
             return response.status(200).json({
               type: 4,
               data: { content: `❌ **"${query}"** 에 해당하는 곡을 찾지 못했습니다.`, flags: 64 }
@@ -271,7 +295,7 @@ export default async function handler(request, response) {
           }
 
           const SITE_BASE = 'https://dear-hyeonjun.vercel.app/html/ins.html';
-          const fields = result.rows.map(song => {
+          const fields = sorted.map(song => {
             const numText = song.number2 ? `${song.number1} / ${song.number2}` : String(song.number1);
             const link = `${SITE_BASE}?num=${song.number1}`;
             const typeLabel = song.song_type.replace(/^일본 커버곡[12]$/, '일본 커버곡');
