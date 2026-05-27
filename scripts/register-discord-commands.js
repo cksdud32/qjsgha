@@ -54,10 +54,16 @@ const commands = [
             required: true
           },
           {
-            name: '번호',
-            description: 'TJ 노래방 번호',
+            name: '번호1',
+            description: 'TJ 노래방 번호 (첫 번째)',
             type: 3,
             required: true
+          },
+          {
+            name: '번호2',
+            description: 'TJ 노래방 번호 (두 번째, 선택)',
+            type: 3,
+            required: false
           },
           {
             name: '종류',

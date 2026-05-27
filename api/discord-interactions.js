@@ -311,19 +311,21 @@ export default async function handler(request, response) {
         }
 
         const songTitle = getOpt('곡제목');
-        const number1 = getOpt('번호');
+        const number1 = getOpt('번호1');
+        const number2 = getOpt('번호2') ?? null;
         const songType = getOpt('종류');
 
         try {
           await pool.query(
-            `INSERT INTO karaoke_number (song_title, song_type, number1) VALUES ($1, $2, $3)`,
-            [songTitle, songType, number1]
+            `INSERT INTO karaoke_number (song_title, song_type, number1, number2) VALUES ($1, $2, $3, $4)`,
+            [songTitle, songType, number1, number2]
           );
 
+          const numText = number2 ? `${number1} / ${number2}` : number1;
           return response.status(200).json({
             type: 4,
             data: {
-              content: `✅ 등록 완료: \`${songTitle}\` → ${number1} (${songType})`,
+              content: `✅ 등록 완료: \`${songTitle}\` → ${numText} (${songType})`,
               flags: 64
             }
           });
