@@ -9,6 +9,10 @@
     {
       "path": "/api/discord-notify",
       "schedule": "14 23 * * *"
+    },
+    {
+      "path": "/api/discord-notify?type=karaoke",
+      "schedule": "0 9 * * *"
     }
   ]
 }
