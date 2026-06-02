@@ -127,6 +127,9 @@ async function updateRecord(request, response) {
   if (!Number.isFinite(parsedStopwatch) || parsedStopwatch < 0) {
     return response.status(400).json({ error: '올바른 stopwatch 값을 전달해주세요.' });
   }
+  if (parsedStopwatch > 0 && parsedStopwatch < 2000) {
+    return response.status(400).json({ error: '유효하지 않은 기록입니다.' });
+  }
 
   await pool.query(
     "DELETE FROM ticketing_practice WHERE stopwatch = 0 AND updated_at < NOW() - INTERVAL '200 seconds'"

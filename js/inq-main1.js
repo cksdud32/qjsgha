@@ -11,12 +11,19 @@
     }
 
     function startStopwatch() {
-        var startTime = Date.now();
+        var startTime;
         try {
             var sess = JSON.parse(sessionStorage.getItem('ticketingPracticeSession') || '{}');
-            sess.stopwatchStart = startTime;
-            sessionStorage.setItem('ticketingPracticeSession', JSON.stringify(sess));
-        } catch (e) {}
+            if (sess.stopwatchStart) {
+                startTime = sess.stopwatchStart;
+            } else {
+                startTime = Date.now();
+                sess.stopwatchStart = startTime;
+                sessionStorage.setItem('ticketingPracticeSession', JSON.stringify(sess));
+            }
+        } catch (e) {
+            startTime = Date.now();
+        }
 
         var hud = document.getElementById('stopwatchHud');
         var swTime = document.getElementById('swTime');
