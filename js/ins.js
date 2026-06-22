@@ -293,19 +293,31 @@ function initLyricsButtons() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const [lyricsRes, songsRes] = await Promise.all([
-        fetch('lyrics.json'),
-        fetch('/api/get-inf?section=karaoke')
-    ]);
+    try {
+        const songsRes = await fetch('/api/get-inf?section=karaoke');
+        if (!songsRes.ok) throw new Error(`곡 데이터 로드 실패 (${songsRes.status})`);
+        const songs = await songsRes.json();
 
-    lyricsData = await lyricsRes.json();
-    const songs = await songsRes.json();
+        renderSongs(songs);
+        updateSongCount(songs);
+        initSearch();
+        initLyricsButtons();
+        scrollToNum();
 
-    renderSongs(songs);
-    updateSongCount(songs);
-    initSearch();
-    initLyricsButtons();
-    scrollToNum();
+        fetch('lyrics.json')
+            .then(r => r.json())
+            .then(data => { lyricsData = data; })
+            .catch(() => {});
+    } catch (e) {
+        console.error(e);
+        const areas = document.querySelectorAll('.jap ul, .ja ul, .kso ul, .kor ul');
+        areas.forEach(ul => {
+            const li = document.createElement('li');
+            li.textContent = '곡 목록을 불러오지 못했습니다. 잠시 후 새로고침 해주세요.';
+            li.style.color = 'tomato';
+            ul.appendChild(li);
+        });
+    }
 
     document.getElementById('closeBtn').addEventListener('click', () => {
         document.getElementById('lyricsModal').style.display = 'none';
