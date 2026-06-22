@@ -13,10 +13,18 @@ function maskName(name) {
   return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
 }
 
-async function getRecords(request, response) {
+function parseBody(request) {
+  return typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
+}
+
+async function cleanupExpired() {
   await pool.query(
     "DELETE FROM ticketing_practice WHERE stopwatch = 0 AND updated_at < NOW() - INTERVAL '200 seconds'"
   );
+}
+
+async function getRecords(request, response) {
+  await cleanupExpired();
   const result = await pool.query(
     'SELECT id, name, stopwatch FROM "ticketing_practice" ORDER BY id DESC LIMIT 50'
   );
@@ -45,27 +53,20 @@ async function getLeaderboard(request, response) {
   }));
 
   const myStopwatch = request.query.myStopwatch ? Number(request.query.myStopwatch) : null;
-  if (myStopwatch && myStopwatch > 0) {
-    const inTop10 = leaderboard.some(r => r.stopwatch === myStopwatch);
-    if (!inTop10) {
-      const myResult = await pool.query(`
-        WITH ranked AS (
-          SELECT name, stopwatch,
-                 RANK() OVER (ORDER BY stopwatch ASC) AS rank
-          FROM ticketing_practice
-          WHERE stopwatch > 0
-        )
-        SELECT * FROM ranked WHERE stopwatch = $1 LIMIT 1
-      `, [myStopwatch]);
+  if (myStopwatch && myStopwatch > 0 && !leaderboard.some(r => r.stopwatch === myStopwatch)) {
+    const myResult = await pool.query(`
+      WITH ranked AS (
+        SELECT name, stopwatch,
+               RANK() OVER (ORDER BY stopwatch ASC) AS rank
+        FROM ticketing_practice
+        WHERE stopwatch > 0
+      )
+      SELECT * FROM ranked WHERE stopwatch = $1 LIMIT 1
+    `, [myStopwatch]);
 
-      if (myResult.rows.length > 0) {
-        const r = myResult.rows[0];
-        leaderboard.push({
-          rank:      Number(r.rank),
-          name:      maskName(r.name),
-          stopwatch: Number(r.stopwatch),
-        });
-      }
+    if (myResult.rows.length > 0) {
+      const r = myResult.rows[0];
+      leaderboard.push({ rank: Number(r.rank), name: maskName(r.name), stopwatch: Number(r.stopwatch) });
     }
   }
 
@@ -73,8 +74,7 @@ async function getLeaderboard(request, response) {
 }
 
 async function createRecord(request, response) {
-  const body = typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
-  const { name, stopwatch } = body;
+  const { name, stopwatch } = parseBody(request);
 
   if (!name || typeof name !== 'string' || name.trim().length === 0) {
     return response.status(400).json({ error: '닉네임을 입력해주세요.' });
@@ -84,9 +84,7 @@ async function createRecord(request, response) {
     return response.status(400).json({ error: '올바른 stopwatch 값을 전달해주세요.' });
   }
 
-  await pool.query(
-    "DELETE FROM ticketing_practice WHERE stopwatch = 0 AND updated_at < NOW() - INTERVAL '200 seconds'"
-  );
+  await cleanupExpired();
 
   const existing = await pool.query(
     'SELECT id, stopwatch FROM ticketing_practice WHERE name = $1 AND stopwatch > 0 ORDER BY stopwatch ASC LIMIT 1',
@@ -94,30 +92,18 @@ async function createRecord(request, response) {
   );
   if (existing.rowCount > 0) {
     const row = existing.rows[0];
-    return response.status(200).json({
-      message: '기존 기록을 이어서 사용합니다.',
-      id: row.id,
-      name: name.trim(),
-      stopwatch: row.stopwatch,
-    });
+    return response.status(200).json({ message: '기존 기록을 이어서 사용합니다.', id: row.id, name: name.trim(), stopwatch: row.stopwatch });
   }
 
   const result = await pool.query(
     'INSERT INTO "ticketing_practice" (name, stopwatch) VALUES ($1, $2) RETURNING id',
     [name.trim(), 0]
   );
-  return response.status(200).json({
-    message: '티켓팅 연습 기록이 저장되었습니다.',
-    id: result.rows[0]?.id,
-    name: name.trim(),
-    stopwatch: 0,
-  });
+  return response.status(200).json({ message: '티켓팅 연습 기록이 저장되었습니다.', id: result.rows[0]?.id, name: name.trim(), stopwatch: 0 });
 }
 
 async function updateRecord(request, response) {
-  const body = typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
-  const { id, stopwatch } = body;
-
+  const { id, stopwatch } = parseBody(request);
   const parsedId = Number(id);
   const parsedStopwatch = Number(stopwatch);
 
@@ -131,9 +117,7 @@ async function updateRecord(request, response) {
     return response.status(400).json({ error: '유효하지 않은 기록입니다.' });
   }
 
-  await pool.query(
-    "DELETE FROM ticketing_practice WHERE stopwatch = 0 AND updated_at < NOW() - INTERVAL '200 seconds'"
-  );
+  await cleanupExpired();
 
   const currentResult = await pool.query(
     'SELECT name, stopwatch FROM ticketing_practice WHERE id = $1',
@@ -145,10 +129,7 @@ async function updateRecord(request, response) {
 
   const currentStopwatch = Number(currentResult.rows[0].stopwatch);
   if (currentStopwatch === 0 || parsedStopwatch < currentStopwatch) {
-    await pool.query(
-      'UPDATE ticketing_practice SET stopwatch = $1 WHERE id = $2',
-      [parsedStopwatch, parsedId]
-    );
+    await pool.query('UPDATE ticketing_practice SET stopwatch = $1 WHERE id = $2', [parsedStopwatch, parsedId]);
     return response.status(200).json({
       kept: 'new',
       message: currentStopwatch === 0 ? '기록이 저장되었습니다.' : '기록이 갱신되었습니다!',
@@ -158,28 +139,22 @@ async function updateRecord(request, response) {
     });
   }
 
-  return response.status(200).json({
-    kept: 'old',
-    message: '이전 기록이 더 빠릅니다.',
-    oldStopwatch: currentStopwatch,
-    newStopwatch: parsedStopwatch,
-  });
+  return response.status(200).json({ kept: 'old', message: '이전 기록이 더 빠릅니다.', oldStopwatch: currentStopwatch, newStopwatch: parsedStopwatch });
 }
 
 export default async function handler(request, response) {
   try {
     if (request.method === 'GET') {
-      const { type } = request.query;
-      if (type === 'leaderboard') return getLeaderboard(request, response);
-      return getRecords(request, response);
+      return request.query.type === 'leaderboard'
+        ? getLeaderboard(request, response)
+        : getRecords(request, response);
     }
-
     if (request.method === 'POST') {
-      const body = typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
-      if (body.action === 'update') return updateRecord(request, response);
-      return createRecord(request, response);
+      const body = parseBody(request);
+      return body.action === 'update'
+        ? updateRecord(request, response)
+        : createRecord(request, response);
     }
-
     return response.status(405).send('Method Not Allowed');
   } catch (error) {
     console.error('DB 에러:', error);
