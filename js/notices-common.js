@@ -88,3 +88,6 @@ function closeNoticeModal() {
     document.querySelector('.popup-overlay')?.classList.remove('active');
     document.body.style.overflow = '';
 }
+
+// HTML onclick="closeModal()" 호환
+const closeModal = closeNoticeModal;
