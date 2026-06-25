@@ -717,3 +717,30 @@ body.dark-mode nav ul li{
 body.dark-mode .Common_Rules{
     background-color: #1e293b !important;
 }
+
+/* side.html 다크모드 */
+body.dark-mode h1 {
+    background-color: #1e3a5f !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode .as ul li {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+body.dark-mode .as ul li a {
+    background-color: #4c3597 !important;
+    border-color: #CCA6E8 !important;
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode .asa a:hover {
+    background-color: #CCA6E8 !important;
+    color: #0f172a !important;
+}
+
+body.dark-mode .as ul li p {
+    color: #cbd5e0 !important;
+}
