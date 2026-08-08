@@ -1,11 +1,5 @@
-import pg from 'pg';
 import crypto from 'crypto';
-const { Pool } = pg;
-
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false }
-});
+import { pool } from '../lib/db.js';
 
 function sha256(text) {
   return crypto.createHash('sha256').update(text).digest('hex');

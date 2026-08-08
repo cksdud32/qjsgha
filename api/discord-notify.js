@@ -1,10 +1,4 @@
-import pg from 'pg';
-const { Pool } = pg;
-
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false }
-});
+import { pool } from '../lib/db.js';
 
 async function handleConcert(botToken) {
   const now = new Date();

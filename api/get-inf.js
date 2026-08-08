@@ -1,11 +1,5 @@
-import pg from 'pg';
 import { sortSongs } from '../lib/songUtils.js';
-
-const { Pool } = pg;
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false }
-});
+import { pool } from '../lib/db.js';
 
 export default async function handler(request, response) {
   if (request.method !== 'GET') return response.status(405).send('Method Not Allowed');

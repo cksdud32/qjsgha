@@ -4,7 +4,11 @@
   "type": "module",
   "main": "loadHeaderFooter.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:pull": "prisma db pull",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "node prisma/seed.js"
   },
   "repository": {
     "type": "git",

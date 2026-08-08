@@ -5,8 +5,17 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("PRISMA_DATABASE_URL") // 여기 이름을 맞췄습니다!
+  // 애플리케이션(lib/db.js)과 같은 환경변수를 쓴다.
+  // DB 를 옮길 때 DATABASE_URL 하나만 바꾸면 앱과 Prisma CLI 가 함께 따라간다.
+  url      = env("DATABASE_URL")
 }
+
+// ⚠️ 주의: 아래 모델은 실제 DB 의 일부만 반영하고 있다.
+// 운영 DB 에는 concert, karaoke_number, questions, difficulty, quiz_ranking,
+// notice, goods, waiting_group, discord_channels, site_config, AdminUsers,
+// SuggestedQuestions, pending_karaoke 등의 테이블이 더 있다.
+// 서버컴 이전 전에 `npm run db:pull` 로 스키마를 실제 DB 와 동기화할 것.
+// (자세한 절차는 docs/DB-MIGRATION.md 참고)
 
 // 방명록 테이블 구조
 model messages {
