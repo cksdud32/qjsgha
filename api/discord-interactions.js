@@ -1,12 +1,6 @@
 import nacl from 'tweetnacl';
-import pg from 'pg';
 import { SONG_TYPE_ORDER, titleSortKey, sortSongs } from '../lib/songUtils.js';
-
-const { Pool } = pg;
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false }
-});
+import { pool } from '../lib/db.js';
 
 const CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 const CHOSUNG_GROUP1 = new Set(['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ']);
@@ -31,7 +25,7 @@ function determineSongType(trackTitle, natType, isCover) {
   return '일본 커버곡2';
 }
 
-const ADMIN_ID = '847104232326955078';
+const ADMIN_ID = process.env.ADMIN_USER_ID;
 
 function getRawBody(request) {
   return new Promise((resolve, reject) => {
