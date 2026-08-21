@@ -4,7 +4,8 @@
   "type": "module",
   "main": "loadHeaderFooter.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "mock:agent": "node scripts/mock-agent.js"
   },
   "repository": {
     "type": "git",
