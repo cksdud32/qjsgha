@@ -1,0 +1,17 @@
+# 비밀정보 — 절대 커밋하지 않는다
+.env
+.env.*
+!.env.example
+
+# 의존성
+node_modules/
+
+# 빌드 / 캐시
+.vercel/
+.next/
+dist/
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+*.log

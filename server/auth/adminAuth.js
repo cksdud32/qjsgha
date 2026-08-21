@@ -1,15 +1,9 @@
-import pg from 'pg';
 import crypto from 'crypto';
+import { pool } from '../../lib/db.js';
 import { ApiError, parseBody } from '../http/respond.js';
 
-const { Pool } = pg;
-
 // 기존 admin.js / inf-admin.js와 동일한 "AdminUsers" 테이블 + sha256 해시 방식을 그대로 재사용한다.
-// 새로운 로그인/세션 시스템을 만들지 않는다.
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false }
-});
+// 새로운 로그인/세션 시스템을 만들지 않고, DB 커넥션도 lib/db.js의 공용 풀을 그대로 쓴다.
 
 function sha256(text) {
   return crypto.createHash('sha256').update(text).digest('hex');

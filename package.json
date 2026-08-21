@@ -5,6 +5,10 @@
   "main": "loadHeaderFooter.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "db:pull": "prisma db pull",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "node prisma/seed.js",
     "mock:agent": "node scripts/mock-agent.js"
   },
   "repository": {
