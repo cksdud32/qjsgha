@@ -11,3 +11,17 @@ export function findAgentById(id) {
 export function createAgent(data) {
   return prisma.agent.create({ data });
 }
+
+export function touchAgentHeartbeat(id) {
+  return prisma.agent.update({
+    where: { id },
+    data: { status: 'online', lastSeenAt: new Date() }
+  });
+}
+
+export function updateAgentStatusReport(id, report) {
+  return prisma.agent.update({
+    where: { id },
+    data: { ...report, status: 'online', lastSeenAt: new Date() }
+  });
+}

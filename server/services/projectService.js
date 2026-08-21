@@ -4,7 +4,8 @@ import {
   findAllProjects,
   findProjectById,
   createProject as createProjectRow,
-  updateProjectStatus
+  updateProjectStatus,
+  findProjectsByAgentId
 } from '../repositories/projectRepository.js';
 import { findAgentById } from '../repositories/agentRepository.js';
 
@@ -83,11 +84,20 @@ export async function createProject(input) {
   }
 }
 
+// GET /api/agent/projects — 인증된 Agent에 연결된 프로젝트만 최소 필드로 반환한다.
+export async function listProjectsForAgent(agentId) {
+  return findProjectsByAgentId(agentId);
+}
+
 // Agent가 보고하는 실제 상태로 프로젝트 status를 갱신한다. (Home Server Agent 연동 지점)
-export async function reportProjectStatus(id, status) {
+// agentId: 인증된 호출자. 다른 Agent에 연결된 프로젝트의 상태는 보고할 수 없다.
+export async function reportProjectStatus(id, status, agentId) {
   if (!isOneOf(status, PROJECT_STATUSES)) {
     throw new ApiError(400, 'VALIDATION_ERROR', `status는 다음 중 하나여야 합니다: ${PROJECT_STATUSES.join(', ')}`);
   }
-  await getProjectOrThrow(id);
+  const project = await getProjectOrThrow(id);
+  if (project.agentId && project.agentId !== agentId) {
+    throw new ApiError(403, 'AGENT_PROJECT_MISMATCH', '다른 Agent에 연결된 프로젝트의 상태는 보고할 수 없습니다.');
+  }
   return updateProjectStatus(id, status);
 }

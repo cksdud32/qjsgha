@@ -18,3 +18,11 @@ export function updateProjectStatus(id, status) {
     data: { status, lastSeenAt: new Date() }
   });
 }
+
+export function findProjectsByAgentId(agentId) {
+  return prisma.project.findMany({
+    where: { agentId },
+    select: { id: true, name: true, processName: true, type: true, port: true, status: true },
+    orderBy: { createdAt: 'asc' }
+  });
+}

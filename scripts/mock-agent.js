@@ -10,6 +10,10 @@ import 'dotenv/config';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const AGENT_API_TOKEN = process.env.AGENT_API_TOKEN;
+// Agent API는 이제 X-Agent-Id로 어떤 Agent인지 스스로 밝혀야 한다(URL query는 신뢰하지 않음).
+// 먼저 POST /api/agents로 Agent를 등록하고, 그 id를 여기 넣는다.
+const MOCK_AGENT_ID = process.env.MOCK_AGENT_ID;
+const HEARTBEAT_INTERVAL_MS = Number(process.env.MOCK_AGENT_HEARTBEAT_INTERVAL_MS) || 30000;
 const POLL_INTERVAL_MS = Number(process.env.MOCK_AGENT_POLL_INTERVAL_MS) || 3000;
 const PROCESS_DELAY_MS = Number(process.env.MOCK_AGENT_PROCESS_DELAY_MS) || 1000;
 
@@ -23,11 +27,23 @@ if (!AGENT_API_TOKEN) {
   process.exit(1);
 }
 
+if (!MOCK_AGENT_ID) {
+  console.error('MOCK_AGENT_ID 환경변수를 설정하세요. (POST /api/agents로 미리 등록한 Agent의 id)');
+  process.exit(1);
+}
+
 function authHeaders() {
   return {
     Authorization: `Bearer ${AGENT_API_TOKEN}`,
+    'X-Agent-Id': MOCK_AGENT_ID,
     'Content-Type': 'application/json'
   };
+}
+
+async function sendHeartbeat() {
+  const res = await fetch(`${BASE_URL}/api/agent/heartbeat`, { method: 'POST', headers: authHeaders() });
+  const body = await res.json();
+  if (!body.success) console.error(`[mock-agent] heartbeat 실패: ${body.error?.message}`);
 }
 
 async function fetchPendingCommands() {
@@ -86,6 +102,8 @@ async function tick() {
   }
 }
 
-console.log(`[mock-agent] 시작 — ${BASE_URL} 를 ${POLL_INTERVAL_MS}ms 간격으로 폴링합니다.`);
+console.log(`[mock-agent] 시작 (agentId=${MOCK_AGENT_ID}) — ${BASE_URL} 를 ${POLL_INTERVAL_MS}ms 간격으로 폴링합니다.`);
+sendHeartbeat();
 tick();
+setInterval(sendHeartbeat, HEARTBEAT_INTERVAL_MS);
 setInterval(tick, POLL_INTERVAL_MS);

@@ -16,13 +16,23 @@ export const PROJECT_TYPES = ['web', 'discord-bot', 'worker', 'api', 'other'];
 
 export const COMMAND_ACTIONS = ['start', 'stop', 'restart'];
 
-export const COMMAND_STATUSES = ['pending', 'processing', 'success', 'failed', 'cancelled'];
+export const COMMAND_STATUSES = ['pending', 'processing', 'success', 'failed', 'cancelled', 'timeout'];
 
 export const COMMAND_SOURCES = ['web', 'discord', 'system'];
 
 export const AGENT_STATUSES = ['online', 'offline', 'unknown'];
 
 export const LOG_LEVELS = ['info', 'warn', 'error'];
+
+// CommandLog.message에 붙는 표준 이벤트 코드. DB에는 별도 컬럼 없이 message에 녹여 남긴다.
+export const COMMAND_LOG_EVENTS = {
+  CREATED: 'COMMAND_CREATED',
+  CLAIMED: 'COMMAND_CLAIMED',
+  SUCCEEDED: 'COMMAND_SUCCEEDED',
+  FAILED: 'COMMAND_FAILED',
+  CANCELLED: 'COMMAND_CANCELLED',
+  TIMEOUT: 'COMMAND_TIMEOUT'
+};
 
 export function isOneOf(value, allowed) {
   return typeof value === 'string' && allowed.includes(value);

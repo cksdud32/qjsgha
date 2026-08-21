@@ -37,6 +37,13 @@ export function parseBody(request) {
   return typeof request.body === 'string' ? JSON.parse(request.body) : request.body;
 }
 
+// Idempotency-Key 헤더는 대소문자 표기가 제각각일 수 있어(node http는 lower-case로 정규화하지만
+// 프록시를 거치는 경우를 대비해) 여기서 한 곳에서만 읽는다.
+export function getIdempotencyKey(request) {
+  const value = request.headers['idempotency-key'];
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
 // 라우트 핸들러를 감싸서 method 체크 + 에러 처리를 통일한다.
 export function createHandler(methodHandlers) {
   return async function handler(request, response) {

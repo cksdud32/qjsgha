@@ -1,0 +1,593 @@
+openapi: 3.0.3
+info:
+  title: qjsgha 개인 서버 관리용 중앙 API
+  description: >
+    관리 페이지(Web)와 Discord Bot이 공통으로 사용할 서버 제어 API 계약.
+    실제 PM2/Docker/SSH 실행은 하지 않으며, 이 API는 DB에 상태(Project/Agent/Command/CommandLog)만
+    저장한다. 실제 실행은 Home Server Agent가 /api/agent/* 엔드포인트를 폴링/보고하며 수행한다.
+  version: 1.1.0
+servers:
+  - url: https://<your-vercel-domain>
+    description: 배포된 Vercel 프로젝트
+
+tags:
+  - name: web-admin
+    description: 관리자 인증이 필요한 Project/Command 조회 및 제어 API
+  - name: agent
+    description: Home Server Agent 전용 API (AGENT_API_TOKEN + X-Agent-Id 필요)
+
+components:
+  securitySchemes:
+    adminBasicAuth:
+      type: http
+      scheme: basic
+      description: >
+        기존 AdminUsers 테이블 기반 인증을 그대로 재사용한다(새 로그인 시스템 아님).
+        GET 요청 등 body가 없는 요청은 반드시 이 방식(Authorization: Basic base64(username:password))을 쓴다.
+        POST 요청은 JSON body { "username", "password" }로 대체할 수도 있다.
+    agentBearerAuth:
+      type: http
+      scheme: bearer
+      description: >
+        서버에 설정된 AGENT_API_TOKEN 단일 값과 timingSafeEqual로 비교한다.
+        관리자 인증과 완전히 분리되어 있으며, 이 토큰은 현재 모든 Agent가 공유한다.
+  parameters:
+    XAgentId:
+      name: X-Agent-Id
+      in: header
+      required: true
+      description: >
+        호출하는 Agent의 id(Agent.id). Agent API는 이 값으로 "어떤 Agent가 호출했는지"를 식별하며,
+        해당 Agent에 연결되지 않은 프로젝트/명령에는 접근할 수 없다(403). 값이 없으면 401.
+        헤더가 없으면 body의 agentId, 그 다음 query의 agentId 순으로 대체 사용하지만
+        보안상 헤더 사용을 권장한다.
+      schema:
+        type: string
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: >
+        네트워크 재시도 등으로 같은 요청이 두 번 들어와도 Command가 중복 생성되지 않도록 하는 선택적 키.
+        같은 키로 다시 요청하면 새로 만들지 않고 기존 Command를 그대로 반환한다.
+      schema:
+        type: string
+    ProjectIdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    CommandIdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    Envelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+    SuccessEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [true]
+            data: {}
+    ErrorEnvelope:
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            success:
+              type: boolean
+              enum: [false]
+            error:
+              type: object
+              properties:
+                code:
+                  type: string
+                message:
+                  type: string
+    Project:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string, nullable: true }
+        status:
+          type: string
+          enum: [running, stopped, starting, stopping, restarting, error, unknown]
+        port: { type: integer, nullable: true }
+        type:
+          type: string
+          description: "web | discord-bot | worker | api | other"
+        processName: { type: string, nullable: true }
+        agentId: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        lastSeenAt: { type: string, format: date-time, nullable: true }
+    AgentProjectSummary:
+      type: object
+      description: GET /api/agent/projects 전용 최소 필드
+      properties:
+        id: { type: string }
+        name: { type: string }
+        processName: { type: string, nullable: true }
+        type: { type: string }
+        port: { type: integer, nullable: true }
+        status:
+          type: string
+          enum: [running, stopped, starting, stopping, restarting, error, unknown]
+    Command:
+      type: object
+      properties:
+        id: { type: string }
+        action: { type: string, enum: [start, stop, restart] }
+        status:
+          type: string
+          enum: [pending, processing, success, failed, cancelled, timeout]
+        projectId: { type: string }
+        requestedBy: { type: string, nullable: true }
+        source: { type: string, enum: [web, discord, system] }
+        claimedByAgentId: { type: string, nullable: true }
+        claimedAt: { type: string, format: date-time, nullable: true }
+        idempotencyKey: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        startedAt: { type: string, format: date-time, nullable: true }
+        finishedAt: { type: string, format: date-time, nullable: true }
+        errorMessage: { type: string, nullable: true }
+    Agent:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        status: { type: string, enum: [online, offline, unknown] }
+        lastSeenAt: { type: string, format: date-time, nullable: true }
+        hostname: { type: string, nullable: true }
+        platform: { type: string, nullable: true }
+        uptime: { type: integer, nullable: true }
+        cpuUsage: { type: number, nullable: true }
+        memoryUsage: { type: number, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+paths:
+  /api/projects:
+    get:
+      tags: [web-admin]
+      summary: 프로젝트 목록 조회
+      security: [{ adminBasicAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/Project' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/projects/{id}:
+    get:
+      tags: [web-admin]
+      summary: 프로젝트 단건 조회
+      security: [{ adminBasicAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ProjectIdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Project' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/projects/{id}/start:
+    post:
+      tags: [web-admin]
+      summary: 프로젝트 시작 명령 생성 (실제 실행 아님, Command를 pending으로 생성)
+      security: [{ adminBasicAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ProjectIdPath'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          commandId: { type: string }
+                          projectId: { type: string }
+                          action: { type: string, enum: [start] }
+                          status: { type: string, enum: [pending] }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: 이미 처리 중인 명령이 있음
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+              example:
+                success: false
+                error: { code: PROJECT_COMMAND_IN_PROGRESS, message: "A command is already being processed for this project." }
+
+  /api/projects/{id}/stop:
+    post:
+      tags: [web-admin]
+      summary: 프로젝트 정지 명령 생성 (start와 동일한 동작/응답 형태, action=stop)
+      security: [{ adminBasicAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ProjectIdPath'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201': { description: Created }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { description: 이미 처리 중인 명령이 있음 }
+
+  /api/projects/{id}/restart:
+    post:
+      tags: [web-admin]
+      summary: 프로젝트 재시작 명령 생성 (start와 동일한 동작/응답 형태, action=restart)
+      security: [{ adminBasicAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ProjectIdPath'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201': { description: Created }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { description: 이미 처리 중인 명령이 있음 }
+
+  /api/commands:
+    get:
+      tags: [web-admin]
+      summary: 명령 목록 조회
+      security: [{ adminBasicAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [pending, processing, success, failed, cancelled, timeout] }
+        - name: projectId
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/Command' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+
+  /api/commands/{id}:
+    get:
+      tags: [web-admin]
+      summary: 명령 단건 조회
+      security: [{ adminBasicAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/CommandIdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Command' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/commands/{id}/cancel:
+    post:
+      tags: [web-admin]
+      summary: 아직 Agent가 가져가지 않은(pending) 명령 취소
+      security: [{ adminBasicAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/CommandIdPath'
+      responses:
+        '200':
+          description: 취소됨 (pending -> cancelled)
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Command' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: pending이 아닌 명령은 취소 불가
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+              example:
+                success: false
+                error: { code: INVALID_STATE_TRANSITION, message: "pending 상태의 명령만 취소할 수 있습니다. (현재 상태: processing)" }
+
+  /api/agents:
+    get:
+      tags: [web-admin]
+      summary: Agent 목록 조회 (status는 lastSeenAt 기준으로 online/offline 계산됨)
+      security: [{ adminBasicAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/Agent' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [web-admin]
+      summary: Agent 등록
+      security: [{ adminBasicAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Agent' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '409': { description: 이미 존재하는 Agent 이름 }
+
+  /api/agent/heartbeat:
+    post:
+      tags: [agent]
+      summary: Agent가 살아있음을 알림 (status=online, lastSeenAt=now)
+      security: [{ agentBearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/XAgentId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          agentId: { type: string }
+                          status: { type: string, enum: [online] }
+                          lastSeenAt: { type: string, format: date-time }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { description: 등록되지 않은 Agent id }
+
+  /api/agent/status:
+    post:
+      tags: [agent]
+      summary: >
+        Agent 시스템 정보 보고 (heartbeat 겸용). 실제 os 모듈로 값을 수집하는 Agent 쪽 구현은
+        이번 범위가 아니며, 여기서는 값을 받아 저장하는 구조만 제공한다.
+      security: [{ agentBearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/XAgentId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hostname: { type: string, example: "HOME-PC" }
+                platform: { type: string, example: "win32" }
+                uptime: { type: integer, example: 123456 }
+                cpuUsage: { type: number, example: 24.3 }
+                memoryUsage: { type: number, example: 61.8 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Agent' }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { description: 등록되지 않은 Agent id }
+
+  /api/agent/projects:
+    get:
+      tags: [agent]
+      summary: 인증된 Agent에 연결된 프로젝트 목록(설정) 조회
+      security: [{ agentBearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/XAgentId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/AgentProjectSummary' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/agent/commands:
+    get:
+      tags: [agent]
+      summary: 인증된 Agent에 연결된 프로젝트의 pending 명령 목록 조회 (폴링용)
+      security: [{ agentBearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/XAgentId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '#/components/schemas/Command' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/agent/commands/{id}/processing:
+    post:
+      tags: [agent]
+      summary: 명령 선점 (pending -> processing). claimedByAgentId/claimedAt이 기록된다.
+      security: [{ agentBearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/CommandIdPath'
+        - $ref: '#/components/parameters/XAgentId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Command' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403':
+          description: 이 Agent에 연결되지 않은 프로젝트의 명령
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+              example:
+                success: false
+                error: { code: AGENT_PROJECT_MISMATCH, message: "다른 Agent에 연결된 프로젝트의 명령은 처리할 수 없습니다." }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: 이미 다른 곳에서 처리 중이거나 완료된 명령 (동시 claim 경합 포함)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorEnvelope' }
+
+  /api/agent/commands/{id}/success:
+    post:
+      tags: [agent]
+      summary: 명령 완료 처리 (processing -> success)
+      security: [{ agentBearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/CommandIdPath'
+        - $ref: '#/components/parameters/XAgentId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Command' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { description: 이 명령을 선점하지 않은 Agent }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { description: processing 상태가 아닌 명령 }
+
+  /api/agent/commands/{id}/failed:
+    post:
+      tags: [agent]
+      summary: 명령 실패 처리 (processing -> failed)
+      security: [{ agentBearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/CommandIdPath'
+        - $ref: '#/components/parameters/XAgentId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                errorMessage: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/Command' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { description: 이 명령을 선점하지 않은 Agent }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { description: processing 상태가 아닌 명령 }
+
+components-note: {}
+
+x-additional-note: >
+  POST /api/agent/projects/{id}/status (프로젝트 실제 상태 보고, project.status 갱신)와
+  POST /api/commands/timeout-check (관리자 인증, 오래된 processing 명령을 timeout으로 정리)도
+  존재하지만 이번 문서의 필수 목록에는 포함되지 않아 스펙만 남긴다. 전자는 body { status },
+  후자는 body 없이 호출하며 { timedOutCommandIds, count }를 반환한다.
