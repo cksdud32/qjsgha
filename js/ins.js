@@ -100,7 +100,7 @@ function highlightMatch(text, matchIndex, keyword) {
 function initSearch() {
     const searchInput = document.getElementById('searchInput');
     const results = document.getElementById('results');
-    const contents = document.querySelectorAll('p:not(.popup3 p):not(.skq p):not(.open-popup3)');
+    const contents = document.querySelectorAll('p:not(.popup3 p):not(.skq p):not(.open-popup3):not(footer p)');
 
     contents.forEach((el, idx) => { if (!el.id) el.id = 'content-' + idx; });
 
