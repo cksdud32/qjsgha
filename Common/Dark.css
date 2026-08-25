@@ -325,7 +325,7 @@ body.dark-mode .hidden-box i {
     line-height: 1.6;
 }
 
-.delete-btn{
+body.dark-mode .delete-btn{
     background-color: blueviolet !important;
     cursor: pointer;
     width: 70px; height: 30px;
