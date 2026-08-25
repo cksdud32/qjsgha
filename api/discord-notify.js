@@ -77,10 +77,66 @@ async function handleConcert(botToken) {
   return { success: true, message: `${succeeded}개 채널 전송 완료`, ...(failed.length > 0 && { errors: failed }) };
 }
 
-async function handleKaraoke(botToken) {
-  const adminChannelId = process.env.ADMIN_CHANNEL_ID;
-  if (!adminChannelId) return { success: false, error: 'ADMIN_CHANNEL_ID not set' };
+// 노래방 등록 확인 메시지는 discord_channels에 등록된 서버 중,
+// TARGET_USER_ID가 서버장(owner)인 서버의 채널로만 보낸다.
+// (Guild Member 조회가 아니라 GET /guilds/{id}의 owner_id로 판별)
+async function findKaraokeCheckTargetChannels(botToken) {
+  const targetUserId = process.env.TARGET_USER_ID;
+  if (!targetUserId) return { error: 'TARGET_USER_ID not set' };
 
+  const { rows: channelRows } = await pool.query(`SELECT guild_id, channel_id FROM discord_channels`);
+  if (channelRows.length === 0) return { channelIds: [] };
+
+  const guildChecks = await Promise.allSettled(
+    channelRows.map(async row => {
+      const r = await fetch(`https://discord.com/api/v10/guilds/${row.guild_id}`, {
+        headers: { 'Authorization': `Bot ${botToken}` }
+      });
+      if (!r.ok) throw new Error(`guild ${row.guild_id}: ${r.status}`);
+      const guild = await r.json();
+      return { channelId: row.channel_id, ownerId: guild.owner_id };
+    })
+  );
+
+  const channelIds = [];
+  for (const result of guildChecks) {
+    if (result.status === 'fulfilled') {
+      if (result.value.ownerId === targetUserId) channelIds.push(result.value.channelId);
+    } else {
+      console.warn('노래방 확인 대상 서버 조회 실패:', result.reason?.message);
+    }
+  }
+  return { channelIds };
+}
+
+function buildKaraokeCheckMessageBody(row) {
+  const natLabel = row.nat_type === 1 ? '한국' : '일본';
+  const coverLabel = row.is_cover ? `커버 (${natLabel})` : '오리지널';
+
+  return JSON.stringify({
+    embeds: [{
+      title: '🎤 노래방 번호 등록 요청',
+      color: 0xCCA6E8,
+      fields: [
+        { name: '곡 제목', value: row.track_title, inline: true },
+        { name: 'TJ 제목', value: row.tj_title || '—', inline: true },
+        { name: 'TJ 번호', value: String(row.tj_number), inline: true },
+        { name: '종류', value: coverLabel, inline: true }
+      ],
+      footer: { text: `pending_id: ${row.id}` },
+      timestamp: new Date().toISOString()
+    }],
+    components: [{
+      type: 1,
+      components: [
+        { type: 2, style: 3, label: '✅ 등록', custom_id: `reg:${row.id}` },
+        { type: 2, style: 4, label: '❌ 기각', custom_id: `rej:${row.id}` }
+      ]
+    }]
+  });
+}
+
+async function handleKaraoke(botToken) {
   const { rows } = await pool.query(
     `SELECT id, track_title, tj_title, tj_number, nat_type, is_cover FROM pending_karaoke ORDER BY id ASC`
   );
@@ -89,40 +145,26 @@ async function handleKaraoke(botToken) {
     return { success: true, message: '처리 대기 중인 항목이 없습니다.' };
   }
 
-  const sendResults = await Promise.allSettled(
-    rows.map(row => {
-      const natLabel = row.nat_type === 1 ? '한국' : '일본';
-      const coverLabel = row.is_cover ? `커버 (${natLabel})` : '오리지널';
+  const { error, channelIds } = await findKaraokeCheckTargetChannels(botToken);
+  if (error) return { success: false, error };
 
-      return fetch(`https://discord.com/api/v10/channels/${adminChannelId}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bot ${botToken}` },
-        body: JSON.stringify({
-          embeds: [{
-            title: '🎤 노래방 번호 등록 요청',
-            color: 0xCCA6E8,
-            fields: [
-              { name: '곡 제목', value: row.track_title, inline: true },
-              { name: 'TJ 제목', value: row.tj_title || '—', inline: true },
-              { name: 'TJ 번호', value: String(row.tj_number), inline: true },
-              { name: '종류', value: coverLabel, inline: true }
-            ],
-            footer: { text: `pending_id: ${row.id}` },
-            timestamp: new Date().toISOString()
-          }],
-          components: [{
-            type: 1,
-            components: [
-              { type: 2, style: 3, label: '✅ 등록', custom_id: `reg:${row.id}` },
-              { type: 2, style: 4, label: '❌ 기각', custom_id: `rej:${row.id}` }
-            ]
-          }]
+  if (channelIds.length === 0) {
+    return { success: true, message: '노래방 확인 메시지를 보낼 대상 서버가 없습니다.' };
+  }
+
+  const sendResults = await Promise.allSettled(
+    channelIds.flatMap(channelId =>
+      rows.map(row =>
+        fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bot ${botToken}` },
+          body: buildKaraokeCheckMessageBody(row)
+        }).then(async r => {
+          if (!r.ok) throw new Error(await r.text());
+          return { channelId, id: row.id };
         })
-      }).then(async r => {
-        if (!r.ok) throw new Error(await r.text());
-        return row.id;
-      });
-    })
+      )
+    )
   );
 
   const succeeded = sendResults.filter(r => r.status === 'fulfilled').length;
