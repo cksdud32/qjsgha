@@ -161,9 +161,15 @@ body.dark-mode .qpsj {
 }
 
 /* 추가하기 버튼 및 초기화 버튼 */
-body.dark-mode #addCustomItemBtn, 
+body.dark-mode #addCustomItemBtn,
 body.dark-mode .clear-btn {
     background-color: #286bd8 !important;
+    color: white !important;
+}
+
+/* 추가한 준비물 전체 삭제 버튼 */
+body.dark-mode .delete-all-btn {
+    background-color: #c0392b !important;
     color: white !important;
 }
 

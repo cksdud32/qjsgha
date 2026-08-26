@@ -445,6 +445,8 @@ tbody tr.goods-clickable.calc-on:hover { background-color: var(--primary-light);
 }
 #addCustomItemBtn:hover, .clear-btn:hover { background: var(--primary-dark); }
 .clear-btn { width: 100%; margin-top: 20px; }
+.delete-all-btn { background: #e74c3c; }
+.delete-all-btn:hover { background: #c0392b; }
 
 /* Popups */
 .popup_12, .popup3 {

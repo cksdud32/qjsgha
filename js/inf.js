@@ -102,6 +102,17 @@ function loadCustomItems() {
   });
 }
 
+function deleteAllCustomItems() {
+  document.querySelectorAll('.custom-item').forEach(item => {
+    const cb = item.querySelector('input[type="checkbox"]');
+    if (cb) localStorage.removeItem(cb.id);
+    item.remove();
+  });
+
+  saveCustomItems();
+  updateCustomItemBorder();
+}
+
 function updateCustomItemBorder() {
   const items = document.querySelectorAll('.custom-item');
 
@@ -161,6 +172,15 @@ document.addEventListener('DOMContentLoaded', () => {
     clearBtn.addEventListener('click', () => {
       if (!confirm('선택된 모든 준비물을 초기화하시겠습니까?')) return;
       clearAllStrikes();
+    });
+  }
+
+  // 추가한 준비물 전체 삭제
+  const deleteAllBtn = document.getElementById('deleteAllCustomBtn');
+  if (deleteAllBtn) {
+    deleteAllBtn.addEventListener('click', () => {
+      if (!confirm('추가한 준비물을 모두 삭제하시겠습니까?')) return;
+      deleteAllCustomItems();
     });
   }
 });
