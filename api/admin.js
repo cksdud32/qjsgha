@@ -400,12 +400,13 @@ export async function getKaraokeSongs(request, response) {
   try {
     await requireKaraokeAdmin(request.query);
     const { search } = request.query;
+    const columns = 'id, song_title, song_type, number1, number2, lyrics_key1, lyrics_label, lyrics_label2';
     const result = search
       ? await pool.query(
-          `SELECT id, song_title, song_type, number1, number2 FROM karaoke_number WHERE song_title ILIKE $1 ORDER BY id DESC`,
+          `SELECT ${columns} FROM karaoke_number WHERE song_title ILIKE $1 ORDER BY id DESC`,
           [`%${search}%`]
         )
-      : await pool.query(`SELECT id, song_title, song_type, number1, number2 FROM karaoke_number ORDER BY id DESC`);
+      : await pool.query(`SELECT ${columns} FROM karaoke_number ORDER BY id DESC`);
     return response.status(200).json({ songs: result.rows });
   } catch (error) {
     console.error('Get karaoke songs error:', error);
@@ -419,13 +420,13 @@ export async function addKaraokeSong(request, response) {
   try {
     const body = parseBody(request);
     await requireKaraokeAdmin(body);
-    const { song_title, song_type, number1, number2 } = body;
+    const { song_title, song_type, number1, number2, lyrics_key1, lyrics_label, lyrics_label2 } = body;
     if (!song_title || !song_type || !number1) {
       return response.status(400).json({ error: '필수 항목(곡 제목, 종류, 번호1)이 누락되었습니다.' });
     }
     await pool.query(
-      `INSERT INTO karaoke_number (song_title, song_type, number1, number2) VALUES ($1, $2, $3, $4)`,
-      [song_title, resolveSongType(song_type, song_title), number1, number2 || null]
+      `INSERT INTO karaoke_number (song_title, song_type, number1, number2, lyrics_key1, lyrics_label, lyrics_label2) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [song_title, resolveSongType(song_type, song_title), number1, number2 || null, lyrics_key1 || null, lyrics_label || null, lyrics_label2 || null]
     );
     return response.status(200).json({ message: '곡이 추가되었습니다.' });
   } catch (error) {
@@ -439,13 +440,13 @@ export async function updateKaraokeSong(request, response) {
   try {
     const body = parseBody(request);
     await requireKaraokeAdmin(body);
-    const { songId, song_title, song_type, number1, number2 } = body;
+    const { songId, song_title, song_type, number1, number2, lyrics_key1, lyrics_label, lyrics_label2 } = body;
     if (!songId || !song_title || !song_type || !number1) {
       return response.status(400).json({ error: '필수 항목이 누락되었습니다.' });
     }
     await pool.query(
-      `UPDATE karaoke_number SET song_title=$1, song_type=$2, number1=$3, number2=$4 WHERE id=$5`,
-      [song_title, resolveSongType(song_type, song_title), number1, number2 || null, songId]
+      `UPDATE karaoke_number SET song_title=$1, song_type=$2, number1=$3, number2=$4, lyrics_key1=$5, lyrics_label=$6, lyrics_label2=$7 WHERE id=$8`,
+      [song_title, resolveSongType(song_type, song_title), number1, number2 || null, lyrics_key1 || null, lyrics_label || null, lyrics_label2 || null, songId]
     );
     return response.status(200).json({ message: '곡이 수정되었습니다.' });
   } catch (error) {

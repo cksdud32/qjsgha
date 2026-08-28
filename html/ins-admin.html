@@ -95,6 +95,9 @@
     .no-lyrics-btn { border-color: #a07d2a; color: #d9b25c; }
     .no-lyrics-btn:hover { border-color: #d9b25c; }
     .no-lyrics-btn.active { background: #a07d2a; border-color: #a07d2a; color: white; }
+    .multi-lyrics-btn { border-color: #2a7da0; color: #5cc0d9; }
+    .multi-lyrics-btn:hover { border-color: #5cc0d9; }
+    .multi-lyrics-btn.active { background: #2a7da0; border-color: #2a7da0; color: white; }
 
     .more-btn {
       padding: 9px 24px; background: #2a2a3e; color: #cca6e8;
@@ -224,7 +227,7 @@ function esc(v) {
 function val(id) { return document.getElementById(id)?.value ?? ''; }
 
 const SONG_TYPES = ['오리지널', '한국 커버곡', '일본 커버곡'];
-const FILTER_TYPES = ['전체', '일본 커버곡1', '일본 커버곡2', '오리지널', '한국 커버곡'];
+const FILTER_TYPES = ['전체', '일본 커버곡', '오리지널', '한국 커버곡'];
 const GROUP_ORDER = { '일본 커버곡1': 0, '일본 커버곡2': 1, '오리지널': 2, '한국 커버곡': 3 };
 const PAGE_SIZE = 10;
 
@@ -399,7 +402,9 @@ let shownCount = PAGE_SIZE;
 const filtersEl = document.getElementById('song-filters');
 filtersEl.innerHTML = FILTER_TYPES.map(t =>
   `<button class="filter-btn ${t === currentFilter ? 'active' : ''}" data-type="${esc(t)}">${esc(t)}</button>`
-).join('') + `<button class="filter-btn no-lyrics-btn" data-type="__no_lyrics__">가사 없음</button>`;
+).join('')
+  + `<button class="filter-btn no-lyrics-btn" data-type="__no_lyrics__">가사 없음</button>`
+  + `<button class="filter-btn multi-lyrics-btn" data-type="__multi_lyrics__">가사 2개 이상</button>`;
 filtersEl.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     currentFilter = btn.dataset.type;
@@ -430,6 +435,11 @@ function updateNoLyricsCount() {
   if (!btn) return;
   const count = allSongs.filter(s => !hasLyrics(s)).length;
   btn.textContent = `가사 없음 (${count})`;
+
+  const multiBtn = filtersEl.querySelector('[data-type="__multi_lyrics__"]');
+  if (!multiBtn) return;
+  const multiCount = allSongs.filter(s => s.lyrics_key1).length;
+  multiBtn.textContent = `가사 2개 이상 (${multiCount})`;
 }
 
 function renderSongs() {
@@ -440,7 +450,11 @@ function renderSongs() {
     ? allSongs
     : currentFilter === '__no_lyrics__'
       ? allSongs.filter(s => !hasLyrics(s))
-      : allSongs.filter(s => s.song_type === currentFilter);
+      : currentFilter === '__multi_lyrics__'
+        ? allSongs.filter(s => s.lyrics_key1)
+        : currentFilter === '일본 커버곡'
+          ? allSongs.filter(s => s.song_type.startsWith('일본 커버곡'))
+          : allSongs.filter(s => s.song_type === currentFilter);
 
   if (!filtered.length) {
     el.innerHTML = '<p class="empty">등록된 곡이 없습니다.</p>';
@@ -451,12 +465,13 @@ function renderSongs() {
   const visible = filtered.slice(0, shownCount);
 
   el.innerHTML = `<table>
-    <thead><tr><th>곡 제목</th><th>종류</th><th>번호1</th><th>번호2</th><th>작업</th></tr></thead>
+    <thead><tr><th>곡 제목</th><th>종류</th><th>번호1</th><th>번호2</th><th>가사 연도</th><th>작업</th></tr></thead>
     <tbody>${visible.map(s => `<tr>
       <td>${esc(s.song_title)}</td>
       <td>${esc(s.song_type)}</td>
       <td>${esc(s.number1)}</td>
       <td>${esc(s.number2) || '-'}</td>
+      <td>${s.lyrics_key1 ? `${esc(s.lyrics_label) || '?'} / ${esc(s.lyrics_label2) || '?'}` : '-'}</td>
       <td>
         <button class="action-btn edit-btn"   data-id="${s.id}">수정</button>
         <button class="action-btn delete-btn" data-id="${s.id}">삭제</button>
@@ -520,6 +535,20 @@ function openSongModal(song) {
         <input type="text" id="f-num2" value="${esc(song?.number2)}">
       </div>
     </div>
+    <div class="form-group">
+      <label>가사 버전2 번호 (선택 · 가사가 2개일 때만)</label>
+      <input type="text" id="f-lyrics-key1" value="${esc(song?.lyrics_key1)}">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>버전1 연도 (선택)</label>
+        <input type="text" id="f-lyrics-label" value="${esc(song?.lyrics_label)}">
+      </div>
+      <div class="form-group">
+        <label>버전2 연도 (선택)</label>
+        <input type="text" id="f-lyrics-label2" value="${esc(song?.lyrics_label2)}">
+      </div>
+    </div>
   `;
   modal.style.display = 'block';
 
@@ -528,12 +557,16 @@ function openSongModal(song) {
     const song_type = val('f-type');
     const number1 = val('f-num1').trim();
     const number2 = val('f-num2').trim() || null;
+    const lyrics_key1 = val('f-lyrics-key1').trim() || null;
+    const lyrics_label = val('f-lyrics-label').trim() || null;
+    const lyrics_label2 = val('f-lyrics-label2').trim() || null;
 
     if (!song_title || !number1) { alert('곡 제목과 번호1은 필수입니다.'); return; }
 
+    const payload = { song_title, song_type, number1, number2, lyrics_key1, lyrics_label, lyrics_label2 };
     const data = song
-      ? await api('karaoke-update-song', { body: { songId: song.id, song_title, song_type, number1, number2 } })
-      : await api('karaoke-add-song', { body: { song_title, song_type, number1, number2 } });
+      ? await api('karaoke-update-song', { body: { songId: song.id, ...payload } })
+      : await api('karaoke-add-song', { body: payload });
 
     if (data.error) { alert('저장 실패: ' + data.error); return; }
     modal.style.display = 'none';
