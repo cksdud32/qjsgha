@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { pool } from '../lib/db.js';
+import { determineSongType } from '../lib/songUtils.js';
 
 function sha256(text) {
   return crypto.createHash('sha256').update(text).digest('hex');
@@ -306,11 +307,176 @@ export async function deleteAllRankingForCurrentMonth(request, response) {
   }
 }
 
+// ── 노래방 관리 (karaoke_number / pending_karaoke) ──────────────
+// Vercel Hobby 플랜 Serverless Function 12개 제한 때문에 별도 파일을 만들지 않고
+// 이미 action 기반으로 라우팅하는 이 파일에 합쳤다. 노래방 admin 액션은 요청마다
+// (inf-admin.js와 동일하게) username/password를 직접 검증한다.
+async function requireKaraokeAdmin(creds) {
+  const { username, password } = creds || {};
+  if (!username || !password) {
+    const err = new Error('아이디와 비밀번호가 필요합니다.');
+    err.status = 401;
+    throw err;
+  }
+  const result = await pool.query(
+    'SELECT id FROM "AdminUsers" WHERE username = $1 AND password = $2',
+    [username, sha256(password)]
+  );
+  if (result.rows.length === 0) {
+    const err = new Error('아이디 또는 비밀번호가 올바르지 않습니다.');
+    err.status = 401;
+    throw err;
+  }
+}
+
+// 디스코드로 오는 노래방 등록 요청과 동일한 목록을 사이트 관리자 페이지에서도 조회
+export async function getPendingKaraoke(request, response) {
+  if (request.method !== 'GET') return response.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    await requireKaraokeAdmin(request.query);
+    const result = await pool.query(
+      `SELECT id, track_title, tj_title, tj_number, nat_type, is_cover FROM pending_karaoke ORDER BY id ASC`
+    );
+    return response.status(200).json({ pending: result.rows });
+  } catch (error) {
+    console.error('Get pending karaoke error:', error);
+    return response.status(error.status || 500).json({ error: error.message });
+  }
+}
+
+// 디스코드 등록 버튼과 동일한 로직(discord-interactions.js)을 사이트에서도 수행
+export async function approvePendingKaraoke(request, response) {
+  if (request.method !== 'POST') return response.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    const body = parseBody(request);
+    await requireKaraokeAdmin(body);
+    const { pendingId } = body;
+    if (!pendingId) return response.status(400).json({ error: 'pendingId가 필요합니다.' });
+
+    const { rows } = await pool.query(
+      'SELECT id, track_title, tj_number, nat_type, is_cover FROM pending_karaoke WHERE id = $1',
+      [pendingId]
+    );
+    if (rows.length === 0) return response.status(404).json({ error: '이미 처리된 항목입니다.' });
+
+    const pending = rows[0];
+    const songType = determineSongType(pending.track_title, pending.nat_type, pending.is_cover);
+    await pool.query(
+      `INSERT INTO karaoke_number (song_title, song_type, number1) VALUES ($1, $2, $3)`,
+      [pending.track_title, songType, pending.tj_number]
+    );
+    await pool.query('DELETE FROM pending_karaoke WHERE id = $1', [pendingId]);
+
+    return response.status(200).json({ message: `등록 완료: ${pending.track_title}`, songType });
+  } catch (error) {
+    console.error('Approve pending karaoke error:', error);
+    return response.status(error.status || 500).json({ error: error.message });
+  }
+}
+
+export async function rejectPendingKaraoke(request, response) {
+  if (request.method !== 'POST') return response.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    const body = parseBody(request);
+    await requireKaraokeAdmin(body);
+    const { pendingId } = body;
+    if (!pendingId) return response.status(400).json({ error: 'pendingId가 필요합니다.' });
+
+    await pool.query('DELETE FROM pending_karaoke WHERE id = $1', [pendingId]);
+    return response.status(200).json({ message: '기각되었습니다.' });
+  } catch (error) {
+    console.error('Reject pending karaoke error:', error);
+    return response.status(error.status || 500).json({ error: error.message });
+  }
+}
+
+export async function getKaraokeSongs(request, response) {
+  if (request.method !== 'GET') return response.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    await requireKaraokeAdmin(request.query);
+    const { search } = request.query;
+    const result = search
+      ? await pool.query(
+          `SELECT id, song_title, song_type, number1, number2 FROM karaoke_number WHERE song_title ILIKE $1 ORDER BY id DESC`,
+          [`%${search}%`]
+        )
+      : await pool.query(`SELECT id, song_title, song_type, number1, number2 FROM karaoke_number ORDER BY id DESC`);
+    return response.status(200).json({ songs: result.rows });
+  } catch (error) {
+    console.error('Get karaoke songs error:', error);
+    return response.status(error.status || 500).json({ error: error.message });
+  }
+}
+
+// 가사는 아직 사이트 관리자 페이지에서 다루지 않고 기존 방식(사이트 내 별도 입력)을 그대로 사용한다.
+export async function addKaraokeSong(request, response) {
+  if (request.method !== 'POST') return response.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    const body = parseBody(request);
+    await requireKaraokeAdmin(body);
+    const { song_title, song_type, number1, number2 } = body;
+    if (!song_title || !song_type || !number1) {
+      return response.status(400).json({ error: '필수 항목(곡 제목, 종류, 번호1)이 누락되었습니다.' });
+    }
+    await pool.query(
+      `INSERT INTO karaoke_number (song_title, song_type, number1, number2) VALUES ($1, $2, $3, $4)`,
+      [song_title, song_type, number1, number2 || null]
+    );
+    return response.status(200).json({ message: '곡이 추가되었습니다.' });
+  } catch (error) {
+    console.error('Add karaoke song error:', error);
+    return response.status(error.status || 500).json({ error: error.message });
+  }
+}
+
+export async function updateKaraokeSong(request, response) {
+  if (request.method !== 'POST') return response.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    const body = parseBody(request);
+    await requireKaraokeAdmin(body);
+    const { songId, song_title, song_type, number1, number2 } = body;
+    if (!songId || !song_title || !song_type || !number1) {
+      return response.status(400).json({ error: '필수 항목이 누락되었습니다.' });
+    }
+    await pool.query(
+      `UPDATE karaoke_number SET song_title=$1, song_type=$2, number1=$3, number2=$4 WHERE id=$5`,
+      [song_title, song_type, number1, number2 || null, songId]
+    );
+    return response.status(200).json({ message: '곡이 수정되었습니다.' });
+  } catch (error) {
+    console.error('Update karaoke song error:', error);
+    return response.status(error.status || 500).json({ error: error.message });
+  }
+}
+
+export async function deleteKaraokeSong(request, response) {
+  if (request.method !== 'DELETE') return response.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    const body = parseBody(request);
+    await requireKaraokeAdmin(body);
+    const { songId } = body;
+    if (!songId) return response.status(400).json({ error: '곡 ID가 필요합니다.' });
+
+    await pool.query('DELETE FROM karaoke_number WHERE id=$1', [songId]);
+    return response.status(200).json({ message: '곡이 삭제되었습니다.' });
+  } catch (error) {
+    console.error('Delete karaoke song error:', error);
+    return response.status(error.status || 500).json({ error: error.message });
+  }
+}
+
 export default async function handler(request, response) {
   const { action } = request.query;
 
   switch (action) {
     case 'login':                        return login(request, response);
+    case 'karaoke-get-pending':          return getPendingKaraoke(request, response);
+    case 'karaoke-approve-pending':      return approvePendingKaraoke(request, response);
+    case 'karaoke-reject-pending':       return rejectPendingKaraoke(request, response);
+    case 'karaoke-get-songs':            return getKaraokeSongs(request, response);
+    case 'karaoke-add-song':             return addKaraokeSong(request, response);
+    case 'karaoke-update-song':          return updateKaraokeSong(request, response);
+    case 'karaoke-delete-song':          return deleteKaraokeSong(request, response);
     case 'get-suggestions':
     case 'get-suggested-problems':       return getSuggestions(request, response);
     case 'approve-suggestion':           return approveSuggestion(request, response);

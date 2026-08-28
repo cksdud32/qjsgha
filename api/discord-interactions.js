@@ -1,29 +1,6 @@
 import nacl from 'tweetnacl';
-import { SONG_TYPE_ORDER, titleSortKey, sortSongs } from '../lib/songUtils.js';
+import { SONG_TYPE_ORDER, titleSortKey, sortSongs, determineSongType } from '../lib/songUtils.js';
 import { pool } from '../lib/db.js';
-
-const CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-const CHOSUNG_GROUP1 = new Set(['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ']);
-
-function firstConsonant(text) {
-  for (const ch of text) {
-    if (/\d/.test(ch)) return 'digit';
-    if (/[A-Za-z]/.test(ch)) return 'alpha';
-    const code = ch.charCodeAt(0);
-    if (code >= 0xAC00 && code <= 0xD7A3) {
-      return CHOSUNG[Math.floor((code - 0xAC00) / 28 / 21)];
-    }
-  }
-  return '';
-}
-
-function determineSongType(trackTitle, natType, isCover) {
-  if (!isCover) return '오리지널 곡';
-  if (natType === 1) return '한국 커버곡';
-  const first = firstConsonant(trackTitle);
-  if (first === 'digit' || first === 'alpha' || CHOSUNG_GROUP1.has(first)) return '일본 커버곡1';
-  return '일본 커버곡2';
-}
 
 const ADMIN_ID = process.env.ADMIN_USER_ID;
 

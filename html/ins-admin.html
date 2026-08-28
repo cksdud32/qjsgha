@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+    <link rel="icon" href="/image/logo.jpg" type="image/jpeg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>노래방 정보 관리</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #13131f; color: #e0e0e0; min-height: 100vh; }
+
+    /* ── 로그인 ── */
+    #login-section {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 100vh; gap: 0;
+    }
+    .login-box {
+      background: #1e1e30; border: 1px solid #333; border-radius: 12px;
+      padding: 40px 36px; width: 320px;
+    }
+    .login-box h1 { font-size: 20px; margin-bottom: 28px; text-align: center; color: #cca6e8; }
+    .login-box input {
+      display: block; width: 100%; padding: 11px 14px; margin-bottom: 12px;
+      background: #2a2a3e; border: 1px solid #444; border-radius: 8px;
+      color: #eee; font-size: 15px;
+    }
+    .login-box input:focus { outline: none; border-color: #7c5cbf; }
+    .login-box button {
+      width: 100%; padding: 12px; margin-top: 4px;
+      background: #7c5cbf; color: white; border: none;
+      border-radius: 8px; font-size: 15px; cursor: pointer; transition: background .2s;
+    }
+    .login-box button:hover { background: #9a78d8; }
+    #login-error { color: #ff6b6b; font-size: 13px; margin-top: 10px; text-align: center; min-height: 18px; }
+
+    /* ── 관리자 패널 ── */
+    #admin-section { display: none; }
+
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 24px; background: #1a1a2e; border-bottom: 1px solid #2a2a3e;
+      position: sticky; top: 0; z-index: 100;
+    }
+    header h1 { font-size: 18px; color: #cca6e8; }
+    #logoutBtn {
+      padding: 7px 16px; background: #7b2d2d; color: white;
+      border: none; border-radius: 6px; cursor: pointer; font-size: 13px;
+    }
+    #logoutBtn:hover { background: #a03535; }
+
+    .tabs {
+      display: flex; gap: 2px; padding: 0 24px; flex-wrap: wrap;
+      background: #1a1a2e; border-bottom: 1px solid #2a2a3e;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 12px 20px; background: transparent; color: #888;
+      border: none; border-bottom: 3px solid transparent;
+      cursor: pointer; font-size: 14px; transition: color .2s;
+      position: relative;
+    }
+    .tab-btn:hover { color: #ccc; }
+    .tab-btn.active { color: #cca6e8; border-bottom-color: #cca6e8; }
+    .tab-badge {
+      display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 6px;
+      background: #c0392b; color: white; border-radius: 10px; font-size: 11px; line-height: 18px;
+    }
+
+    .tab-panel { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .tab-panel.active { display: block; }
+
+    .panel-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+    }
+    .panel-header h2 { font-size: 17px; }
+    .add-btn {
+      padding: 8px 16px; background: #27ae60; color: white;
+      border: none; border-radius: 7px; cursor: pointer; font-size: 13px;
+    }
+    .add-btn:hover { background: #2ecc71; }
+    .search-box {
+      padding: 8px 12px; background: #1e1e30; border: 1px solid #333;
+      border-radius: 7px; color: #eee; font-size: 13px; min-width: 220px;
+    }
+    .search-box:focus { outline: none; border-color: #7c5cbf; }
+
+    /* ── 테이블 ── */
+    .tbl-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 500px; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid #2a2a3e; text-align: left; vertical-align: top; }
+    th { background: #1e1e30; color: #cca6e8; font-weight: 600; white-space: nowrap; }
+    tr:hover td { background: #1c1c2e; }
+    .empty { color: #555; padding: 30px; text-align: center; }
+
+    .action-btn {
+      padding: 4px 10px; border: none; border-radius: 5px;
+      cursor: pointer; font-size: 12px; margin-right: 4px; white-space: nowrap;
+    }
+    .edit-btn   { background: #2471a3; color: white; }
+    .edit-btn:hover   { background: #2e86c1; }
+    .delete-btn { background: #922b21; color: white; }
+    .delete-btn:hover { background: #c0392b; }
+    .approve-btn { background: #1e7d3a; color: white; }
+    .approve-btn:hover { background: #27ae60; }
+    .reject-btn { background: #922b21; color: white; }
+    .reject-btn:hover { background: #c0392b; }
+
+    /* ── 모달 ── */
+    #modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.72); z-index: 500; overflow-y: auto;
+    }
+    .modal-inner {
+      background: #1e1e30; border: 1px solid #333; border-radius: 10px;
+      width: 92%; max-width: 480px; margin: 40px auto; padding: 28px;
+    }
+    .modal-inner h2 { font-size: 17px; color: #cca6e8; margin-bottom: 22px; }
+    .form-group { margin-bottom: 13px; }
+    .form-group label { display: block; font-size: 12px; color: #999; margin-bottom: 4px; }
+    .form-group input,
+    .form-group select {
+      width: 100%; padding: 9px 12px; background: #13131f;
+      border: 1px solid #333; border-radius: 7px; color: #eee; font-size: 14px;
+    }
+    .form-group input:focus,
+    .form-group select:focus { outline: none; border-color: #7c5cbf; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-buttons { display: flex; gap: 8px; justify-content: flex-end; margin-top: 22px; }
+    .modal-buttons button { padding: 10px 22px; border: none; border-radius: 7px; cursor: pointer; font-size: 14px; }
+    #modal-save   { background: #7c5cbf; color: white; }
+    #modal-save:hover { background: #9a78d8; }
+    #modal-cancel { background: #3a3a4a; color: #ccc; }
+    #modal-cancel:hover { background: #4a4a5a; }
+  </style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<div id="login-section">
+  <div class="login-box">
+    <h1>노래방 정보 관리</h1>
+    <form id="loginForm" autocomplete="on">
+      <input type="text"     id="u-input" placeholder="아이디"   autocomplete="username">
+      <input type="password" id="p-input" placeholder="비밀번호" autocomplete="current-password">
+      <button type="submit">로그인</button>
+    </form>
+    <p id="login-error"></p>
+    <a href="ins.html" style="display:block; margin-top:16px; text-align:center; color:#888; font-size:13px; text-decoration:none;">← 노래방 사이트로 돌아가기</a>
+  </div>
+</div>
+
+<!-- 관리자 패널 -->
+<div id="admin-section">
+  <header>
+    <h1>노래방 정보 관리자</h1>
+    <button id="logoutBtn">로그아웃</button>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="pending">등록 요청<span class="tab-badge" id="pending-badge" style="display:none;">0</span></button>
+    <button class="tab-btn"        data-tab="songs">번호 관리</button>
+  </div>
+
+  <!-- 등록 요청 -->
+  <div class="tab-panel active" id="tab-pending">
+    <div class="panel-header">
+      <h2>노래방 번호 등록 요청</h2>
+    </div>
+    <p style="color:#888; font-size:13px; margin-bottom:14px;">디스코드로 오는 등록 요청과 동일한 목록입니다. 디스코드 또는 이 페이지, 어느 쪽에서 먼저 처리하든 동일하게 반영됩니다.</p>
+    <div class="tbl-wrap"><div id="pending-list"><p class="empty">불러오는 중...</p></div></div>
+  </div>
+
+  <!-- 번호 관리 -->
+  <div class="tab-panel" id="tab-songs">
+    <div class="panel-header">
+      <h2>노래방 번호 관리</h2>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <input type="text" id="song-search" class="search-box" placeholder="곡 제목으로 검색">
+        <button class="add-btn" id="add-song-btn">+ 곡 추가</button>
+      </div>
+    </div>
+    <p style="color:#888; font-size:13px; margin-bottom:14px;">가사는 이 패널이 아니라 기존 방식대로 사이트에서 직접 추가합니다. 여기서는 곡 제목/번호/종류만 관리합니다.</p>
+    <div class="tbl-wrap"><div id="songs-list"><p class="empty">불러오는 중...</p></div></div>
+  </div>
+</div>
+
+<!-- 모달 -->
+<div id="modal">
+  <div class="modal-inner">
+    <h2 id="modal-title"></h2>
+    <div id="modal-body"></div>
+    <div class="modal-buttons">
+      <button id="modal-cancel">취소</button>
+      <button id="modal-save">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 유틸 ─────────────────────────────────────────
+function esc(v) {
+  return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function val(id) { return document.getElementById(id)?.value ?? ''; }
+
+const SONG_TYPES = ['오리지널', '한국 커버곡', '일본 커버곡1', '일본 커버곡2'];
+
+// ── 인증 ─────────────────────────────────────────
+function getAuth() {
+  const u = sessionStorage.getItem('_ku'), p = sessionStorage.getItem('_kp');
+  return (u && p) ? { username: u, password: p } : null;
+}
+function setAuth(u, p) { sessionStorage.setItem('_ku', u); sessionStorage.setItem('_kp', p); }
+function clearAuth()   { sessionStorage.removeItem('_ku'); sessionStorage.removeItem('_kp'); }
+
+// ── API ──────────────────────────────────────────
+async function api(action, { method = 'POST', params = {}, body = {} } = {}) {
+  const auth = getAuth() || {};
+
+  if (method === 'GET') {
+    const qs = new URLSearchParams({ action, ...auth, ...params });
+    const res = await fetch(`/api/admin?${qs.toString()}`);
+    return res.json();
+  }
+
+  const res = await fetch(`/api/admin?action=${encodeURIComponent(action)}`, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...auth, ...body })
+  });
+  return res.json();
+}
+
+// ── 로그인 ────────────────────────────────────────
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const username = val('u-input').trim();
+  const password = val('p-input');
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+
+  if (!username || !password) { errEl.textContent = '아이디와 비밀번호를 입력해주세요.'; return; }
+
+  const data = await api('login', { body: { username, password } });
+
+  if (data.success) {
+    setAuth(username, password);
+    showAdmin();
+  } else {
+    errEl.textContent = data.error || '로그인에 실패했습니다.';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  clearAuth();
+  location.reload();
+});
+
+// ── 초기화 ───────────────────────────────────────
+async function init() {
+  const auth = getAuth();
+  if (!auth) return;
+  const res = await api('login', { body: auth });
+  if (res.success) showAdmin();
+  else clearAuth();
+}
+
+function showAdmin() {
+  document.getElementById('login-section').style.display = 'none';
+  document.getElementById('admin-section').style.display = 'block';
+  loadPending();
+  loadSongs();
+}
+
+// ── 탭 ───────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── 등록 요청 ──────────────────────────────────────
+async function loadPending() {
+  const data = await api('karaoke-get-pending', { method: 'GET' });
+  const el = document.getElementById('pending-list');
+  const badge = document.getElementById('pending-badge');
+
+  if (data.error) { el.innerHTML = `<p class="empty">불러오기 실패: ${esc(data.error)}</p>`; return; }
+
+  const list = data.pending || [];
+  badge.style.display = list.length > 0 ? 'inline-block' : 'none';
+  badge.textContent = list.length;
+
+  if (!list.length) { el.innerHTML = '<p class="empty">대기 중인 등록 요청이 없습니다.</p>'; return; }
+
+  el.innerHTML = `<table>
+    <thead><tr><th>곡 제목</th><th>TJ 제목</th><th>TJ 번호</th><th>국가</th><th>커버 여부</th><th>작업</th></tr></thead>
+    <tbody>${list.map(p => `<tr>
+      <td>${esc(p.track_title)}</td>
+      <td>${esc(p.tj_title) || '-'}</td>
+      <td>${esc(p.tj_number)}</td>
+      <td>${p.nat_type === 1 ? '한국' : '일본'}</td>
+      <td>${p.is_cover ? '커버' : '오리지널'}</td>
+      <td>
+        <button class="action-btn approve-btn" data-id="${p.id}" data-act="approve">승인</button>
+        <button class="action-btn reject-btn"  data-id="${p.id}" data-act="reject">기각</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+
+  el.querySelectorAll('[data-act]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const act = btn.dataset.act;
+      if (act === 'reject' && !confirm('이 등록 요청을 기각하시겠습니까?')) return;
+
+      const data = await api(act === 'approve' ? 'karaoke-approve-pending' : 'karaoke-reject-pending', {
+        body: { pendingId: id }
+      });
+      if (data.error) { alert('처리 실패: ' + data.error); return; }
+      loadPending();
+      if (act === 'approve') loadSongs();
+    });
+  });
+}
+
+// ── 번호 관리 ──────────────────────────────────────
+let songSearchTimer = null;
+document.getElementById('song-search').addEventListener('input', () => {
+  clearTimeout(songSearchTimer);
+  songSearchTimer = setTimeout(loadSongs, 300);
+});
+
+async function loadSongs() {
+  const search = val('song-search').trim();
+  const data = await api('karaoke-get-songs', { method: 'GET', params: search ? { search } : {} });
+  const el = document.getElementById('songs-list');
+
+  if (data.error) { el.innerHTML = `<p class="empty">불러오기 실패: ${esc(data.error)}</p>`; return; }
+
+  const list = data.songs || [];
+  if (!list.length) { el.innerHTML = '<p class="empty">등록된 곡이 없습니다.</p>'; return; }
+
+  el.innerHTML = `<table>
+    <thead><tr><th>곡 제목</th><th>종류</th><th>번호1</th><th>번호2</th><th>작업</th></tr></thead>
+    <tbody>${list.map(s => `<tr>
+      <td>${esc(s.song_title)}</td>
+      <td>${esc(s.song_type)}</td>
+      <td>${esc(s.number1)}</td>
+      <td>${esc(s.number2) || '-'}</td>
+      <td>
+        <button class="action-btn edit-btn"   data-id="${s.id}">수정</button>
+        <button class="action-btn delete-btn" data-id="${s.id}">삭제</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+
+  el.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const song = list.find(s => String(s.id) === btn.dataset.id);
+      openSongModal(song);
+    });
+  });
+  el.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('이 곡을 삭제하시겠습니까?')) return;
+      const data = await api('karaoke-delete-song', { method: 'DELETE', body: { songId: btn.dataset.id } });
+      if (data.error) { alert('삭제 실패: ' + data.error); return; }
+      loadSongs();
+    });
+  });
+}
+
+document.getElementById('add-song-btn').addEventListener('click', () => openSongModal(null));
+
+function songTypeOptions(selected) {
+  return SONG_TYPES.map(t => `<option value="${esc(t)}" ${t === selected ? 'selected' : ''}>${esc(t)}</option>`).join('');
+}
+
+function openSongModal(song) {
+  const modal = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = song ? '곡 수정' : '곡 추가';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-group">
+      <label>곡 제목</label>
+      <input type="text" id="f-title" value="${esc(song?.song_title)}">
+    </div>
+    <div class="form-group">
+      <label>종류</label>
+      <select id="f-type">${songTypeOptions(song?.song_type)}</select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>번호1</label>
+        <input type="text" id="f-num1" value="${esc(song?.number1)}">
+      </div>
+      <div class="form-group">
+        <label>번호2 (선택)</label>
+        <input type="text" id="f-num2" value="${esc(song?.number2)}">
+      </div>
+    </div>
+  `;
+  modal.style.display = 'block';
+
+  document.getElementById('modal-save').onclick = async () => {
+    const song_title = val('f-title').trim();
+    const song_type = val('f-type');
+    const number1 = val('f-num1').trim();
+    const number2 = val('f-num2').trim() || null;
+
+    if (!song_title || !number1) { alert('곡 제목과 번호1은 필수입니다.'); return; }
+
+    const data = song
+      ? await api('karaoke-update-song', { body: { songId: song.id, song_title, song_type, number1, number2 } })
+      : await api('karaoke-add-song', { body: { song_title, song_type, number1, number2 } });
+
+    if (data.error) { alert('저장 실패: ' + data.error); return; }
+    modal.style.display = 'none';
+    loadSongs();
+  };
+}
+
+document.getElementById('modal-cancel').addEventListener('click', () => {
+  document.getElementById('modal').style.display = 'none';
+});
+
+init();
+</script>
+</body>
+</html>
