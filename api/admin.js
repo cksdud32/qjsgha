@@ -1,6 +1,11 @@
 import crypto from 'crypto';
 import { pool } from '../lib/db.js';
-import { determineSongType } from '../lib/songUtils.js';
+import { determineSongType, classifyJapaneseCover } from '../lib/songUtils.js';
+
+// 관리자 폼에서는 '일본 커버곡'을 하나로만 고르고, 실제 저장 시 곡 제목 첫 글자로 1/2을 자동 분류한다.
+function resolveSongType(song_type, song_title) {
+  return song_type === '일본 커버곡' ? classifyJapaneseCover(song_title) : song_type;
+}
 
 function sha256(text) {
   return crypto.createHash('sha256').update(text).digest('hex');
@@ -420,7 +425,7 @@ export async function addKaraokeSong(request, response) {
     }
     await pool.query(
       `INSERT INTO karaoke_number (song_title, song_type, number1, number2) VALUES ($1, $2, $3, $4)`,
-      [song_title, song_type, number1, number2 || null]
+      [song_title, resolveSongType(song_type, song_title), number1, number2 || null]
     );
     return response.status(200).json({ message: '곡이 추가되었습니다.' });
   } catch (error) {
@@ -440,7 +445,7 @@ export async function updateKaraokeSong(request, response) {
     }
     await pool.query(
       `UPDATE karaoke_number SET song_title=$1, song_type=$2, number1=$3, number2=$4 WHERE id=$5`,
-      [song_title, song_type, number1, number2 || null, songId]
+      [song_title, resolveSongType(song_type, song_title), number1, number2 || null, songId]
     );
     return response.status(200).json({ message: '곡이 수정되었습니다.' });
   } catch (error) {

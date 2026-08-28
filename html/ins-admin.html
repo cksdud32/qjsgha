@@ -84,6 +84,24 @@
     }
     .search-box:focus { outline: none; border-color: #7c5cbf; }
 
+    .song-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .filter-btn {
+      padding: 6px 14px; background: #1e1e30; border: 1px solid #333;
+      border-radius: 999px; color: #aaa; font-size: 12px; cursor: pointer;
+      transition: all .15s;
+    }
+    .filter-btn:hover { border-color: #7c5cbf; color: #ddd; }
+    .filter-btn.active { background: #7c5cbf; border-color: #7c5cbf; color: white; }
+    .no-lyrics-btn { border-color: #a07d2a; color: #d9b25c; }
+    .no-lyrics-btn:hover { border-color: #d9b25c; }
+    .no-lyrics-btn.active { background: #a07d2a; border-color: #a07d2a; color: white; }
+
+    .more-btn {
+      padding: 9px 24px; background: #2a2a3e; color: #cca6e8;
+      border: 1px solid #444; border-radius: 8px; cursor: pointer; font-size: 13px;
+    }
+    .more-btn:hover { background: #33334a; }
+
     /* ── 테이블 ── */
     .tbl-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 500px; }
@@ -180,7 +198,9 @@
       </div>
     </div>
     <p style="color:#888; font-size:13px; margin-bottom:14px;">가사는 이 패널이 아니라 기존 방식대로 사이트에서 직접 추가합니다. 여기서는 곡 제목/번호/종류만 관리합니다.</p>
+    <div class="song-filters" id="song-filters"></div>
     <div class="tbl-wrap"><div id="songs-list"><p class="empty">불러오는 중...</p></div></div>
+    <div id="songs-more-wrap" style="text-align:center; margin-top:14px;"></div>
   </div>
 </div>
 
@@ -203,7 +223,45 @@ function esc(v) {
 }
 function val(id) { return document.getElementById(id)?.value ?? ''; }
 
-const SONG_TYPES = ['오리지널', '한국 커버곡', '일본 커버곡1', '일본 커버곡2'];
+const SONG_TYPES = ['오리지널', '한국 커버곡', '일본 커버곡'];
+const FILTER_TYPES = ['전체', '일본 커버곡1', '일본 커버곡2', '오리지널', '한국 커버곡'];
+const GROUP_ORDER = { '일본 커버곡1': 0, '일본 커버곡2': 1, '오리지널': 2, '한국 커버곡': 3 };
+const PAGE_SIZE = 10;
+
+// 숫자 -> 영어 -> 초성(ㄱ~ㅎ) 순 정렬 (js/ins.js의 공개 목록 정렬과 동일한 기준)
+function titleSortKey(title) {
+  const ch = (title || '')[0] || '';
+  if (/\d/.test(ch)) return '0_' + title;
+  if (/[A-Za-z]/.test(ch)) return '1_' + ch.toLowerCase() + '_' + title.toLowerCase();
+  const code = ch.charCodeAt(0);
+  if (code >= 0xAC00 && code <= 0xD7A3)
+    return '2_' + String(Math.floor((code - 0xAC00) / 28 / 21)).padStart(2, '0') + '_' + title;
+  return '3_' + title;
+}
+function sortForDisplay(list) {
+  return list.slice().sort((a, b) => {
+    const ga = GROUP_ORDER[a.song_type] ?? 99;
+    const gb = GROUP_ORDER[b.song_type] ?? 99;
+    if (ga !== gb) return ga - gb;
+    return titleSortKey(a.song_title).localeCompare(titleSortKey(b.song_title), 'ko');
+  });
+}
+
+// ── 가사 보유 여부 ─────────────────────────────────
+let lyricsData = null;
+async function ensureLyricsData() {
+  if (lyricsData) return lyricsData;
+  try {
+    const res = await fetch('lyrics.json');
+    lyricsData = await res.json();
+  } catch {
+    lyricsData = {};
+  }
+  return lyricsData;
+}
+function hasLyrics(song) {
+  return !!(lyricsData && lyricsData[String(song.number1)]);
+}
 
 // ── 인증 ─────────────────────────────────────────
 function getAuth() {
@@ -334,19 +392,67 @@ document.getElementById('song-search').addEventListener('input', () => {
   songSearchTimer = setTimeout(loadSongs, 300);
 });
 
+let allSongs = [];
+let currentFilter = '전체';
+let shownCount = PAGE_SIZE;
+
+const filtersEl = document.getElementById('song-filters');
+filtersEl.innerHTML = FILTER_TYPES.map(t =>
+  `<button class="filter-btn ${t === currentFilter ? 'active' : ''}" data-type="${esc(t)}">${esc(t)}</button>`
+).join('') + `<button class="filter-btn no-lyrics-btn" data-type="__no_lyrics__">가사 없음</button>`;
+filtersEl.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentFilter = btn.dataset.type;
+    shownCount = PAGE_SIZE;
+    filtersEl.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+    renderSongs();
+  });
+});
+
 async function loadSongs() {
   const search = val('song-search').trim();
-  const data = await api('karaoke-get-songs', { method: 'GET', params: search ? { search } : {} });
+  const [data] = await Promise.all([
+    api('karaoke-get-songs', { method: 'GET', params: search ? { search } : {} }),
+    ensureLyricsData()
+  ]);
   const el = document.getElementById('songs-list');
 
-  if (data.error) { el.innerHTML = `<p class="empty">불러오기 실패: ${esc(data.error)}</p>`; return; }
+  if (data.error) { el.innerHTML = `<p class="empty">불러오기 실패: ${esc(data.error)}</p>`; document.getElementById('songs-more-wrap').innerHTML = ''; return; }
 
-  const list = data.songs || [];
-  if (!list.length) { el.innerHTML = '<p class="empty">등록된 곡이 없습니다.</p>'; return; }
+  allSongs = sortForDisplay(data.songs || []);
+  shownCount = PAGE_SIZE;
+  updateNoLyricsCount();
+  renderSongs();
+}
+
+function updateNoLyricsCount() {
+  const btn = filtersEl.querySelector('[data-type="__no_lyrics__"]');
+  if (!btn) return;
+  const count = allSongs.filter(s => !hasLyrics(s)).length;
+  btn.textContent = `가사 없음 (${count})`;
+}
+
+function renderSongs() {
+  const el = document.getElementById('songs-list');
+  const moreWrap = document.getElementById('songs-more-wrap');
+
+  const filtered = currentFilter === '전체'
+    ? allSongs
+    : currentFilter === '__no_lyrics__'
+      ? allSongs.filter(s => !hasLyrics(s))
+      : allSongs.filter(s => s.song_type === currentFilter);
+
+  if (!filtered.length) {
+    el.innerHTML = '<p class="empty">등록된 곡이 없습니다.</p>';
+    moreWrap.innerHTML = '';
+    return;
+  }
+
+  const visible = filtered.slice(0, shownCount);
 
   el.innerHTML = `<table>
     <thead><tr><th>곡 제목</th><th>종류</th><th>번호1</th><th>번호2</th><th>작업</th></tr></thead>
-    <tbody>${list.map(s => `<tr>
+    <tbody>${visible.map(s => `<tr>
       <td>${esc(s.song_title)}</td>
       <td>${esc(s.song_type)}</td>
       <td>${esc(s.number1)}</td>
@@ -360,7 +466,7 @@ async function loadSongs() {
 
   el.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const song = list.find(s => String(s.id) === btn.dataset.id);
+      const song = filtered.find(s => String(s.id) === btn.dataset.id);
       openSongModal(song);
     });
   });
@@ -372,11 +478,22 @@ async function loadSongs() {
       loadSongs();
     });
   });
+
+  if (filtered.length > shownCount) {
+    moreWrap.innerHTML = `<button class="more-btn" id="songs-more-btn">펼치기 (${filtered.length - shownCount}곡 더)</button>`;
+    document.getElementById('songs-more-btn').addEventListener('click', () => {
+      shownCount += PAGE_SIZE;
+      renderSongs();
+    });
+  } else {
+    moreWrap.innerHTML = '';
+  }
 }
 
 document.getElementById('add-song-btn').addEventListener('click', () => openSongModal(null));
 
-function songTypeOptions(selected) {
+function songTypeOptions(actualType) {
+  const selected = actualType && actualType.startsWith('일본 커버곡') ? '일본 커버곡' : actualType;
   return SONG_TYPES.map(t => `<option value="${esc(t)}" ${t === selected ? 'selected' : ''}>${esc(t)}</option>`).join('');
 }
 
@@ -391,6 +508,7 @@ function openSongModal(song) {
     <div class="form-group">
       <label>종류</label>
       <select id="f-type">${songTypeOptions(song?.song_type)}</select>
+      <p style="color:#888; font-size:11px; margin-top:5px;">일본 커버곡은 곡 제목 첫 글자(숫자/영어/ㄱ~ㄹ → 1, ㅁ~ㅎ → 2)로 자동 분류됩니다.</p>
     </div>
     <div class="form-row">
       <div class="form-group">
