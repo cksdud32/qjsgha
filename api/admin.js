@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { pool } from '../lib/db.js';
 import { writeAdminLog } from '../lib/admin-log.js';
-import { requireAdmin } from '../lib/admin-auth.js';
+import { requireAdmin, requireAdminPlain } from '../lib/admin-auth.js';
 import { determineSongType, classifyJapaneseCover } from '../lib/songUtils.js';
 
 // 관리자 폼에서는 '일본 커버곡'을 하나로만 고르고, 실제 저장 시 곡 제목 첫 글자로 1/2을 자동 분류한다.
@@ -546,12 +546,13 @@ async function requireKaraokeAdmin(creds) {
 export async function getPendingKaraoke(request, response) {
   if (request.method !== 'GET') return response.status(405).json({ error: 'Method Not Allowed' });
   try {
-    await requireKaraokeAdmin(request.query);
+    await requireAdminPlain(request); // 헤더(X-Admin-Username / X-Admin-Password) 인증. URL query 아님.
     const result = await pool.query(
       `SELECT id, track_title, tj_title, tj_number, nat_type, is_cover FROM pending_karaoke ORDER BY id ASC`
     );
     return response.status(200).json({ pending: result.rows });
   } catch (error) {
+    if (error.status === 401) return response.status(401).json({ error: error.message });
     console.error('Get pending karaoke error:', error);
     return response.status(error.status || 500).json({ error: error.message });
   }
@@ -606,7 +607,7 @@ export async function rejectPendingKaraoke(request, response) {
 export async function getKaraokeSongs(request, response) {
   if (request.method !== 'GET') return response.status(405).json({ error: 'Method Not Allowed' });
   try {
-    await requireKaraokeAdmin(request.query);
+    await requireAdminPlain(request); // 헤더(X-Admin-Username / X-Admin-Password) 인증. URL query 아님.
     const { search } = request.query;
     const columns = 'id, song_title, song_type, number1, number2, lyrics_key1, lyrics_label, lyrics_label2';
     const result = search
@@ -617,6 +618,7 @@ export async function getKaraokeSongs(request, response) {
       : await pool.query(`SELECT ${columns} FROM karaoke_number ORDER BY id DESC`);
     return response.status(200).json({ songs: result.rows });
   } catch (error) {
+    if (error.status === 401) return response.status(401).json({ error: error.message });
     console.error('Get karaoke songs error:', error);
     return response.status(error.status || 500).json({ error: error.message });
   }

@@ -51,3 +51,24 @@ CREATE TABLE IF NOT EXISTS "questions" (
   question_text3 TEXT,
   difficulty_id  INT
 );
+
+-- api/admin.js 의 노래방 조회 액션(getPendingKaraoke / getKaraokeSongs)이 읽는 테이블.
+CREATE TABLE IF NOT EXISTS "pending_karaoke" (
+  id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  track_title TEXT,
+  tj_title    TEXT,
+  tj_number   TEXT,
+  nat_type    INT,
+  is_cover    BOOLEAN
+);
+
+CREATE TABLE IF NOT EXISTS "karaoke_number" (
+  id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  song_title   TEXT,
+  song_type    TEXT,
+  number1      TEXT,
+  number2      TEXT,
+  lyrics_key1  TEXT,
+  lyrics_label TEXT,
+  lyrics_label2 TEXT
+);
