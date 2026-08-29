@@ -40,13 +40,27 @@ function getAdminAuth() {
   };
 }
 
-// 조회(GET) 요청용: 인증정보를 URL 이 아니라 헤더로 보낸다.
-// 서버(lib/admin-auth.js)가 X-Admin-Username / X-Admin-Password-Hash 를 검증한다.
+// HTTP 헤더 값은 ISO-8859-1 만 허용되므로, 한글 등 유니코드가 섞일 수 있는 자격증명은
+// UTF-8 -> base64url 로 인코딩해 보낸다. 서버(lib/admin-auth.js)는
+// X-Admin-Credentials-Encoding: base64url-utf8 표식을 보고 디코딩한다.
+function encodeCred(value) {
+  const bytes = new TextEncoder().encode(String(value));
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// 조회(GET) 요청용: 인증정보를 URL 이 아니라 헤더로, base64url(UTF-8) 로 보낸다.
+// 서버(lib/admin-auth.js requireAdmin)가 X-Admin-Username / X-Admin-Password-Hash 를 검증한다.
 function adminAuthHeaders() {
   const username = sessionStorage.getItem('adminUsername');
   const passwordHash = sessionStorage.getItem('adminPwHash');
   return username && passwordHash
-    ? { 'X-Admin-Username': username, 'X-Admin-Password-Hash': passwordHash }
+    ? {
+        'X-Admin-Credentials-Encoding': 'base64url-utf8',
+        'X-Admin-Username': encodeCred(username),
+        'X-Admin-Password-Hash': encodeCred(passwordHash),
+      }
     : {};
 }
 
@@ -625,7 +639,7 @@ async function loadAdminLogs(page = 1) {
 
   try {
     const response = await fetch(`/api/admin?${params.toString()}`, {
-      headers: { 'X-Admin-Username': username, 'X-Admin-Password-Hash': pwHash },
+      headers: adminAuthHeaders(),
     });
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));

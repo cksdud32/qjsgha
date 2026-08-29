@@ -274,11 +274,25 @@ function getAuth() {
 function setAuth(u, p) { sessionStorage.setItem('_ku', u); sessionStorage.setItem('_kp', p); }
 function clearAuth()   { sessionStorage.removeItem('_ku'); sessionStorage.removeItem('_kp'); }
 
-// 조회(GET) 요청용: 자격증명을 URL 이 아니라 헤더로 보낸다.
+// HTTP 헤더 값은 ISO-8859-1 만 허용되므로, 한글 등 유니코드가 섞일 수 있는 자격증명(평문
+// 비밀번호 포함)은 UTF-8 -> base64url 로 인코딩해 보낸다. 서버(lib/admin-auth.js)가
+// X-Admin-Credentials-Encoding: base64url-utf8 표식을 보고 디코딩한다.
+function encodeCred(value) {
+  const bytes = new TextEncoder().encode(String(value));
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// 조회(GET) 요청용: 자격증명을 URL 이 아니라 헤더로, base64url(UTF-8) 로 보낸다.
 // 서버(lib/admin-auth.js requireAdminPlain)가 X-Admin-Username / X-Admin-Password(평문)를 검증한다.
 function adminAuthHeaders() {
   const a = getAuth();
-  return a ? { 'X-Admin-Username': a.username, 'X-Admin-Password': a.password } : {};
+  return a ? {
+    'X-Admin-Credentials-Encoding': 'base64url-utf8',
+    'X-Admin-Username': encodeCred(a.username),
+    'X-Admin-Password': encodeCred(a.password),
+  } : {};
 }
 
 // ── API ──────────────────────────────────────────

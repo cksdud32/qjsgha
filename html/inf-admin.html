@@ -289,6 +289,25 @@ function getAuth() {
 function setAuth(u, p) { sessionStorage.setItem('_iu', u); sessionStorage.setItem('_ip', p); }
 function clearAuth()   { sessionStorage.removeItem('_iu'); sessionStorage.removeItem('_ip'); }
 
+// HTTP 헤더 값은 ISO-8859-1 만 허용되므로, 한글 등 유니코드가 섞일 수 있는 자격증명은
+// UTF-8 -> base64url 로 인코딩해 보낸다. 서버(lib/admin-auth.js)가
+// X-Admin-Credentials-Encoding: base64url-utf8 표식을 보고 디코딩한다.
+function encodeCred(value) {
+  const bytes = new TextEncoder().encode(String(value));
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+// 조회(GET) 요청용 인증 헤더. _ip 는 비밀번호 SHA-256 해시(해시 방식).
+function adminAuthHeaders() {
+  const a = getAuth();
+  return a ? {
+    'X-Admin-Credentials-Encoding': 'base64url-utf8',
+    'X-Admin-Username': encodeCred(a.username),
+    'X-Admin-Password-Hash': encodeCred(a.password),
+  } : {};
+}
+
 // ── API ──────────────────────────────────────────
 async function api(action, extra = {}) {
   const auth = getAuth() || {};
@@ -598,7 +617,7 @@ async function loadAdminLogs(page = 1) {
 
   try {
     const res = await fetch(`/api/admin?${params.toString()}`, {
-      headers: { 'X-Admin-Username': auth.username, 'X-Admin-Password-Hash': auth.password },
+      headers: adminAuthHeaders(),
     });
     const data = await res.json();
     if (!res.ok) { el.innerHTML = `<p class="empty">오류: ${esc(data.error || '알 수 없는 오류')}</p>`; return; }

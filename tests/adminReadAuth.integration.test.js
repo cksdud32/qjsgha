@@ -20,6 +20,13 @@ const AUTH_HEADERS = { 'x-admin-username': USER, 'x-admin-password-hash': PW_HAS
 // 노래방 조회는 평문 방식(서버가 sha256)
 const PLAIN_AUTH_HEADERS = { 'x-admin-username': USER, 'x-admin-password': PW_PLAIN };
 
+// 한글 username + 한글·특수문자 평문 비밀번호 (base64url-utf8 헤더로만 보낼 수 있음)
+const KUSER = `테스트관리자-${runId}`;
+const KPW_PLAIN = `한글암호!@#${runId} 空`;
+const KPW_HASH = crypto.createHash('sha256').update(KPW_PLAIN).digest('hex');
+const enc = (v) => Buffer.from(String(v), 'utf8').toString('base64url');
+const encHeaders = (extra) => ({ 'x-admin-credentials-encoding': 'base64url-utf8', ...extra });
+
 function fakeRes() {
   return {
     statusCode: 200,
@@ -42,6 +49,10 @@ before(async () => {
       'INSERT INTO "AdminUsers" (username, password) VALUES ($1, $2) ON CONFLICT (username) DO NOTHING',
       [USER, PW_HASH]
     );
+    await pool.query(
+      'INSERT INTO "AdminUsers" (username, password) VALUES ($1, $2) ON CONFLICT (username) DO NOTHING',
+      [KUSER, KPW_HASH]
+    );
   } catch (error) {
     console.warn('[adminReadAuth.integration.test] DB 연결 불가, 건너뜁니다:', error.message);
     dbAvailable = false;
@@ -50,7 +61,7 @@ before(async () => {
 
 after(async () => {
   if (!dbAvailable) return;
-  await pool.query('DELETE FROM "AdminUsers" WHERE username = $1', [USER]).catch(() => {});
+  await pool.query('DELETE FROM "AdminUsers" WHERE username = ANY($1)', [[USER, KUSER]]).catch(() => {});
   await pool.end();
 });
 
@@ -186,4 +197,60 @@ test('노래방 조회 401 응답에 username / 비밀번호가 포함되지 않
   const serialized = JSON.stringify(res.body);
   assert.ok(!serialized.includes(USER), '응답에 username 노출');
   assert.ok(!serialized.includes(PW_PLAIN), '응답에 비밀번호 노출');
+});
+
+// ── base64url-utf8 인코딩 헤더 (한글 자격증명) ──────────────
+test('getSuggestions(해시): base64url-utf8 표식 + 한글 username 헤더로 인증 통과', async (t) => {
+  if (!dbAvailable) return t.skip('DB 연결 불가');
+  const res = fakeRes();
+  await admin.getSuggestions(
+    getReq(encHeaders({ 'x-admin-username': enc(KUSER), 'x-admin-password-hash': enc(KPW_HASH) })),
+    res
+  );
+  assert.equal(res.statusCode, 200);
+  assert.ok(Array.isArray(res.body));
+});
+
+test('getKaraokeSongs(평문): base64url-utf8 표식 + 한글 username + 한글·특수문자 비밀번호로 인증 통과', async (t) => {
+  if (!dbAvailable) return t.skip('DB 연결 불가');
+  const res = fakeRes();
+  await admin.getKaraokeSongs(
+    getReq(encHeaders({ 'x-admin-username': enc(KUSER), 'x-admin-password': enc(KPW_PLAIN) }), {}),
+    res
+  );
+  assert.equal(res.statusCode, 200);
+  assert.ok(Array.isArray(res.body.songs));
+});
+
+test('base64url-utf8 표식 + 한글 username + 틀린 비밀번호 → 401', async (t) => {
+  if (!dbAvailable) return t.skip('DB 연결 불가');
+  const res = fakeRes();
+  await admin.getKaraokeSongs(
+    getReq(encHeaders({ 'x-admin-username': enc(KUSER), 'x-admin-password': enc('틀린암호') }), {}),
+    res
+  );
+  assert.equal(res.statusCode, 401);
+});
+
+test('base64url-utf8 표식 + 잘못된 인코딩 헤더 → 401 (DB 조회 전)', async (t) => {
+  if (!dbAvailable) return t.skip('DB 연결 불가');
+  const res = fakeRes();
+  await admin.getSuggestions(
+    getReq(encHeaders({ 'x-admin-username': '한글을 그대로!!', 'x-admin-password-hash': enc('x') })),
+    res
+  );
+  assert.equal(res.statusCode, 401);
+});
+
+test('base64url-utf8 표식 + 잘못된 인코딩 401 응답에 값이 노출되지 않는다', async (t) => {
+  if (!dbAvailable) return t.skip('DB 연결 불가');
+  const res = fakeRes();
+  await admin.getSuggestions(
+    getReq(encHeaders({ 'x-admin-username': enc(KUSER), 'x-admin-password-hash': 'YWJj_' })),
+    res
+  );
+  assert.equal(res.statusCode, 401);
+  const serialized = JSON.stringify(res.body);
+  assert.ok(!serialized.includes(KUSER), '응답에 username 노출');
+  assert.ok(!serialized.includes('YWJj_'), '응답에 원본 헤더값 노출');
 });
