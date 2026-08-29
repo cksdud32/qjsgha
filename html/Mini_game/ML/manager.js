@@ -28,9 +28,16 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   });
 });
 
-// 헬퍼: 관리자 로그용 아이디 (인증에는 쓰이지 않고, 감사 로그의 admin_id 표시용)
-function getAdminUsername() {
-  return sessionStorage.getItem('adminUsername') || undefined;
+// 헬퍼: 변경성 관리자 요청에 실어 보낼 인증정보.
+// username 과, 로그인 시 저장해 둔 비밀번호 SHA-256 해시(adminPwHash)를 보낸다.
+// 서버(api/admin.js requireQuizAdmin)가 이 값을 "AdminUsers" 와 대조해 검증하고,
+// 검증된 username 만 감사 로그에 남긴다. 비밀번호 원문은 저장하지도 보내지도 않는다.
+// 로그인 상태가 아니면 두 값 모두 undefined 라서 JSON 에서 빠지고 서버가 401 로 거부한다.
+function getAdminAuth() {
+  return {
+    username: sessionStorage.getItem('adminUsername') || undefined,
+    password: sessionStorage.getItem('adminPwHash') || undefined,
+  };
 }
 
 // 헬퍼: 상태 메시지 표시
@@ -98,7 +105,7 @@ async function approveSuggestion(suggestionId) {
     const response = await fetch('/api/admin?action=approve-suggestion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ suggestionId, adminUsername: getAdminUsername() })
+      body: JSON.stringify({ suggestionId, ...getAdminAuth() })
     });
 
     if (!response.ok) throw new Error('승인에 실패했습니다.');
@@ -117,7 +124,7 @@ async function rejectSuggestion(suggestionId) {
     const response = await fetch('/api/admin?action=reject-suggestion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ suggestionId, adminUsername: getAdminUsername() })
+      body: JSON.stringify({ suggestionId, ...getAdminAuth() })
     });
 
     if (!response.ok) throw new Error('기각에 실패했습니다.');
@@ -192,7 +199,7 @@ async function saveSuggestedProblemEditInline(suggestionId) {
         question_text3: answer3,
         difficulty_id: parseInt(difficulty),
         suggestionId: suggestionId,
-        adminUsername: getAdminUsername()
+        ...getAdminAuth()
       })
     });
 
@@ -231,7 +238,7 @@ document.getElementById('addProblemForm')?.addEventListener('submit', async (e) 
         question_text2: answer2 || null,
         question_text3: answer3 || null,
         difficulty: difficulty,
-        adminUsername: getAdminUsername()
+        ...getAdminAuth()
       })
     });
 
@@ -388,7 +395,7 @@ async function updateProblem(problemId) {
         question_text2: answer2,
         question_text3: answer3,
         difficulty_id: parseInt(difficulty),
-        adminUsername: getAdminUsername()
+        ...getAdminAuth()
       })
     });
 
@@ -410,7 +417,7 @@ async function deleteProblem(problemId) {
     const response = await fetch('/api/admin?action=delete-problem', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ problemId, adminUsername: getAdminUsername() })
+      body: JSON.stringify({ problemId, ...getAdminAuth() })
     });
 
     const result = await response.json();
@@ -517,7 +524,7 @@ async function deleteRanking(rankingId) {
     const response = await fetch('/api/admin?action=delete-ranking', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ rankingId, adminUsername: getAdminUsername() })
+      body: JSON.stringify({ rankingId, ...getAdminAuth() })
     });
 
     const result = await response.json();
@@ -539,7 +546,7 @@ async function deleteAllRankingForCurrentMonth() {
     const response = await fetch('/api/admin?action=delete-all-ranking-current-month', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ difficulty, adminUsername: getAdminUsername() })
+      body: JSON.stringify({ difficulty, ...getAdminAuth() })
     });
 
     const result = await response.json();

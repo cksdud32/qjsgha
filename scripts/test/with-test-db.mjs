@@ -28,6 +28,8 @@ const MIGRATIONS = [
   'prisma/manual/0001_server_control_tables.sql',
   'prisma/manual/0002_server_control_agent_command_enhancements.sql',
   'prisma/manual/0003_admin_logs.sql',
+  // 통합 테스트가 쓰는 레거시 테이블 스켈레톤(AdminUsers, quiz_ranking). 한 번만, 순차로 적용.
+  'scripts/test/test-legacy-tables.sql',
 ];
 
 function run(cmd, args, env) {

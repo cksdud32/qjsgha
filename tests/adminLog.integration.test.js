@@ -31,10 +31,7 @@ before(async () => {
     adminLogsHandler = (await import('../api/admin-logs.js')).default;
     await pool.query('SELECT 1');
 
-    // admin-logs.js 의 인증은 "AdminUsers" 테이블을 본다. 테스트 DB 에는 없으므로 additive 로 만든다.
-    await pool.query(
-      'CREATE TABLE IF NOT EXISTS "AdminUsers" (id SERIAL PRIMARY KEY, username TEXT UNIQUE, password TEXT)'
-    );
+    // "AdminUsers" 는 with-test-db.mjs 가 scripts/test/test-legacy-tables.sql 로 미리 만들어 둔다.
     await pool.query(
       'INSERT INTO "AdminUsers" (username, password) VALUES ($1, $2) ON CONFLICT (username) DO NOTHING',
       [TEST_ADMIN.username, TEST_ADMIN.passwordHash]

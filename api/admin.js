@@ -22,6 +22,38 @@ function difficultyToId(difficulty) {
   return DIFFICULTY_IDS[difficulty] ?? null;
 }
 
+// 변경성 퀴즈/랭킹 관리자 액션 전용 인증.
+//
+// 이 액션들을 호출하는 화면(html/Mini_game/ML/*)은 로그인 시 sessionStorage 에
+// 비밀번호 원문이 아니라 SHA-256 해시(adminPwHash)만 저장한다. 그래서 여기서는
+// api/admin-logs.js 와 동일하게 "이미 클라이언트에서 해시된 password" 를 받아 그대로
+// "AdminUsers".password 와 대조한다. (반면 requireKaraokeAdmin 은 원문을 받아 sha256()
+// 한다 — 호출 화면과 저장 형식이 다르기 때문이다.)
+//
+// 통과 시 DB 에 저장된 정규 username 을 돌려준다. 감사 로그 admin_id 로는 클라이언트가
+// 보낸 adminUsername 이 아니라 오직 이 반환값만 사용한다.
+// 실패(인증정보 누락 / 불일치) 시 status=401 인 Error 를 throw 한다. 호출부는 이 경우
+// 어떤 DB 변경도 하기 전에 401 로 응답해야 한다.
+async function requireQuizAdmin(creds) {
+  const username = creds?.username;
+  const passwordHash = creds?.password;
+  if (!username || !passwordHash) {
+    const err = new Error('관리자 인증 정보가 필요합니다.');
+    err.status = 401;
+    throw err;
+  }
+  const result = await pool.query(
+    'SELECT username FROM "AdminUsers" WHERE username = $1 AND password = $2',
+    [username, passwordHash]
+  );
+  if (result.rows.length === 0) {
+    const err = new Error('아이디 또는 비밀번호가 올바르지 않습니다.');
+    err.status = 401;
+    throw err;
+  }
+  return result.rows[0].username;
+}
+
 // 관리자 로그인
 export async function login(request, response) {
   if (request.method !== 'POST') return response.status(405).json({ error: 'Method Not Allowed' });
@@ -77,7 +109,7 @@ export async function approveSuggestion(request, response) {
   let adminUsername;
   try {
     const body = parseBody(request);
-    adminUsername = body.adminUsername;
+    adminUsername = await requireQuizAdmin(body);
     const { suggestionId } = body;
     if (!suggestionId) return response.status(400).json({ error: '건의사항 ID가 필요합니다.' });
 
@@ -106,6 +138,12 @@ export async function approveSuggestion(request, response) {
     return response.status(200).json({ message: '건의사항이 승인되었습니다.' });
   } catch (error) {
     console.error('Approve suggestion error:', error);
+
+    // 인증 실패(requireQuizAdmin)면 DB 변경 전이므로 실패 감사 로그를 남기지 않고 401 로 거부한다.
+    if (error.status === 401) {
+      return response.status(401).json({ error: error.message });
+    }
+
     await writeAdminLog({
       adminId: adminUsername,
       action: 'QUIZ_SUGGESTION_APPROVE',
@@ -124,7 +162,7 @@ export async function rejectSuggestion(request, response) {
   let adminUsername;
   try {
     const body = parseBody(request);
-    adminUsername = body.adminUsername;
+    adminUsername = await requireQuizAdmin(body);
     const { suggestionId } = body;
     if (!suggestionId) return response.status(400).json({ error: '건의사항 ID가 필요합니다.' });
 
@@ -140,6 +178,12 @@ export async function rejectSuggestion(request, response) {
     return response.status(200).json({ message: '건의사항이 기각되었습니다.' });
   } catch (error) {
     console.error('Reject suggestion error:', error);
+
+    // 인증 실패(requireQuizAdmin)면 DB 변경 전이므로 실패 감사 로그를 남기지 않고 401 로 거부한다.
+    if (error.status === 401) {
+      return response.status(401).json({ error: error.message });
+    }
+
     await writeAdminLog({
       adminId: adminUsername,
       action: 'QUIZ_SUGGESTION_REJECT',
@@ -158,7 +202,7 @@ export async function addProblem(request, response) {
   let adminUsername;
   try {
     const body = parseBody(request);
-    adminUsername = body.adminUsername;
+    adminUsername = await requireQuizAdmin(body);
     const { question_text, answer, question_text2, question_text3, difficulty } = body;
     if (!question_text || !answer || !difficulty) {
       return response.status(400).json({ error: '필수 입력값이 없습니다.' });
@@ -183,6 +227,12 @@ export async function addProblem(request, response) {
     return response.status(200).json({ message: '문제가 추가되었습니다.' });
   } catch (error) {
     console.error('Add problem error:', error);
+
+    // 인증 실패(requireQuizAdmin)면 DB 변경 전이므로 실패 감사 로그를 남기지 않고 401 로 거부한다.
+    if (error.status === 401) {
+      return response.status(401).json({ error: error.message });
+    }
+
     await writeAdminLog({
       adminId: adminUsername,
       action: 'QUIZ_CREATE',
@@ -201,7 +251,7 @@ export async function addProblemFromEdit(request, response) {
   let adminUsername;
   try {
     const body = parseBody(request);
-    adminUsername = body.adminUsername;
+    adminUsername = await requireQuizAdmin(body);
     const { question_text, answer, question_text2, question_text3, difficulty_id, suggestionId } = body;
     if (!question_text || !answer || difficulty_id === undefined || !suggestionId) {
       return response.status(400).json({ error: '필수 입력값이 없습니다.' });
@@ -224,6 +274,12 @@ export async function addProblemFromEdit(request, response) {
     return response.status(200).json({ message: '문제가 추가되었습니다.' });
   } catch (error) {
     console.error('Add problem from edit error:', error);
+
+    // 인증 실패(requireQuizAdmin)면 DB 변경 전이므로 실패 감사 로그를 남기지 않고 401 로 거부한다.
+    if (error.status === 401) {
+      return response.status(401).json({ error: error.message });
+    }
+
     await writeAdminLog({
       adminId: adminUsername,
       action: 'QUIZ_CREATE',
@@ -285,7 +341,7 @@ export async function updateProblem(request, response) {
   let adminUsername;
   try {
     const body = parseBody(request);
-    adminUsername = body.adminUsername;
+    adminUsername = await requireQuizAdmin(body);
     const { problemId, question_text, answer, question_text2, question_text3, difficulty_id } = body;
     if (!problemId || !question_text || !answer || difficulty_id === undefined) {
       return response.status(400).json({ error: '필수 입력값이 없습니다.' });
@@ -306,6 +362,12 @@ export async function updateProblem(request, response) {
     return response.status(200).json({ message: '문제가 수정되었습니다.' });
   } catch (error) {
     console.error('Update problem error:', error);
+
+    // 인증 실패(requireQuizAdmin)면 DB 변경 전이므로 실패 감사 로그를 남기지 않고 401 로 거부한다.
+    if (error.status === 401) {
+      return response.status(401).json({ error: error.message });
+    }
+
     await writeAdminLog({
       adminId: adminUsername,
       action: 'QUIZ_UPDATE',
@@ -324,7 +386,7 @@ export async function deleteProblem(request, response) {
   let adminUsername;
   try {
     const body = parseBody(request);
-    adminUsername = body.adminUsername;
+    adminUsername = await requireQuizAdmin(body);
     const { problemId } = body;
     if (!problemId) return response.status(400).json({ error: '문제 ID가 필요합니다.' });
 
@@ -340,6 +402,12 @@ export async function deleteProblem(request, response) {
     return response.status(200).json({ message: '문제가 삭제되었습니다.' });
   } catch (error) {
     console.error('Delete problem error:', error);
+
+    // 인증 실패(requireQuizAdmin)면 DB 변경 전이므로 실패 감사 로그를 남기지 않고 401 로 거부한다.
+    if (error.status === 401) {
+      return response.status(401).json({ error: error.message });
+    }
+
     await writeAdminLog({
       adminId: adminUsername,
       action: 'QUIZ_DELETE',
@@ -385,7 +453,7 @@ export async function deleteRanking(request, response) {
   let adminUsername;
   try {
     const body = parseBody(request);
-    adminUsername = body.adminUsername;
+    adminUsername = await requireQuizAdmin(body);
     const { rankingId } = body;
     if (!rankingId) return response.status(400).json({ error: '랭킹 ID가 필요합니다.' });
 
@@ -401,6 +469,12 @@ export async function deleteRanking(request, response) {
     return response.status(200).json({ message: '랭킹이 삭제되었습니다.' });
   } catch (error) {
     console.error('Delete ranking error:', error);
+
+    // 인증 실패(requireQuizAdmin)면 DB 변경 전이므로 실패 감사 로그를 남기지 않고 401 로 거부한다.
+    if (error.status === 401) {
+      return response.status(401).json({ error: error.message });
+    }
+
     await writeAdminLog({
       adminId: adminUsername,
       action: 'QUIZ_RANKING_DELETE',
@@ -419,7 +493,7 @@ export async function deleteAllRankingForCurrentMonth(request, response) {
   let adminUsername;
   try {
     const body = parseBody(request);
-    adminUsername = body.adminUsername;
+    adminUsername = await requireQuizAdmin(body);
     const { difficulty } = body;
     if (!difficulty) return response.status(400).json({ error: '난이도 파라미터가 필요합니다.' });
 
@@ -447,6 +521,12 @@ export async function deleteAllRankingForCurrentMonth(request, response) {
     return response.status(200).json({ message: `${result.rowCount}개의 랭킹이 삭제되었습니다.`, deletedCount: result.rowCount });
   } catch (error) {
     console.error('Delete all ranking for current month error:', error);
+
+    // 인증 실패(requireQuizAdmin)면 DB 변경 전이므로 실패 감사 로그를 남기지 않고 401 로 거부한다.
+    if (error.status === 401) {
+      return response.status(401).json({ error: error.message });
+    }
+
     await writeAdminLog({
       adminId: adminUsername,
       action: 'QUIZ_RANKING_DELETE_ALL',
