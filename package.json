@@ -5,6 +5,9 @@
   "main": "loadHeaderFooter.js",
   "scripts": {
     "test": "node --import dotenv/config --test \"tests/**/*.test.js\"",
+    "test:unit": "node --import ./scripts/test/unit-setup.mjs --test tests/auth.test.js tests/commandTransitions.test.js",
+    "pretest:full": "prisma generate",
+    "test:full": "node scripts/test/with-test-db.mjs",
     "db:pull": "prisma db pull",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
@@ -35,5 +38,8 @@
   },
   "prisma": {
     "seed": "node prisma/seed.js"
+  },
+  "devDependencies": {
+    "embedded-postgres": "^18.4.0-beta.17"
   }
 }

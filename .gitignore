@@ -2,6 +2,10 @@
 .env
 .env.*
 !.env.example
+!.env.test.example
+
+# 테스트용 임시 PostgreSQL 데이터 (scripts/test/with-test-db.mjs)
+/tmp-test-pg/
 
 # 의존성
 node_modules/
