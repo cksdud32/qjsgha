@@ -1,4 +1,5 @@
 import { pool } from '../lib/db.js';
+import { writeAdminLog } from '../lib/admin-log.js';
 
 async function handleConcert(botToken) {
   const now = new Date();
@@ -180,16 +181,32 @@ export default async function handler(request, response) {
 
   const type = request.query.type ?? 'concert';
   const botToken = process.env.DISCORD_BOT_TOKEN;
+  const action = type === 'karaoke' ? 'DISCORD_NOTIFY_KARAOKE_PENDING' : 'DISCORD_NOTIFY_CONCERT';
 
   try {
     const result = type === 'karaoke'
       ? await handleKaraoke(botToken)
       : await handleConcert(botToken);
 
+    await writeAdminLog({
+      adminId: 'system:cron',
+      action,
+      targetType: 'discord',
+      details: { message: result.message, errors: result.errors },
+      status: result.success === false ? 'failed' : 'success',
+    });
+
     const status = result.success === false ? 500 : 200;
     return response.status(status).json(result);
   } catch (error) {
     console.error('discord-notify 오류:', error);
+    await writeAdminLog({
+      adminId: 'system:cron',
+      action,
+      targetType: 'discord',
+      status: 'failed',
+      details: { error: error.message },
+    });
     return response.status(500).json({ success: false, error: error.message });
   }
 }

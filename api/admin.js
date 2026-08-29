@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { pool } from '../lib/db.js';
+import { writeAdminLog } from '../lib/admin-log.js';
 import { determineSongType, classifyJapaneseCover } from '../lib/songUtils.js';
 
 // 관리자 폼에서는 '일본 커버곡'을 하나로만 고르고, 실제 저장 시 곡 제목 첫 글자로 1/2을 자동 분류한다.
@@ -73,8 +74,11 @@ export async function getSuggestions(request, response) {
 export async function approveSuggestion(request, response) {
   if (request.method !== 'POST') return response.status(405).json({ error: 'Method Not Allowed' });
 
+  let adminUsername;
   try {
-    const { suggestionId } = parseBody(request);
+    const body = parseBody(request);
+    adminUsername = body.adminUsername;
+    const { suggestionId } = body;
     if (!suggestionId) return response.status(400).json({ error: '건의사항 ID가 필요합니다.' });
 
     const suggestionRes = await pool.query(
@@ -91,9 +95,24 @@ export async function approveSuggestion(request, response) {
     );
     await pool.query('DELETE FROM "SuggestedQuestions" WHERE id = $1', [suggestionId]);
 
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_SUGGESTION_APPROVE',
+      targetType: 'quiz_suggestion',
+      targetId: suggestionId,
+      details: { question_text: s.question_text },
+    });
+
     return response.status(200).json({ message: '건의사항이 승인되었습니다.' });
   } catch (error) {
     console.error('Approve suggestion error:', error);
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_SUGGESTION_APPROVE',
+      targetType: 'quiz_suggestion',
+      status: 'failed',
+      details: { error: error.message },
+    });
     return response.status(500).json({ error: error.message });
   }
 }
@@ -102,14 +121,32 @@ export async function approveSuggestion(request, response) {
 export async function rejectSuggestion(request, response) {
   if (request.method !== 'POST') return response.status(405).json({ error: 'Method Not Allowed' });
 
+  let adminUsername;
   try {
-    const { suggestionId } = parseBody(request);
+    const body = parseBody(request);
+    adminUsername = body.adminUsername;
+    const { suggestionId } = body;
     if (!suggestionId) return response.status(400).json({ error: '건의사항 ID가 필요합니다.' });
 
     await pool.query('DELETE FROM "SuggestedQuestions" WHERE id = $1', [suggestionId]);
+
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_SUGGESTION_REJECT',
+      targetType: 'quiz_suggestion',
+      targetId: suggestionId,
+    });
+
     return response.status(200).json({ message: '건의사항이 기각되었습니다.' });
   } catch (error) {
     console.error('Reject suggestion error:', error);
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_SUGGESTION_REJECT',
+      targetType: 'quiz_suggestion',
+      status: 'failed',
+      details: { error: error.message },
+    });
     return response.status(500).json({ error: error.message });
   }
 }
@@ -118,8 +155,11 @@ export async function rejectSuggestion(request, response) {
 export async function addProblem(request, response) {
   if (request.method !== 'POST') return response.status(405).json({ error: 'Method Not Allowed' });
 
+  let adminUsername;
   try {
-    const { question_text, answer, question_text2, question_text3, difficulty } = parseBody(request);
+    const body = parseBody(request);
+    adminUsername = body.adminUsername;
+    const { question_text, answer, question_text2, question_text3, difficulty } = body;
     if (!question_text || !answer || !difficulty) {
       return response.status(400).json({ error: '필수 입력값이 없습니다.' });
     }
@@ -127,13 +167,29 @@ export async function addProblem(request, response) {
     const difficulty_id = difficultyToId(difficulty);
     if (difficulty_id === null) return response.status(400).json({ error: '올바르지 않은 난이도입니다.' });
 
-    await pool.query(
-      'INSERT INTO "questions" (question_text, answer, question_text2, question_text3, difficulty_id) VALUES ($1, $2, $3, $4, $5)',
+    const inserted = await pool.query(
+      'INSERT INTO "questions" (question_text, answer, question_text2, question_text3, difficulty_id) VALUES ($1, $2, $3, $4, $5) RETURNING id',
       [question_text, answer, question_text2 || null, question_text3 || null, difficulty_id]
     );
+
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_CREATE',
+      targetType: 'quiz',
+      targetId: inserted.rows[0]?.id,
+      details: { difficulty },
+    });
+
     return response.status(200).json({ message: '문제가 추가되었습니다.' });
   } catch (error) {
     console.error('Add problem error:', error);
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_CREATE',
+      targetType: 'quiz',
+      status: 'failed',
+      details: { error: error.message },
+    });
     return response.status(500).json({ error: error.message });
   }
 }
@@ -142,21 +198,39 @@ export async function addProblem(request, response) {
 export async function addProblemFromEdit(request, response) {
   if (request.method !== 'POST') return response.status(405).json({ error: 'Method Not Allowed' });
 
+  let adminUsername;
   try {
-    const { question_text, answer, question_text2, question_text3, difficulty_id, suggestionId } = parseBody(request);
+    const body = parseBody(request);
+    adminUsername = body.adminUsername;
+    const { question_text, answer, question_text2, question_text3, difficulty_id, suggestionId } = body;
     if (!question_text || !answer || difficulty_id === undefined || !suggestionId) {
       return response.status(400).json({ error: '필수 입력값이 없습니다.' });
     }
 
-    await pool.query(
-      'INSERT INTO "questions" (question_text, answer, question_text2, question_text3, difficulty_id) VALUES ($1, $2, $3, $4, $5)',
+    const inserted = await pool.query(
+      'INSERT INTO "questions" (question_text, answer, question_text2, question_text3, difficulty_id) VALUES ($1, $2, $3, $4, $5) RETURNING id',
       [question_text, answer, question_text2 || null, question_text3 || null, difficulty_id]
     );
     await pool.query('DELETE FROM "SuggestedQuestions" WHERE id = $1', [suggestionId]);
 
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_CREATE',
+      targetType: 'quiz',
+      targetId: inserted.rows[0]?.id,
+      details: { from_suggestion_id: suggestionId },
+    });
+
     return response.status(200).json({ message: '문제가 추가되었습니다.' });
   } catch (error) {
     console.error('Add problem from edit error:', error);
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_CREATE',
+      targetType: 'quiz',
+      status: 'failed',
+      details: { error: error.message },
+    });
     return response.status(500).json({ error: error.message });
   }
 }
@@ -208,8 +282,11 @@ export async function getAllProblems(request, response) {
 export async function updateProblem(request, response) {
   if (request.method !== 'POST') return response.status(405).json({ error: 'Method Not Allowed' });
 
+  let adminUsername;
   try {
-    const { problemId, question_text, answer, question_text2, question_text3, difficulty_id } = parseBody(request);
+    const body = parseBody(request);
+    adminUsername = body.adminUsername;
+    const { problemId, question_text, answer, question_text2, question_text3, difficulty_id } = body;
     if (!problemId || !question_text || !answer || difficulty_id === undefined) {
       return response.status(400).json({ error: '필수 입력값이 없습니다.' });
     }
@@ -218,9 +295,24 @@ export async function updateProblem(request, response) {
       'UPDATE "questions" SET question_text = $1, answer = $2, question_text2 = $3, question_text3 = $4, difficulty_id = $5 WHERE id = $6',
       [question_text, answer, question_text2 || null, question_text3 || null, difficulty_id, problemId]
     );
+
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_UPDATE',
+      targetType: 'quiz',
+      targetId: problemId,
+    });
+
     return response.status(200).json({ message: '문제가 수정되었습니다.' });
   } catch (error) {
     console.error('Update problem error:', error);
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_UPDATE',
+      targetType: 'quiz',
+      status: 'failed',
+      details: { error: error.message },
+    });
     return response.status(500).json({ error: error.message });
   }
 }
@@ -229,14 +321,32 @@ export async function updateProblem(request, response) {
 export async function deleteProblem(request, response) {
   if (request.method !== 'DELETE') return response.status(405).json({ error: 'Method Not Allowed' });
 
+  let adminUsername;
   try {
-    const { problemId } = parseBody(request);
+    const body = parseBody(request);
+    adminUsername = body.adminUsername;
+    const { problemId } = body;
     if (!problemId) return response.status(400).json({ error: '문제 ID가 필요합니다.' });
 
     await pool.query('DELETE FROM "questions" WHERE id = $1', [problemId]);
+
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_DELETE',
+      targetType: 'quiz',
+      targetId: problemId,
+    });
+
     return response.status(200).json({ message: '문제가 삭제되었습니다.' });
   } catch (error) {
     console.error('Delete problem error:', error);
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_DELETE',
+      targetType: 'quiz',
+      status: 'failed',
+      details: { error: error.message },
+    });
     return response.status(500).json({ error: error.message });
   }
 }
@@ -272,14 +382,32 @@ export async function getAdminRanking(request, response) {
 export async function deleteRanking(request, response) {
   if (request.method !== 'DELETE') return response.status(405).json({ error: 'Method Not Allowed' });
 
+  let adminUsername;
   try {
-    const { rankingId } = parseBody(request);
+    const body = parseBody(request);
+    adminUsername = body.adminUsername;
+    const { rankingId } = body;
     if (!rankingId) return response.status(400).json({ error: '랭킹 ID가 필요합니다.' });
 
     await pool.query('DELETE FROM "quiz_ranking" WHERE id = $1', [rankingId]);
+
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_RANKING_DELETE',
+      targetType: 'quiz_ranking',
+      targetId: rankingId,
+    });
+
     return response.status(200).json({ message: '랭킹이 삭제되었습니다.' });
   } catch (error) {
     console.error('Delete ranking error:', error);
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_RANKING_DELETE',
+      targetType: 'quiz_ranking',
+      status: 'failed',
+      details: { error: error.message },
+    });
     return response.status(500).json({ error: error.message });
   }
 }
@@ -288,8 +416,11 @@ export async function deleteRanking(request, response) {
 export async function deleteAllRankingForCurrentMonth(request, response) {
   if (request.method !== 'DELETE') return response.status(405).json({ error: 'Method Not Allowed' });
 
+  let adminUsername;
   try {
-    const { difficulty } = parseBody(request);
+    const body = parseBody(request);
+    adminUsername = body.adminUsername;
+    const { difficulty } = body;
     if (!difficulty) return response.status(400).json({ error: '난이도 파라미터가 필요합니다.' });
 
     const now = new Date();
@@ -305,9 +436,24 @@ export async function deleteAllRankingForCurrentMonth(request, response) {
          AND r.created_at <= $3`,
       [difficulty, startOfMonth, endOfMonth]
     );
+
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_RANKING_DELETE_ALL',
+      targetType: 'quiz_ranking',
+      details: { difficulty, deletedCount: result.rowCount },
+    });
+
     return response.status(200).json({ message: `${result.rowCount}개의 랭킹이 삭제되었습니다.`, deletedCount: result.rowCount });
   } catch (error) {
     console.error('Delete all ranking for current month error:', error);
+    await writeAdminLog({
+      adminId: adminUsername,
+      action: 'QUIZ_RANKING_DELETE_ALL',
+      targetType: 'quiz_ranking',
+      status: 'failed',
+      details: { error: error.message },
+    });
     return response.status(500).json({ error: error.message });
   }
 }

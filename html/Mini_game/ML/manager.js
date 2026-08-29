@@ -21,10 +21,17 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         loadEditProblems();
       } else if (tabName === 'ranking') {
         loadRanking();
+      } else if (tabName === 'admin-logs') {
+        loadAdminLogs();
       }
     }
   });
 });
+
+// 헬퍼: 관리자 로그용 아이디 (인증에는 쓰이지 않고, 감사 로그의 admin_id 표시용)
+function getAdminUsername() {
+  return sessionStorage.getItem('adminUsername') || undefined;
+}
 
 // 헬퍼: 상태 메시지 표시
 function showStatus(elementId, message, type = 'success') {
@@ -91,7 +98,7 @@ async function approveSuggestion(suggestionId) {
     const response = await fetch('/api/admin?action=approve-suggestion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ suggestionId })
+      body: JSON.stringify({ suggestionId, adminUsername: getAdminUsername() })
     });
 
     if (!response.ok) throw new Error('승인에 실패했습니다.');
@@ -110,7 +117,7 @@ async function rejectSuggestion(suggestionId) {
     const response = await fetch('/api/admin?action=reject-suggestion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ suggestionId })
+      body: JSON.stringify({ suggestionId, adminUsername: getAdminUsername() })
     });
 
     if (!response.ok) throw new Error('기각에 실패했습니다.');
@@ -184,7 +191,8 @@ async function saveSuggestedProblemEditInline(suggestionId) {
         question_text2: answer2,
         question_text3: answer3,
         difficulty_id: parseInt(difficulty),
-        suggestionId: suggestionId
+        suggestionId: suggestionId,
+        adminUsername: getAdminUsername()
       })
     });
 
@@ -222,7 +230,8 @@ document.getElementById('addProblemForm')?.addEventListener('submit', async (e) 
         answer: answer,
         question_text2: answer2 || null,
         question_text3: answer3 || null,
-        difficulty: difficulty
+        difficulty: difficulty,
+        adminUsername: getAdminUsername()
       })
     });
 
@@ -378,7 +387,8 @@ async function updateProblem(problemId) {
         answer: answer,
         question_text2: answer2,
         question_text3: answer3,
-        difficulty_id: parseInt(difficulty)
+        difficulty_id: parseInt(difficulty),
+        adminUsername: getAdminUsername()
       })
     });
 
@@ -400,7 +410,7 @@ async function deleteProblem(problemId) {
     const response = await fetch('/api/admin?action=delete-problem', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ problemId })
+      body: JSON.stringify({ problemId, adminUsername: getAdminUsername() })
     });
 
     const result = await response.json();
@@ -507,7 +517,7 @@ async function deleteRanking(rankingId) {
     const response = await fetch('/api/admin?action=delete-ranking', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ rankingId })
+      body: JSON.stringify({ rankingId, adminUsername: getAdminUsername() })
     });
 
     const result = await response.json();
@@ -529,7 +539,7 @@ async function deleteAllRankingForCurrentMonth() {
     const response = await fetch('/api/admin?action=delete-all-ranking-current-month', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ difficulty })
+      body: JSON.stringify({ difficulty, adminUsername: getAdminUsername() })
     });
 
     const result = await response.json();
@@ -545,6 +555,143 @@ async function deleteAllRankingForCurrentMonth() {
 
 // 랭킹 필터 변경 시 재로드
 document.getElementById('rankingDifficulty')?.addEventListener('change', () => loadRanking(1)); // 첫 페이지부터 로드
+
+// ==================== 관리자 로그 ====================
+const ACTION_LABELS = {
+  QUIZ_SUGGESTION_APPROVE: '퀴즈 건의 승인',
+  QUIZ_SUGGESTION_REJECT: '퀴즈 건의 기각',
+  QUIZ_CREATE: '퀴즈 추가',
+  QUIZ_UPDATE: '퀴즈 수정',
+  QUIZ_DELETE: '퀴즈 삭제',
+  QUIZ_RANKING_DELETE: '랭킹 삭제',
+  QUIZ_RANKING_DELETE_ALL: '랭킹 전체 삭제',
+  CONCERT_CREATE: '콘서트 추가',
+  CONCERT_UPDATE: '콘서트 수정',
+  CONCERT_DELETE: '콘서트 삭제',
+  GOODS_CREATE: '굿즈 추가',
+  GOODS_UPDATE: '굿즈 수정',
+  GOODS_DELETE: '굿즈 삭제',
+  NOTICE_CREATE: '공지 추가',
+  NOTICE_UPDATE: '공지 수정',
+  NOTICE_DELETE: '공지 삭제',
+  CONFIG_UPDATE: '설정 변경',
+  WAITING_CREATE: '대기그룹 추가',
+  WAITING_UPDATE: '대기그룹 수정',
+  WAITING_DELETE: '대기그룹 삭제',
+  DISCORD_NOTICE_SEND: '디스코드 공지 전송',
+  DISCORD_NOTIFY_CONCERT: '디스코드 일정 알림',
+  DISCORD_NOTIFY_KARAOKE_PENDING: '디스코드 노래방 알림',
+  KARAOKE_NUMBER_CREATE: '노래방 번호 추가',
+  KARAOKE_PENDING_APPROVE: '노래방 등록요청 승인',
+  KARAOKE_PENDING_REJECT: '노래방 등록요청 기각',
+};
+
+async function loadAdminLogs(page = 1) {
+  const container = document.getElementById('adminLogsList');
+  container.innerHTML = '<p class="loading">로딩 중...</p>';
+
+  const username = sessionStorage.getItem('adminUsername');
+  const pwHash = sessionStorage.getItem('adminPwHash');
+  if (!username || !pwHash) {
+    container.innerHTML = '<p class="loading">로그를 보려면 다시 로그인해주세요.</p>';
+    return;
+  }
+
+  const action = document.getElementById('logActionFilter')?.value || '';
+  const status = document.getElementById('logStatusFilter')?.value || '';
+
+  const params = new URLSearchParams({ username, password: pwHash, page: String(page), limit: '50' });
+  if (action) params.set('action', action);
+  if (status) params.set('status', status);
+
+  try {
+    const response = await fetch(`/api/admin-logs?${params.toString()}`);
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error || '로그를 불러올 수 없습니다.');
+    }
+
+    const data = await response.json();
+    const logs = data.logs || [];
+    const hasMore = data.hasMore;
+
+    container.innerHTML = '';
+
+    if (logs.length === 0) {
+      container.innerHTML = '<p class="loading">로그가 없습니다.</p>';
+      return;
+    }
+
+    logs.forEach(log => {
+      const div = document.createElement('div');
+      div.className = 'list-item';
+      const time = new Date(log.created_at).toLocaleString('ko-KR');
+      const label = ACTION_LABELS[log.action] || log.action;
+      const target = log.target_type ? `${log.target_type}${log.target_id ? ' #' + log.target_id : ''}` : '-';
+      const statusLabel = log.status === 'failed' ? '❌ 실패' : '✅ 성공';
+      const detailsText = log.details ? JSON.stringify(log.details) : '';
+      const detailsShort = detailsText.length > 80 ? detailsText.slice(0, 80) + '…' : detailsText;
+
+      div.innerHTML = `
+        <div class="list-item-header">
+          <div>
+            <div class="list-item-title">${escapeHtml(label)}</div>
+            <div class="list-item-meta">${escapeHtml(time)} | 관리자: ${escapeHtml(log.admin_id)} | 대상: ${escapeHtml(target)} | ${statusLabel}</div>
+          </div>
+        </div>
+        ${detailsText ? `<div class="list-item-content">
+          <span class="log-details-short">${escapeHtml(detailsShort)}</span>
+          ${detailsText.length > 80 ? `<button class="btn btn-secondary log-details-toggle" type="button">전체 보기</button>
+          <pre class="log-details-full" style="display:none;white-space:pre-wrap;word-break:break-all;margin-top:8px;">${escapeHtml(detailsText)}</pre>` : ''}
+        </div>` : ''}
+      `;
+
+      const toggleBtn = div.querySelector('.log-details-toggle');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+          const full = div.querySelector('.log-details-full');
+          const short = div.querySelector('.log-details-short');
+          const showing = full.style.display !== 'none';
+          full.style.display = showing ? 'none' : 'block';
+          short.style.display = showing ? 'inline' : 'none';
+          toggleBtn.textContent = showing ? '전체 보기' : '접기';
+        });
+      }
+
+      container.appendChild(div);
+    });
+
+    if (hasMore || page > 1) {
+      const paginationDiv = document.createElement('div');
+      paginationDiv.style.cssText = 'text-align: center; margin-top: 20px; padding: 10px;';
+
+      if (page > 1) {
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'btn btn-secondary';
+        prevBtn.textContent = '이전';
+        prevBtn.onclick = () => loadAdminLogs(page - 1);
+        prevBtn.style.marginRight = '10px';
+        paginationDiv.appendChild(prevBtn);
+      }
+
+      if (hasMore) {
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn btn-secondary';
+        nextBtn.textContent = '다음';
+        nextBtn.onclick = () => loadAdminLogs(page + 1);
+        paginationDiv.appendChild(nextBtn);
+      }
+
+      container.appendChild(paginationDiv);
+    }
+  } catch (error) {
+    console.error('관리자 로그 로드 오류:', error);
+    container.innerHTML = '<p class="loading">오류 발생: ' + error.message + '</p>';
+  }
+}
+
+document.getElementById('logActionFilter')?.addEventListener('change', () => loadAdminLogs(1));
+document.getElementById('logStatusFilter')?.addEventListener('change', () => loadAdminLogs(1));
 
 // 유틸: XSS 방지
 function escapeHtml(text) {

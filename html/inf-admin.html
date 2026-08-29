@@ -171,6 +171,7 @@
     <button class="tab-btn"        data-tab="waiting">대기 시간</button>
     <button class="tab-btn"        data-tab="notice">공지</button>
     <button class="tab-btn"        data-tab="config">사이트 설정</button>
+    <button class="tab-btn"        data-tab="adminlogs">관리자 로그</button>
   </div>
 
   <!-- 콘서트 -->
@@ -235,6 +236,22 @@
     <div id="config-list"><p class="empty">불러오는 중...</p></div>
     <div class="panel-header" style="margin-top:24px;"><h2>콘서트별 굿즈 합계</h2></div>
     <div id="goods-total-list"><p class="empty">불러오는 중...</p></div>
+  </div>
+
+  <!-- 관리자 로그 -->
+  <div class="tab-panel" id="tab-adminlogs">
+    <div class="panel-header"><h2>관리자 로그</h2></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+      <select id="log-action-filter" style="background:#1e1e2e; border:1px solid #555; color:#fff; padding:6px 10px; border-radius:6px;">
+        <option value="">전체 작업</option>
+      </select>
+      <select id="log-status-filter" style="background:#1e1e2e; border:1px solid #555; color:#fff; padding:6px 10px; border-radius:6px;">
+        <option value="">전체 결과</option>
+        <option value="success">성공</option>
+        <option value="failed">실패</option>
+      </select>
+    </div>
+    <div class="tbl-wrap"><div id="adminlogs-list"><p class="empty">불러오는 중...</p></div></div>
   </div>
 </div>
 
@@ -347,6 +364,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'adminlogs') loadAdminLogs(1);
   });
 });
 
@@ -521,6 +539,102 @@ async function saveGoodsTotal(key, btn) {
     alert('저장 실패: ' + (res.error || '오류'));
   }
 }
+
+// ── 관리자 로그 ────────────────────────────────────
+const ADMIN_LOG_ACTION_LABELS = {
+  QUIZ_SUGGESTION_APPROVE: '퀴즈 건의 승인',
+  QUIZ_SUGGESTION_REJECT: '퀴즈 건의 기각',
+  QUIZ_CREATE: '퀴즈 추가',
+  QUIZ_UPDATE: '퀴즈 수정',
+  QUIZ_DELETE: '퀴즈 삭제',
+  QUIZ_RANKING_DELETE: '랭킹 삭제',
+  QUIZ_RANKING_DELETE_ALL: '랭킹 전체 삭제',
+  CONCERT_CREATE: '콘서트 추가',
+  CONCERT_UPDATE: '콘서트 수정',
+  CONCERT_DELETE: '콘서트 삭제',
+  GOODS_CREATE: '굿즈 추가',
+  GOODS_UPDATE: '굿즈 수정',
+  GOODS_DELETE: '굿즈 삭제',
+  NOTICE_CREATE: '공지 추가',
+  NOTICE_UPDATE: '공지 수정',
+  NOTICE_DELETE: '공지 삭제',
+  CONFIG_UPDATE: '설정 변경',
+  WAITING_CREATE: '대기그룹 추가',
+  WAITING_UPDATE: '대기그룹 수정',
+  WAITING_DELETE: '대기그룹 삭제',
+  DISCORD_NOTICE_SEND: '디스코드 공지 전송',
+  DISCORD_NOTIFY_CONCERT: '디스코드 일정 알림',
+  DISCORD_NOTIFY_KARAOKE_PENDING: '디스코드 노래방 알림',
+  KARAOKE_NUMBER_CREATE: '노래방 번호 추가',
+  KARAOKE_PENDING_APPROVE: '노래방 등록요청 승인',
+  KARAOKE_PENDING_REJECT: '노래방 등록요청 기각',
+};
+
+(function populateAdminLogActionFilter() {
+  const select = document.getElementById('log-action-filter');
+  Object.entries(ADMIN_LOG_ACTION_LABELS).forEach(([value, label]) => {
+    const opt = document.createElement('option');
+    opt.value = value;
+    opt.textContent = label;
+    select.appendChild(opt);
+  });
+})();
+
+async function loadAdminLogs(page = 1) {
+  const el = document.getElementById('adminlogs-list');
+  el.innerHTML = '<p class="empty">불러오는 중...</p>';
+
+  const auth = getAuth();
+  if (!auth) { el.innerHTML = '<p class="empty">다시 로그인해주세요.</p>'; return; }
+
+  const action = document.getElementById('log-action-filter')?.value || '';
+  const status = document.getElementById('log-status-filter')?.value || '';
+
+  const params = new URLSearchParams({ username: auth.username, password: auth.password, page: String(page), limit: '50' });
+  if (action) params.set('action', action);
+  if (status) params.set('status', status);
+
+  try {
+    const res = await fetch(`/api/admin-logs?${params.toString()}`);
+    const data = await res.json();
+    if (!res.ok) { el.innerHTML = `<p class="empty">오류: ${esc(data.error || '알 수 없는 오류')}</p>`; return; }
+    renderAdminLogs(data.logs || [], data.hasMore, page);
+  } catch (err) {
+    el.innerHTML = `<p class="empty">오류: ${esc(err.message)}</p>`;
+  }
+}
+
+function renderAdminLogs(logs, hasMore, page) {
+  const el = document.getElementById('adminlogs-list');
+  if (!logs.length) { el.innerHTML = '<p class="empty">로그가 없습니다.</p>'; return; }
+
+  el.innerHTML = `<table>
+    <thead><tr><th>시간</th><th>관리자</th><th>작업</th><th>대상</th><th>결과</th><th>상세</th></tr></thead>
+    <tbody>${logs.map(log => {
+      const time = new Date(log.created_at).toLocaleString('ko-KR');
+      const label = ADMIN_LOG_ACTION_LABELS[log.action] || log.action;
+      const target = log.target_type ? `${esc(log.target_type)}${log.target_id ? ' #' + esc(log.target_id) : ''}` : '-';
+      const statusLabel = log.status === 'failed' ? '❌ 실패' : '✅ 성공';
+      const detailsText = log.details ? JSON.stringify(log.details) : '';
+      const shortText = detailsText.length > 40 ? detailsText.slice(0, 40) + '…' : detailsText;
+      return `<tr>
+        <td>${esc(time)}</td>
+        <td>${esc(log.admin_id)}</td>
+        <td>${esc(label)}</td>
+        <td>${target}</td>
+        <td>${statusLabel}</td>
+        <td class="truncate"${detailsText ? ` style="cursor:pointer;" title="클릭하면 전체 내용을 볼 수 있습니다" onclick="alert(${esc(JSON.stringify(detailsText))})"` : ''}>${esc(shortText) || '-'}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>
+  <div style="margin-top:12px; display:flex; gap:8px;">
+    ${page > 1 ? `<button class="action-btn edit-btn" onclick="loadAdminLogs(${page - 1})">이전</button>` : ''}
+    ${hasMore ? `<button class="action-btn edit-btn" onclick="loadAdminLogs(${page + 1})">다음</button>` : ''}
+  </div>`;
+}
+
+document.getElementById('log-action-filter').addEventListener('change', () => loadAdminLogs(1));
+document.getElementById('log-status-filter').addEventListener('change', () => loadAdminLogs(1));
 
 // ── 이벤트 위임 (수정/삭제 버튼) ─────────────────
 document.getElementById('admin-section').addEventListener('click', e => {

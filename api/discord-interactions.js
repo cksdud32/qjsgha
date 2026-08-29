@@ -1,6 +1,7 @@
 import nacl from 'tweetnacl';
 import { SONG_TYPE_ORDER, titleSortKey, sortSongs, determineSongType } from '../lib/songUtils.js';
 import { pool } from '../lib/db.js';
+import { writeAdminLog } from '../lib/admin-log.js';
 
 const ADMIN_ID = process.env.ADMIN_USER_ID;
 
@@ -55,6 +56,7 @@ export default async function handler(request, response) {
     if (interaction.data.custom_id === 'announcement_modal') {
       const content = interaction.data.components[0].components[0].value;
       const botToken = process.env.DISCORD_BOT_TOKEN;
+      const userId = interaction.member?.user?.id ?? interaction.user?.id;
 
       try {
         const channelsResult = await pool.query(`SELECT channel_id FROM discord_channels`);
@@ -95,6 +97,14 @@ export default async function handler(request, response) {
         const succeeded = sendResults.filter(r => r.status === 'fulfilled').length;
         const failed = sendResults.filter(r => r.status === 'rejected').length;
 
+        await writeAdminLog({
+          adminId: userId,
+          action: 'DISCORD_NOTICE_SEND',
+          targetType: 'discord',
+          details: { succeeded, failed, channelCount: channelsResult.rows.length },
+          status: succeeded === 0 && failed > 0 ? 'failed' : 'success',
+        });
+
         return response.status(200).json({
           type: 4,
           data: {
@@ -104,6 +114,13 @@ export default async function handler(request, response) {
         });
       } catch (err) {
         console.error('공지사항 모달 오류:', err);
+        await writeAdminLog({
+          adminId: userId,
+          action: 'DISCORD_NOTICE_SEND',
+          targetType: 'discord',
+          status: 'failed',
+          details: { error: err.message },
+        });
         return response.status(200).json({
           type: 4,
           data: { content: '❌ 전송 중 오류가 발생했습니다.', flags: 64 }
@@ -301,6 +318,14 @@ export default async function handler(request, response) {
             [songTitle, songType, number1, number2]
           );
 
+          await writeAdminLog({
+            adminId: userId,
+            action: 'KARAOKE_NUMBER_CREATE',
+            targetType: 'karaoke',
+            targetId: songTitle,
+            details: { songTitle, number1, number2, songType },
+          });
+
           const numText = number2 ? `${number1} / ${number2}` : number1;
           return response.status(200).json({
             type: 4,
@@ -311,6 +336,13 @@ export default async function handler(request, response) {
           });
         } catch (err) {
           console.error('노래방 번호 추가 오류:', err);
+          await writeAdminLog({
+            adminId: userId,
+            action: 'KARAOKE_NUMBER_CREATE',
+            targetType: 'karaoke',
+            status: 'failed',
+            details: { error: err.message, songTitle },
+          });
           return response.status(200).json({
             type: 4,
             data: { content: `❌ 오류: \`${err.message}\``, flags: 64 }
@@ -420,6 +452,14 @@ export default async function handler(request, response) {
         );
         await pool.query('DELETE FROM pending_karaoke WHERE id = $1', [pendingId]);
 
+        await writeAdminLog({
+          adminId: userId,
+          action: 'KARAOKE_PENDING_APPROVE',
+          targetType: 'karaoke',
+          targetId: pendingId,
+          details: { track_title: pending.track_title, tj_number: pending.tj_number },
+        });
+
         return response.status(200).json({
           type: 7,
           data: {
@@ -433,6 +473,14 @@ export default async function handler(request, response) {
       if (action === 'rej') {
         await pool.query('DELETE FROM pending_karaoke WHERE id = $1', [pendingId]);
 
+        await writeAdminLog({
+          adminId: userId,
+          action: 'KARAOKE_PENDING_REJECT',
+          targetType: 'karaoke',
+          targetId: pendingId,
+          details: { track_title: pending.track_title },
+        });
+
         return response.status(200).json({
           type: 7,
           data: {
@@ -444,6 +492,14 @@ export default async function handler(request, response) {
       }
     } catch (err) {
       console.error('버튼 인터랙션 오류:', err);
+      await writeAdminLog({
+        adminId: userId,
+        action: action === 'reg' ? 'KARAOKE_PENDING_APPROVE' : 'KARAOKE_PENDING_REJECT',
+        targetType: 'karaoke',
+        targetId: pendingId,
+        status: 'failed',
+        details: { error: err.message },
+      });
       return response.status(200).json({
         type: 4,
         data: { content: `❌ 오류: \`${err.message}\``, flags: 64 }

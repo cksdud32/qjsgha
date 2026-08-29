@@ -30,6 +30,7 @@
                 <button class="nav-btn" data-tab="add-problem">문제 추가</button>
                 <button class="nav-btn" data-tab="edit-problem">문제 수정</button>
                 <button class="nav-btn" data-tab="ranking">랭킹 관리</button>
+                <button class="nav-btn" data-tab="admin-logs">관리자 로그</button>
             </nav>
             <div class="sidebar-footer">
                 <a href="ina.html" class="logout-btn">← 돌아가기</a>
@@ -111,6 +112,52 @@
                     </select>
                 </div>
                 <div id="rankingList" class="list-container">
+                    <p class="loading">로딩 중...</p>
+                </div>
+            </section>
+
+            <!-- 관리자 로그 탭 -->
+            <section id="admin-logs" class="tab-content">
+                <h1>관리자 로그</h1>
+                <div class="filter-group">
+                    <label for="logActionFilter">작업</label>
+                    <select id="logActionFilter">
+                        <option value="">전체</option>
+                        <option value="QUIZ_SUGGESTION_APPROVE">퀴즈 건의 승인</option>
+                        <option value="QUIZ_SUGGESTION_REJECT">퀴즈 건의 기각</option>
+                        <option value="QUIZ_CREATE">퀴즈 추가</option>
+                        <option value="QUIZ_UPDATE">퀴즈 수정</option>
+                        <option value="QUIZ_DELETE">퀴즈 삭제</option>
+                        <option value="QUIZ_RANKING_DELETE">랭킹 삭제</option>
+                        <option value="QUIZ_RANKING_DELETE_ALL">랭킹 전체 삭제</option>
+                        <option value="CONCERT_CREATE">콘서트 추가</option>
+                        <option value="CONCERT_UPDATE">콘서트 수정</option>
+                        <option value="CONCERT_DELETE">콘서트 삭제</option>
+                        <option value="GOODS_CREATE">굿즈 추가</option>
+                        <option value="GOODS_UPDATE">굿즈 수정</option>
+                        <option value="GOODS_DELETE">굿즈 삭제</option>
+                        <option value="NOTICE_CREATE">공지 추가</option>
+                        <option value="NOTICE_UPDATE">공지 수정</option>
+                        <option value="NOTICE_DELETE">공지 삭제</option>
+                        <option value="CONFIG_UPDATE">설정 변경</option>
+                        <option value="WAITING_CREATE">대기그룹 추가</option>
+                        <option value="WAITING_UPDATE">대기그룹 수정</option>
+                        <option value="WAITING_DELETE">대기그룹 삭제</option>
+                        <option value="DISCORD_NOTICE_SEND">디스코드 공지 전송</option>
+                        <option value="DISCORD_NOTIFY_CONCERT">디스코드 일정 알림</option>
+                        <option value="DISCORD_NOTIFY_KARAOKE_PENDING">디스코드 노래방 알림</option>
+                        <option value="KARAOKE_NUMBER_CREATE">노래방 번호 추가</option>
+                        <option value="KARAOKE_PENDING_APPROVE">노래방 등록요청 승인</option>
+                        <option value="KARAOKE_PENDING_REJECT">노래방 등록요청 기각</option>
+                    </select>
+                    <label for="logStatusFilter">결과</label>
+                    <select id="logStatusFilter">
+                        <option value="">전체</option>
+                        <option value="success">성공</option>
+                        <option value="failed">실패</option>
+                    </select>
+                </div>
+                <div id="adminLogsList" class="list-container">
                     <p class="loading">로딩 중...</p>
                 </div>
             </section>
