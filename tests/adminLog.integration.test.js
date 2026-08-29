@@ -111,7 +111,11 @@ test('api/admin-logs: 잘못된 인증은 401', async (t) => {
 
   const res = fakeRes();
   await adminLogsHandler(
-    { method: 'GET', query: { username: TEST_ADMIN.username, password: 'wrong' } },
+    {
+      method: 'GET',
+      query: {},
+      headers: { 'x-admin-username': TEST_ADMIN.username, 'x-admin-password-hash': 'wrong' },
+    },
     res
   );
   assert.equal(res.statusCode, 401);
@@ -129,12 +133,10 @@ test('api/admin-logs: 인증 통과 시 action 필터와 페이지네이션이 �
   await adminLogsHandler(
     {
       method: 'GET',
-      query: {
-        username: TEST_ADMIN.username,
-        password: TEST_ADMIN.passwordHash,
-        action: 'TEST_PAGINATE',
-        limit: '2',
-        page: '1',
+      query: { action: 'TEST_PAGINATE', limit: '2', page: '1' },
+      headers: {
+        'x-admin-username': TEST_ADMIN.username,
+        'x-admin-password-hash': TEST_ADMIN.passwordHash,
       },
     },
     res

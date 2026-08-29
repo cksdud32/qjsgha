@@ -40,6 +40,16 @@ function getAdminAuth() {
   };
 }
 
+// 조회(GET) 요청용: 인증정보를 URL 이 아니라 헤더로 보낸다.
+// 서버(lib/admin-auth.js)가 X-Admin-Username / X-Admin-Password-Hash 를 검증한다.
+function adminAuthHeaders() {
+  const username = sessionStorage.getItem('adminUsername');
+  const passwordHash = sessionStorage.getItem('adminPwHash');
+  return username && passwordHash
+    ? { 'X-Admin-Username': username, 'X-Admin-Password-Hash': passwordHash }
+    : {};
+}
+
 // 헬퍼: 상태 메시지 표시
 function showStatus(elementId, message, type = 'success') {
   const statusEl = document.getElementById(elementId);
@@ -58,7 +68,7 @@ async function loadSuggestions() {
   container.innerHTML = '<p class="loading">로딩 중...</p>';
 
   try {
-    const response = await fetch('/api/admin?action=get-suggestions');
+    const response = await fetch('/api/admin?action=get-suggestions', { headers: adminAuthHeaders() });
     if (!response.ok) throw new Error('건의사항을 불러올 수 없습니다.');
 
     const suggestions = await response.json();
@@ -274,7 +284,7 @@ async function loadExistingProblems(page = 1) {
       ? `/api/admin?action=get-all-problems&difficulty=${difficulty}&page=${page}`
       : `/api/admin?action=get-all-problems&page=${page}`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: adminAuthHeaders() });
     console.log('API response status:', response.status);
 
     if (!response.ok) {
@@ -444,7 +454,7 @@ async function loadRanking(page = 1) {
   container.innerHTML = '<p class="loading">로딩 중...</p>';
 
   try {
-    const response = await fetch(`/api/admin?action=get-admin-ranking&difficulty=${difficulty}&page=${page}`);
+    const response = await fetch(`/api/admin?action=get-admin-ranking&difficulty=${difficulty}&page=${page}`, { headers: adminAuthHeaders() });
     if (!response.ok) throw new Error('랭킹을 불러올 수 없습니다.');
 
     const data = await response.json();
@@ -607,12 +617,15 @@ async function loadAdminLogs(page = 1) {
   const action = document.getElementById('logActionFilter')?.value || '';
   const status = document.getElementById('logStatusFilter')?.value || '';
 
-  const params = new URLSearchParams({ username, password: pwHash, page: String(page), limit: '50' });
+  // 인증정보는 헤더로만. URL query 에는 필터/페이지 정보만 넣는다.
+  const params = new URLSearchParams({ page: String(page), limit: '50' });
   if (action) params.set('action', action);
   if (status) params.set('status', status);
 
   try {
-    const response = await fetch(`/api/admin-logs?${params.toString()}`);
+    const response = await fetch(`/api/admin-logs?${params.toString()}`, {
+      headers: { 'X-Admin-Username': username, 'X-Admin-Password-Hash': pwHash },
+    });
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       throw new Error(err.error || '로그를 불러올 수 없습니다.');

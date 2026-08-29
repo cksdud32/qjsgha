@@ -19,3 +19,35 @@ CREATE TABLE IF NOT EXISTS "quiz_ranking" (
   difficulty_id INT,
   created_at    TIMESTAMPTZ DEFAULT now()
 );
+
+-- api/admin.js 의 조회 액션(getSuggestions / getAllProblems / getAdminRanking)이
+-- JOIN 하는 테이블들. 인증 테스트가 정상 조회 시 500 이 아니라 깔끔한 200 을 받도록.
+CREATE TABLE IF NOT EXISTS "difficulty" (
+  id         INT PRIMARY KEY,
+  level_name TEXT,
+  db_value   TEXT
+);
+INSERT INTO "difficulty" (id, level_name, db_value) VALUES
+  (1, '쉬움', 'easy'), (2, '보통', 'medium'), (3, '어려움', 'hard'), (4, '하드코어', 'Hardcore')
+  ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS "SuggestedQuestions" (
+  id             BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name           TEXT,
+  question_text  TEXT,
+  answer         TEXT,
+  question_text2 TEXT,
+  question_text3 TEXT,
+  difficulty_id  INT,
+  status         TEXT DEFAULT 'pending',
+  created_at     TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS "questions" (
+  id             BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  question_text  TEXT,
+  answer         TEXT,
+  question_text2 TEXT,
+  question_text3 TEXT,
+  difficulty_id  INT
+);

@@ -1,31 +1,18 @@
 import { pool } from '../lib/db.js';
+import { requireAdmin } from '../lib/admin-auth.js';
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
 
-// 기존 inf-admin.js / admin.js 와 동일한 인증 방식.
-// AdminUsers.password 컬럼에는 항상 SHA-256 해시가 들어있고,
-// 클라이언트가 미리 해시해서 보내든(inf-admin.html) 서버가 해시하든(admin.js) 결국 같은 값과 비교한다.
-// 여기서는 inf-admin.html 방식과 동일하게 "이미 해시된 password" 를 받는다.
-async function validateAuth(username, hashedPassword) {
-  if (!username || !hashedPassword) return false;
-  const res = await pool.query(
-    'SELECT id FROM "AdminUsers" WHERE username = $1 AND password = $2',
-    [username, hashedPassword]
-  );
-  return res.rows.length > 0;
-}
-
+// 인증은 lib/admin-auth.js 로 통일한다. username + 비밀번호 SHA-256 해시를
+// X-Admin-Username / X-Admin-Password-Hash 헤더로 받는다(URL query 아님).
 export default async function handler(request, response) {
   if (request.method !== 'GET') return response.status(405).json({ error: 'Method Not Allowed' });
 
   try {
-    const { username, password, action, adminId, status, from, to } = request.query;
+    await requireAdmin(request);
 
-    const authorized = await validateAuth(username, password);
-    if (!authorized) {
-      return response.status(401).json({ error: '인증에 실패했습니다.' });
-    }
+    const { action, adminId, status, from, to } = request.query;
 
     let limit = parseInt(request.query.limit, 10);
     if (!Number.isFinite(limit) || limit <= 0) limit = DEFAULT_LIMIT;
@@ -80,6 +67,7 @@ export default async function handler(request, response) {
 
     return response.status(200).json({ logs, hasMore, page, limit });
   } catch (error) {
+    if (error.status === 401) return response.status(401).json({ error: error.message });
     console.error('admin-logs 조회 오류:', error);
     return response.status(500).json({ error: error.message });
   }

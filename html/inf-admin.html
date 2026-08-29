@@ -590,12 +590,15 @@ async function loadAdminLogs(page = 1) {
   const action = document.getElementById('log-action-filter')?.value || '';
   const status = document.getElementById('log-status-filter')?.value || '';
 
-  const params = new URLSearchParams({ username: auth.username, password: auth.password, page: String(page), limit: '50' });
+  // 인증정보는 헤더로만. URL query 에는 필터/페이지 정보만.
+  const params = new URLSearchParams({ page: String(page), limit: '50' });
   if (action) params.set('action', action);
   if (status) params.set('status', status);
 
   try {
-    const res = await fetch(`/api/admin-logs?${params.toString()}`);
+    const res = await fetch(`/api/admin-logs?${params.toString()}`, {
+      headers: { 'X-Admin-Username': auth.username, 'X-Admin-Password-Hash': auth.password },
+    });
     const data = await res.json();
     if (!res.ok) { el.innerHTML = `<p class="empty">오류: ${esc(data.error || '알 수 없는 오류')}</p>`; return; }
     renderAdminLogs(data.logs || [], data.hasMore, page);

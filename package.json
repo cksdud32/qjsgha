@@ -4,8 +4,8 @@
   "type": "module",
   "main": "loadHeaderFooter.js",
   "scripts": {
-    "test": "node --import ./scripts/test/unit-setup.mjs --import ./scripts/test/db-guard.mjs --test tests/auth.test.js tests/commandTransitions.test.js",
-    "test:unit": "node --import ./scripts/test/unit-setup.mjs --import ./scripts/test/db-guard.mjs --test tests/auth.test.js tests/commandTransitions.test.js",
+    "test": "node --import ./scripts/test/unit-setup.mjs --import ./scripts/test/db-guard.mjs --test tests/auth.test.js tests/commandTransitions.test.js tests/adminAuth.test.js",
+    "test:unit": "node --import ./scripts/test/unit-setup.mjs --import ./scripts/test/db-guard.mjs --test tests/auth.test.js tests/commandTransitions.test.js tests/adminAuth.test.js",
     "pretest:full": "prisma generate",
     "test:full": "node scripts/test/with-test-db.mjs",
     "db:pull": "prisma db pull",
