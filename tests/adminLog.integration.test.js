@@ -6,12 +6,12 @@
 //   - writeAdminLog() 가 id 를 넘기지 않아도 INSERT 가 성공한다 (0003 의 GENERATED ALWAYS AS IDENTITY).
 //   - created_at 이 자동으로 채워진다.
 //   - details 의 민감 키(password 등)는 저장되지 않는다 (lib/admin-log.js sanitizeDetails).
-//   - api/admin-logs.js 가 인증/필터/페이지네이션을 정상 처리한다.
+//   - api/admin.js 의 get-admin-logs 액션이 인증/필터/페이지네이션을 정상 처리한다.
 
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 
-let pool, writeAdminLog, adminLogsHandler;
+let pool, writeAdminLog, getAdminLogs;
 let dbAvailable = true;
 
 const runId = Date.now();
@@ -28,7 +28,7 @@ before(async () => {
   try {
     ({ pool } = await import('../lib/db.js'));
     ({ writeAdminLog } = await import('../lib/admin-log.js'));
-    adminLogsHandler = (await import('../api/admin-logs.js')).default;
+    ({ getAdminLogs } = await import('../api/admin.js'));
     await pool.query('SELECT 1');
 
     // "AdminUsers" 는 with-test-db.mjs 가 scripts/test/test-legacy-tables.sql 로 미리 만들어 둔다.
@@ -106,14 +106,14 @@ test('writeAdminLog: 로그 기록 실패는 throw 하지 않는다', async (t) 
   await assert.doesNotReject(() => writeAdminLog({ adminId: 'x', action: null }));
 });
 
-test('api/admin-logs: 잘못된 인증은 401', async (t) => {
+test('get-admin-logs: 잘못된 인증은 401', async (t) => {
   if (!dbAvailable) return t.skip('DB 연결 불가');
 
   const res = fakeRes();
-  await adminLogsHandler(
+  await getAdminLogs(
     {
       method: 'GET',
-      query: {},
+      query: { action: 'get-admin-logs' },
       headers: { 'x-admin-username': TEST_ADMIN.username, 'x-admin-password-hash': 'wrong' },
     },
     res
@@ -121,7 +121,14 @@ test('api/admin-logs: 잘못된 인증은 401', async (t) => {
   assert.equal(res.statusCode, 401);
 });
 
-test('api/admin-logs: 인증 통과 시 action 필터와 페이지네이션이 동작한다', async (t) => {
+test('get-admin-logs: 잘못된 메서드는 405', async (t) => {
+  if (!dbAvailable) return t.skip('DB 연결 불가');
+  const res = fakeRes();
+  await getAdminLogs({ method: 'POST', query: { action: 'get-admin-logs' }, headers: {} }, res);
+  assert.equal(res.statusCode, 405);
+});
+
+test('get-admin-logs: 인증 통과 시 logAction 필터와 페이지네이션이 동작한다', async (t) => {
   if (!dbAvailable) return t.skip('DB 연결 불가');
 
   // TEST_PAGINATE 로그 3개 생성
@@ -130,10 +137,11 @@ test('api/admin-logs: 인증 통과 시 action 필터와 페이지네이션이 �
   }
 
   const res = fakeRes();
-  await adminLogsHandler(
+  await getAdminLogs(
     {
       method: 'GET',
-      query: { action: 'TEST_PAGINATE', limit: '2', page: '1' },
+      // 라우팅용 action=get-admin-logs 와 별개로, 로그 action 컬럼 필터는 logAction 으로 보낸다.
+      query: { action: 'get-admin-logs', logAction: 'TEST_PAGINATE', limit: '2', page: '1' },
       headers: {
         'x-admin-username': TEST_ADMIN.username,
         'x-admin-password-hash': TEST_ADMIN.passwordHash,

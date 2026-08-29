@@ -617,13 +617,14 @@ async function loadAdminLogs(page = 1) {
   const action = document.getElementById('logActionFilter')?.value || '';
   const status = document.getElementById('logStatusFilter')?.value || '';
 
-  // 인증정보는 헤더로만. URL query 에는 필터/페이지 정보만 넣는다.
-  const params = new URLSearchParams({ page: String(page), limit: '50' });
-  if (action) params.set('action', action);
+  // 인증정보는 헤더로만. URL query 에는 라우팅(action)과 필터/페이지 정보만.
+  // 로그 action 컬럼 필터는 라우팅 파라미터와 겹치지 않도록 logAction 으로 보낸다.
+  const params = new URLSearchParams({ action: 'get-admin-logs', page: String(page), limit: '50' });
+  if (action) params.set('logAction', action);
   if (status) params.set('status', status);
 
   try {
-    const response = await fetch(`/api/admin-logs?${params.toString()}`, {
+    const response = await fetch(`/api/admin?${params.toString()}`, {
       headers: { 'X-Admin-Username': username, 'X-Admin-Password-Hash': pwHash },
     });
     if (!response.ok) {

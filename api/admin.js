@@ -428,6 +428,80 @@ export async function getAdminRanking(request, response) {
   }
 }
 
+// 관리자 감사 로그 조회 (get-admin-logs). 헤더 인증(lib/admin-auth.js requireAdmin).
+// 라우팅 파라미터가 ?action=get-admin-logs 라서, 로그의 action 컬럼 필터는 logAction 으로 받는다.
+// 필터: logAction / adminId / status / from / to, 페이지네이션: page / limit.
+const ADMIN_LOG_DEFAULT_LIMIT = 50;
+const ADMIN_LOG_MAX_LIMIT = 100;
+
+export async function getAdminLogs(request, response) {
+  if (request.method !== 'GET') return response.status(405).json({ error: 'Method Not Allowed' });
+
+  try {
+    await requireAdmin(request);
+
+    const { adminId, status, from, to } = request.query;
+    const logAction = request.query.logAction;
+
+    let limit = parseInt(request.query.limit, 10);
+    if (!Number.isFinite(limit) || limit <= 0) limit = ADMIN_LOG_DEFAULT_LIMIT;
+    limit = Math.min(limit, ADMIN_LOG_MAX_LIMIT);
+
+    let page = parseInt(request.query.page, 10);
+    if (!Number.isFinite(page) || page <= 0) page = 1;
+    const offset = (page - 1) * limit;
+
+    const conditions = [];
+    const params = [];
+
+    if (logAction) {
+      params.push(logAction);
+      conditions.push(`action = $${params.length}`);
+    }
+    if (adminId) {
+      params.push(adminId);
+      conditions.push(`admin_id = $${params.length}`);
+    }
+    if (status) {
+      params.push(status);
+      conditions.push(`status = $${params.length}`);
+    }
+    if (from) {
+      params.push(from);
+      conditions.push(`created_at >= $${params.length}`);
+    }
+    if (to) {
+      params.push(to);
+      conditions.push(`created_at <= $${params.length}`);
+    }
+
+    const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    params.push(limit + 1);
+    const limitParamIndex = params.length;
+    params.push(offset);
+    const offsetParamIndex = params.length;
+
+    const result = await pool.query(
+      `SELECT id, admin_id, action, target_type, target_id, details, status, created_at
+       FROM admin_logs
+       ${where}
+       ORDER BY created_at DESC
+       LIMIT $${limitParamIndex} OFFSET $${offsetParamIndex}`,
+      params
+    );
+
+    const hasMore = result.rows.length > limit;
+    const logs = hasMore ? result.rows.slice(0, limit) : result.rows;
+
+    return response.status(200).json({ logs, hasMore, page, limit });
+  } catch (error) {
+    if (error.status === 401) return response.status(401).json({ error: error.message });
+    console.error('Get admin logs error:', error);
+    return response.status(500).json({ error: error.message });
+  }
+}
+
 // 랭킹 삭제
 export async function deleteRanking(request, response) {
   if (request.method !== 'DELETE') return response.status(405).json({ error: 'Method Not Allowed' });
@@ -703,6 +777,7 @@ export default async function handler(request, response) {
     case 'update-problem':               return updateProblem(request, response);
     case 'delete-problem':               return deleteProblem(request, response);
     case 'get-admin-ranking':            return getAdminRanking(request, response);
+    case 'get-admin-logs':               return getAdminLogs(request, response);
     case 'delete-ranking':               return deleteRanking(request, response);
     case 'delete-all-ranking-current-month': return deleteAllRankingForCurrentMonth(request, response);
     default: return response.status(400).json({ error: 'Invalid action' });
